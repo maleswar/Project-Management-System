@@ -3,19 +3,22 @@ import img from "./assets/Vector/Login.jpeg";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {
+  checkEmpty,
+  validateEmail,
+  validateRadio,
+  validateNumber,
+  togglePasswordVisibility,
+} from "../../JS/FormValidation";
 
 function Login() {
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
 
-  function checkEmpty(id, name) {
-    let value = document.getElementById(id).value;
-    if (value === "") {
-      alert(name + " is Empty Please Check");
-      document.getElementById(id).focus();
-      return false;
-    }
-    return true;
-  }
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   const [value, setValues] = useState({
     email: "",
     role: "",
@@ -33,9 +36,13 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     let result =
-      checkEmpty("email", "Email") &&
-      checkEmpty("uid", "Uniq ID") &&
-      checkEmpty("password", "Password");
+      checkEmpty("email", "Email", "emailspan") &&
+      validateEmail("email", "emailspan") &&
+      validateRadio("team", "teamLeader", "radiospan") &&
+      checkEmpty("uid", "Uniq ID", "uidspan") &&
+      validateNumber("uid", "uidspan") &&
+      checkEmpty("password", "Password", "passspan") &&
+      validateNumber("password", "passspan");
     // alert(result);
     if (result) {
       try {
@@ -53,18 +60,16 @@ function Login() {
           const tlId = userData.TL_Id;
           const tlFname = userData.TL_fname;
           const tlLname = userData.TL_lname;
-          const status=response.status;
+          const status = response.status;
           // alert(status);
-          if(status===200){
-          sessionStorage.setItem('TLID', tlId);
-          sessionStorage.setItem('TLName', tlFname + " "+tlLname);
-          navigate("/AdminDashbord");
-          }else{
+          if (status === 200) {
+            sessionStorage.setItem("TLID", tlId);
+            sessionStorage.setItem("TLName", tlFname + " " + tlLname);
+            navigate("/AdminDashbord");
+          } else {
             alert("Login Unsuccessfull");
           }
-          
         } else {
-
           const response = await axios.post(
             "http://localhost:3001/Utilities/loginForTeam",
             value
@@ -72,8 +77,8 @@ function Login() {
           const userData = response.data.data[0];
           const TeamID = userData.Team_id;
           const TeamName = userData.Team_name;
-          sessionStorage.setItem('TeamID', TeamID);
-          sessionStorage.setItem('TeamName', TeamName);
+          sessionStorage.setItem("TeamID", TeamID);
+          sessionStorage.setItem("TeamName", TeamName);
           navigate("/TeamDashbord");
           // alert("team ");
         }
@@ -110,9 +115,11 @@ function Login() {
                 id="email"
                 className="p-2 rounded-lg w-full border"
                 onChange={handleInput}
+
                 // {...register("email", { required: true })}
               />
             </label>
+            <span id="emailspan" className="text-red-700 email"></span>
             <div className="m-1">
               <div className="md:flex">
                 <label className="inline-flex items-center">
@@ -120,6 +127,7 @@ function Login() {
                     type="radio"
                     name="role"
                     value="Team"
+                    id="team"
                     className="form-radio h-4 w-4 text-indigo-600"
                     // checked={selectedOption === "team"}
                     onChange={handleInput}
@@ -130,6 +138,7 @@ function Login() {
                   <input
                     type="radio"
                     name="role"
+                    id="teamLeader"
                     value="TL"
                     className="form-radio h-4 w-4 text-indigo-600"
                     // checked={selectedOption === "TL"}
@@ -139,34 +148,75 @@ function Login() {
                 </label>
               </div>
             </div>
+            <span id="radiospan" className="text-red-700 tt"></span>
             <div className="flex flex-row gap-6">
-              <label>
-                Unique Id
-                <input
-                  type="number"
-                  name="uid"
-                  id="uid"
-                  // value="manager"
-                  className="p-2 rounded-lg w-full border"
-                  // checked={selectedOption === 'Manager'}
+              <div>
+                <label>
+                  Unique Id
+                  <input
+                    type="text"
+                    name="uid"
+                    id="uid"
+                    className="p-2 rounded-lg w-full border"
+                    onChange={handleInput}
+                  />
+                </label>
+                <p id="uidspan" className="text-red-700 uid"></p>
+              </div>
 
-                  onChange={handleInput}
+              <div>
+                <label>
+                  Password
+                  <div className="relative">
+                    <input
+                      type={passwordVisible ? "text" : "password"}
+                      name="password"
+                      id="password"
+                      className="p-2 rounded-lg w-full border"
+                      onChange={handleInput}
 
-                  // {...register("uniqid")}
-                />
-              </label>
-              <label>
-                Password
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  className="p-2 rounded-lg w-full border"
-                  onChange={handleInput}
-
-                  // {...register("password")}
-                />
-              </label>
+                      // {...register("password")}
+                    />
+                    <div
+                      onClick={togglePasswordVisibility}
+                      style={{
+                        cursor: "pointer",
+                        position: "absolute",
+                        top: "50%",
+                        right: "10px",
+                        transform: "translateY(-50%)",
+                      }}
+                    >
+                      {passwordVisible ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-eye-fill"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                          <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
+                        </svg>
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-eye-slash-fill"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7 7 0 0 0 2.79-.588M5.21 3.088A7 7 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474z" />
+                          <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12z" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                  <p id="passspan" className="text-red-700 uid"></p>
+                </label>
+              </div>
             </div>
 
             <button className="bg-customBlue p-2 rounded-lg text-white font-semibold hover:scale-100 duration-300 mt-3">
