@@ -1,0 +1,568 @@
+import React, { useState, useEffect, useRef } from "react";
+import { FaPlus } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
+import ReactApexChart from "react-apexcharts";
+import Cards from "./Layouts/Cards";
+import { IoTrophyOutline } from "react-icons/io5";
+import { RxCounterClockwiseClock } from "react-icons/rx";
+import { IoTrashOutline } from "react-icons/io5";
+import { Editor } from "@tinymce/tinymce-react";
+import axios from "axios";
+
+
+function Task() {
+  const [totalCompletedTask, setTotalCompletedTask] = useState(null);
+  const [totalPendingTask, setTotalPendingTask] = useState(null);
+  const [totalCancelTask, setTotalCancelTask] = useState(null);
+  const [taskList, setTaskList] = useState([]);
+  const [taskTeam, setTaskTeam] = useState([]);
+  const [taskAllData, setTaskAllData] = useState([]);
+
+
+  const CompletedTask = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3001/Task/TaskCompleteCount"
+      );
+      const TaskCompleted = response.data.data[0]["count(*)"];
+      setTotalCompletedTask(TaskCompleted);
+    } catch (error) {
+      console.error("Error fetching Completed Task count:", error);
+    }
+  };
+
+  const PendingTask = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/Task/TaskPendingCount");
+      const  totalPendingTask= response.data.data[0]["count(*)"];
+      setTotalPendingTask(totalPendingTask);
+    } catch (error) {
+      console.error("Error fetching Pending Task count:", error);
+    }
+  };
+
+  const CancledTask = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3001/Task/TaskCancelCount"
+      );
+      const totalCancelTask = response.data.data[0]["count(*)"];
+      setTotalCancelTask(totalCancelTask);
+    } catch (error) {
+      console.error("Error fetching CompleteProject count:", error);
+    }
+  };
+
+  const TaskData = async () => {
+    await axios
+      .get("http://localhost:3001/Task/TaskDashbordData")
+      .then((res) => {
+        let list = res.data;
+        let taskList = list.data;
+        setTaskList(taskList);
+        // alert(BudgetList);
+      });
+  };
+
+  const TaskAllData = async () => {
+    await axios
+      .get("http://localhost:3001/Task/TaskData")
+      .then((res) => {
+        let list = res.data;
+        let taskAllData = list.data;
+        setTaskAllData(taskAllData);
+        // alert(BudgetList);
+      });
+  }; 
+
+  const TaskTeam = async () => {
+    await axios
+      .get("http://localhost:3001/Task/TaskTeamData")
+      .then((res) => {
+        let list = res.data;
+        let taskTeam = list.data;
+        setTaskTeam(taskTeam);
+        // alert(BudgetList);
+      });
+  };
+
+
+
+
+
+
+  useEffect(() => {
+    CompletedTask();
+    PendingTask();
+    CancledTask();
+    TaskData();
+    TaskTeam();
+    TaskAllData();
+  }, []);
+
+
+
+
+
+  const [chartOptions, setChartOptions] = useState({
+    labels: ["Project A", "Project B", "Project C"],
+    colors: ["#008FFB", "#00E396", "#FEB019"],
+  });
+
+  const [chartSeries, setChartSeries] = useState([30, 70, 50]);
+
+  const TABLE_ROWS1 = [
+    { teamLeader: "Team Lead 1", assignedTask: "Task A" },
+    { teamLeader: "Team Lead 2", assignedTask: "Task B" },
+    { teamLeader: "Team Lead 3", assignedTask: "Task C" },
+    // Add more rows as needed
+  ];
+
+  const TASK_ASSIGNMENTS = [
+    {
+      teamLeader: "Team Lead 1",
+      assignedTask: "Task A, Task B",
+      status: "Pending",
+    },
+    {
+      teamLeader: "Team Lead 2",
+      assignedTask: "Task C, Task D",
+      status: "Complete",
+    },
+    // Add more entries as needed
+  ];
+
+  const [formData, setFormData] = useState({
+    taskName: "",
+    description: "",
+    priority: "",
+    startDate: "",
+    endDate: "",
+    estimatedHours: "",
+  });
+
+  const drawerRef = useRef(null);
+  const buttonRef = useRef(null);
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+
+  const openDrawer = () => {
+    setFormData({
+      taskName: "",
+      description: "",
+      priority: "",
+      startDate: "",
+      endDate: "",
+      estimatedHours: "",
+    });
+    setDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleCloseForm = () => {
+    closeDrawer();
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission for task
+    // ...
+
+    // Reset form after submission
+    setFormData({
+      taskName: "",
+      description: "",
+      priority: "",
+      startDate: "",
+      endDate: "",
+      estimatedHours: "",
+    });
+
+    // Close the drawer
+    closeDrawer();
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        drawerRef.current &&
+        !drawerRef.current.contains(event.target) &&
+        buttonRef.current !== event.target
+      ) {
+        closeDrawer();
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div className="w-full h-full mt-16">
+      <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4">
+        <div className="justify-end -mt-5">
+          <button
+            ref={buttonRef}
+            className="float-end mx-4 bg-customBlue text-white font-semibold p-2 mt-5 rounded-md flex w-48 items-center"
+            onClick={openDrawer}
+          >
+            <span>
+              <FaPlus className="h-4 w-4 text-white mr-3" />
+            </span>
+            Add New Task
+          </button>
+        </div>
+        <div
+          ref={drawerRef}
+          id="drawer-right-example"
+          className={`fixed top-0 right-0 z-50 h-screen p-4 overflow-y-auto transition-transform ${
+            isDrawerOpen ? "translate-x-0" : "translate-x-full"
+          } bg-white w-[700px] dark:bg-gray-800 border-l border-gray-300`}
+        >
+          <section className="bg-white w-full max-w-2xl p-7">
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-2xl font-bold text-center text-gray-900 -mt-3">
+                Task Form
+              </h1>
+              <button
+                className="text-gray-600 hover:text-gray-800"
+                onClick={handleCloseForm}
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div>
+                <label
+                  htmlFor="taskName"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Task Name
+                </label>
+                <input
+                  type="text"
+                  name="taskName"
+                  id="taskName"
+                  value={formData.taskName}
+                  onChange={handleChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Task Name"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="description"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Description
+                </label>
+                <Editor
+                  apiKey="vymw4rqyiorz5pkxqudpiw0te0z5z9sm6q25ru8xif5dzbkl"
+                  init={{
+                    height: 200,
+                    menubar: false,
+                    plugins: [
+                      "advlist autolink lists link image charmap print preview anchor",
+                      "searchreplace visualblocks code fullscreen",
+                      "insertdatetime media table paste code help wordcount",
+                    ],
+                    toolbar:
+                      "undo redo | formatselect | bold italic backcolor | \
+                    alignleft aligncenter alignright alignjustify | \
+                    bullist numlist outdent indent | removeformat | help",
+                  }}
+                  value={formData.description}
+                  onEditorChange={(content, editor) =>
+                    setFormData({ ...formData, description: content })
+                  }
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="priority"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Priority
+                </label>
+                <select
+                  name="priority"
+                  id="priority"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  required
+                  value={formData.priority}
+                  onChange={handleChange}
+                >
+                  <option value="" disabled>
+                    Select Priority
+                  </option>
+                  <option value="High">High</option>
+                  <option value="Moderate">Moderate</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="estimatedHours"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Estimated Hours
+                </label>
+                <input
+                  type="text"
+                  name="estimatedHours"
+                  id="estimatedHours"
+                  value={formData.estimatedHours}
+                  onChange={handleChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Estimated Hours"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-bgButton text-white px-5 py-2.5 text-center rounded-md"
+              >
+                Create Task
+              </button>
+            </form>
+          </section>
+        </div>
+
+        {/* Project Card  */}
+        <div className="w-full">
+          <div className="bg-white  shadow-lg flex items-center py-10">
+            <div className="text-left ml-10">
+              <h1 className="text-4xl font-bold mb-2 text-customBlue">
+               Task 
+              </h1>
+              <p className="text-gray-600">
+                Welcome to the Project Management Dashboard! Your hub for
+                project progress, collaboration, and success. Let's get started!
+              </p>
+            </div>
+          </div>
+        </div>
+        {/* Cards */}
+        <div className="w-full">
+          <div class="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-x-10 mx-auto">
+            <Cards title="Completed Task" value={totalCompletedTask}>
+              <IoTrophyOutline className="w-10 h-10 text-customBlue" />
+            </Cards>
+
+            <Cards title="Pending Task" value={totalPendingTask}>
+              <RxCounterClockwiseClock className="w-10 h-10 text-customBlue" />
+            </Cards>
+
+            <Cards title="Canceled Task" value={totalCancelTask}>
+              <IoTrashOutline className="w-10 h-10 text-customBlue" />
+            </Cards>
+          </div>
+        </div>
+        <div className="w-full">
+          <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-x-10 mx-auto mt-7 space-y-7 sm:space-y-7 md:space-y-7 lg:space-y-0">
+            {/* Task Graph */}
+            <div className="bg-white shadow-lg  px-5 py-5 flex-1">
+              <h2 className="text-2xl font-bold mb-4 text-customBlue">
+                Task Graph
+              </h2>
+              <div>
+                <ReactApexChart
+                  options={chartOptions}
+                  series={chartSeries}
+                  type="pie"
+                  height={180}
+                />
+              </div>
+            </div>
+
+            {/* Task Graph */}
+            <div className="bg-white shadow-lg  px-5 py-5 flex-1">
+              <h2 className="text-2xl font-bold mb-4 text-customBlue">
+                Completed Task
+              </h2>
+              <table className="w-full text-left">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="border border-blue-gray-300 p-2 text-gray-700">
+                      Sr.no
+                    </th>
+                    <th className="border border-blue-gray-300 p-2 text-gray-700">
+                      Task Name
+                    </th>
+                    <th className="border border-blue-gray-300 p-2 text-gray-700">
+                     Team Member
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {taskTeam.map(
+                      ({ Task_id, Task_name, Team_name}, index) => (
+                        <tr key={index}>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Task_id}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Task_name}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Team_name}
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div className="w-full">
+          <div className="mx-auto bg-white shadow-lg px-5 py-5 mt-7">
+            <h2 className="text-2xl font-bold mb-4 text-customBlue">
+              Pending Task Details
+            </h2>
+            <div className="overflow-auto">
+              <table className="w-full text-left">
+              <thead className="bg-gray-400">
+                    <tr>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
+                      Sr.No
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Task
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Description
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Start_date
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      End_date
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Priority
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Comments
+                      </th>
+                    </tr>
+                  </thead>
+                <tbody>
+                    {taskList.map(
+                      ({ Task_id,Task_name,Description,start_date,End_date,Priority,Comments }, index) => (
+                        <tr key={index}>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Task_id}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Task_name}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Description}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {start_date}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {End_date}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Priority}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Comments}
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+        <div className="w-full">
+          <div className="mx-auto bg-white shadow-lg px-5 py-5 mt-7">
+            <h2 className="text-2xl font-bold mb-4 text-customBlue">
+              All Tasks
+            </h2>
+            <div className="overflow-auto">
+              <table className="w-full text-left">
+              <thead className="bg-gray-400">
+                    <tr>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
+                      Sr.No
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Task
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Description
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Start_date
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      End_date
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Priority
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Comments
+                      </th>
+                    </tr>
+                  </thead>
+                <tbody>
+                    {taskAllData.map(
+                      ({ Task_id,Task_name,Description,start_date,End_date,Priority,Comments }, index) => (
+                        <tr key={index}>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Task_id}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Task_name}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Description}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {start_date}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {End_date}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Priority}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Comments}
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+              </table>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Task;
