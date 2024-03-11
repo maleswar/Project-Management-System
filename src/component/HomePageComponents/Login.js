@@ -65,6 +65,7 @@ function Login() {
           if (status === 200) {
             sessionStorage.setItem("TLID", tlId);
             sessionStorage.setItem("TLName", tlFname + " " + tlLname);
+            alert("Login Successfull");
             navigate("/AdminDashbord");
           } else {
             alert("Login Unsuccessfull");

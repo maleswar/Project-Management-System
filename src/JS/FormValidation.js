@@ -1,14 +1,18 @@
-export function checkEmpty(id, name,span) {
+export function checkEmpty(id, name, spanId) {
     let value = document.getElementById(id).value;
-    var errorMessage = document.getElementById(span);
+    var errorMessage = document.getElementById(spanId);
 
     if (value === "") {
-        errorMessage.textContent = name + " is Empty Please Check";
-      document.getElementById(id).focus();
-      return false;
+        errorMessage.textContent = name + " is Empty. Please Check.";
+        document.getElementById(id).focus();
+        return false;
+    } else {
+        errorMessage.textContent = ""; // Clear the error message
     }
+
     return true;
-  }
+}
+
 
  export  function validateEmail(email,span) {
     var emailInput = document.getElementById(email);
