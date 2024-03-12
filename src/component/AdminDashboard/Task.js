@@ -522,13 +522,16 @@ function Task() {
                       Priority
                       </th>
                       <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Progress
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Comments
                       </th>
                     </tr>
                   </thead>
                 <tbody>
                     {taskAllData.map(
-                      ({ Task_id,Task_name,Description,start_date,End_date,Priority,Comments }, index) => (
+                      ({ Task_id,Task_name,Description,start_date,End_date,Priority,Progress,Comments }, index) => (
                         <tr key={index}>
                           <td className="border border-blue-gray-300 p-2">
                             {Task_id}
@@ -547,6 +550,9 @@ function Task() {
                           </td>
                           <td className="border border-blue-gray-300 p-2">
                             {Priority}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Progress}
                           </td>
                           <td className="border border-blue-gray-300 p-2">
                             {Comments}

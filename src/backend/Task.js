@@ -8,7 +8,7 @@ router.get("/TaskData", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "SELECT Task_id,Task_name,Description,start_date,End_date,Priority,status,Comments from task";
+    let query = "SELECT Task_id,Task_name,Description,start_date,End_date,Priority,Progress,Comments from task";
     connection.query(query, (err, data) => {
       connection.release();
 
