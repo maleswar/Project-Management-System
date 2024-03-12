@@ -11,20 +11,22 @@ router.post("/loginForTL", (req, res) => {
     if (err) {
       return res.json({ err: err });
     }
-    
+
     const sql =
-      "SELECT TL_Id, TL_fname,TL_lname FROM TL WHERE Email = ? AND Uniq_id = ? AND Password = ?";
-      
-    connection.query(sql, [email, uid, password], (err, data,status) => {
+      "SELECT TL_Id, TL_fname, TL_lname FROM TL WHERE Email = ? AND Uniq_id = ? AND Password = ?";
+
+    connection.query(sql, [email, uid, password], (err, data) => {
       connection.release();
       if (err) {
         return res.json({ err: err });
       } else {
-        return res.json({ data: data,status:true });
+        const status = data && data.length > 0; // Check if data exists
+        return res.json({ data: data, status: status });
       }
     });
   });
 });
+
 
 router.post("/loginForTeam", (req, res) => {
   let email = req.body.email;
@@ -35,20 +37,22 @@ router.post("/loginForTeam", (req, res) => {
     if (err) {
       return res.json({ err: err });
     }
-    
+
     const sql =
-      "SELECT Team_id,Team_name FROM Team WHERE Email = ? AND Uniq_id = ? AND Password = ?";
-      
+      "SELECT Team_id, Team_name FROM Team WHERE Email = ? AND Uniq_id = ? AND Password = ?";
+
     connection.query(sql, [email, uid, password], (err, data) => {
       connection.release();
       if (err) {
         return res.json({ err: err });
       } else {
-        return res.json({ data: data });
+        const status = data && data.length > 0; // Check if data exists
+        return res.json({ data: data, status: status });
       }
     });
   });
 });
+
 
 router.post("/signup", (req, res) => {
   const value = [

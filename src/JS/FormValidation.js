@@ -70,19 +70,22 @@ export function validateNumber(inputId,span) {
     }
 }
 
-export function validateDropdown(ID,Message,span) {
+export function validateDropdown(ID, Message, span) {
     const selectedValue = document.getElementById(ID).value;
-    var errorMessage = document.getElementById(span);
-  
+    const errorMessage = document.getElementById(span);
+
     // Check if a valid option is selected
-    if (selectedValue === '') {
-        errorMessage.textContent = "Please Select "+Message;
-      return false; // Prevent form submission
-    }else{
-        errorMessage.textContent="";
+    if (selectedValue.trim() === '') {
+        errorMessage.textContent = "Please select a valid " + Message;
+        return false; // Prevent form submission
+    } else {
+        errorMessage.textContent = "";
     }
-  
+
     // Additional validation logic can be added here if needed
-  
+    // For example, you can check for specific values or patterns
+
+    // Return true if the selected value is valid
     return true; // Allow form submission
-  }
+}
+

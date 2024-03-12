@@ -62,15 +62,16 @@ function Login() {
           const tlLname = userData.TL_lname;
           const status = response.status;
           // alert(status);
-          if (status === 200) {
+          if (status) {
+            alert("Login Successful");
             sessionStorage.setItem("TLID", tlId);
             sessionStorage.setItem("TLName", tlFname + " " + tlLname);
-            alert("Login Successfull");
             navigate("/AdminDashbord");
           } else {
-            alert("Login Unsuccessfull");
+            alert("Login Unsuccessful");
+            console.log("Login Unsuccessful");
           }
-        } else {
+        }else if(selectedValue == "Team") {
           const response = await axios.post(
             "http://localhost:3001/Utilities/loginForTeam",
             value
@@ -78,10 +79,18 @@ function Login() {
           const userData = response.data.data[0];
           const TeamID = userData.Team_id;
           const TeamName = userData.Team_name;
-          sessionStorage.setItem("TeamID", TeamID);
-          sessionStorage.setItem("TeamName", TeamName);
-          navigate("/TeamDashbord");
+          const status = response.status;
+          if (status) {
+            sessionStorage.setItem("TeamID", TeamID);
+            sessionStorage.setItem("TeamName", TeamName);
+            alert("Login Successfull");
+            navigate("/TeamDashbord");
+          } else {
+            alert("Login Unsuccessfull");
+          }
           // alert("team ");
+        }else{
+          alert("Login Unsuccessfull");
         }
       } catch (err) {
         console.log(err);

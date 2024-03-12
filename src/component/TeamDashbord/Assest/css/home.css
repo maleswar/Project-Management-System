@@ -1,0 +1,18 @@
+@keyframes bounceUpDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animated-image {
+  animation: bounceUpDown 3s infinite;
+}
+
+.element {
+  width: 900px; /* Set the width to 100% to make it fill the container */
+  height: auto; /* Maintain the aspect ratio */
+}

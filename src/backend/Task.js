@@ -22,6 +22,7 @@ router.get("/TaskData", (req, res) => {
 });
 
 router.post("/AddNewTask", (req, res) => {
+  
   const value = [
     req.body.task,
     req.body.description,
@@ -30,14 +31,16 @@ router.post("/AddNewTask", (req, res) => {
     req.body.enddate,
     req.body.priority,
     req.body.projectid,
-  ];
+    req.body.TlId,
+    req.body.progress,
+ ];
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
 
     let query =
-      "insert into Task (`Task_name`,`Description`,`Team_id`,`Start_date`,`End_date`,`Priority`,`Project_id`) values(?)";
+      "insert into Task (`Task_name`,`Description`,`Team_id`,`Start_date`,`End_date`,`Priority`,`Project_id`,`TL_id`,`Progress`) values(?)";
     connection.query(query, [value], (err, data) => {
       connection.release();
 

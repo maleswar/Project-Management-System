@@ -8,16 +8,21 @@ import { RxCounterClockwiseClock } from "react-icons/rx";
 import { IoTrashOutline } from "react-icons/io5";
 import { Editor } from "@tinymce/tinymce-react";
 import axios from "axios";
-
+import {
+  checkEmpty,
+  validateDropdown,
+} from "../../JS/FormValidation";
 
 function Task() {
+  const ID = sessionStorage.getItem("TLID");
   const [totalCompletedTask, setTotalCompletedTask] = useState(null);
   const [totalPendingTask, setTotalPendingTask] = useState(null);
   const [totalCancelTask, setTotalCancelTask] = useState(null);
   const [taskList, setTaskList] = useState([]);
   const [taskTeam, setTaskTeam] = useState([]);
   const [taskAllData, setTaskAllData] = useState([]);
-
+  const [ProjectName, setProjectName] = useState([]);
+  const [teamFormMember, setTeamFormMember] = useState([]);
 
   const CompletedTask = async () => {
     try {
@@ -33,8 +38,10 @@ function Task() {
 
   const PendingTask = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/Task/TaskPendingCount");
-      const  totalPendingTask= response.data.data[0]["count(*)"];
+      const response = await axios.get(
+        "http://localhost:3001/Task/TaskPendingCount"
+      );
+      const totalPendingTask = response.data.data[0]["count(*)"];
       setTotalPendingTask(totalPendingTask);
     } catch (error) {
       console.error("Error fetching Pending Task count:", error);
@@ -65,31 +72,47 @@ function Task() {
   };
 
   const TaskAllData = async () => {
-    await axios
-      .get("http://localhost:3001/Task/TaskData")
-      .then((res) => {
-        let list = res.data;
-        let taskAllData = list.data;
-        setTaskAllData(taskAllData);
-        // alert(BudgetList);
-      });
-  }; 
-
-  const TaskTeam = async () => {
-    await axios
-      .get("http://localhost:3001/Task/TaskTeamData")
-      .then((res) => {
-        let list = res.data;
-        let taskTeam = list.data;
-        setTaskTeam(taskTeam);
-        // alert(BudgetList);
-      });
+    await axios.get("http://localhost:3001/Task/TaskData").then((res) => {
+      let list = res.data;
+      let taskAllData = list.data;
+      setTaskAllData(taskAllData);
+      // alert(BudgetList);
+    });
   };
 
+  const TaskTeam = async () => {
+    await axios.get("http://localhost:3001/Task/TaskTeamData").then((res) => {
+      let list = res.data;
+      let taskTeam = list.data;
+      setTaskTeam(taskTeam);
+      // alert(BudgetList);
+    });
+  };
 
-
-
-
+  const fetchProjectData = async () => {
+    try {
+      const tlid = sessionStorage.getItem("TLID");
+      const response = await axios.get(
+        `http://localhost:3001/Project/ProjectNames?tlid=${tlid}`
+      );
+      const ProjectName = response.data.data;
+      setProjectName(ProjectName);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
+  };
+  const fetchTeamMemberList = async () => {
+    try {
+      const tlid = sessionStorage.getItem("TLID");
+      const response = await axios.get(
+        `http://localhost:3001/Team/TeamNames?tlid=${tlid}`
+      );
+      const teamFormMember = response.data.data;
+      setTeamFormMember(teamFormMember);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
+  };
 
   useEffect(() => {
     CompletedTask();
@@ -98,18 +121,16 @@ function Task() {
     TaskData();
     TaskTeam();
     TaskAllData();
+    fetchProjectData();
+    fetchTeamMemberList();
   }, []);
 
-
-
-
-
   const [chartOptions, setChartOptions] = useState({
-    labels: ["Project A", "Project B", "Project C"],
+    labels: ["Completed Tasks", "Pending Task", "Cancled Task"],
     colors: ["#008FFB", "#00E396", "#FEB019"],
   });
 
-  const [chartSeries, setChartSeries] = useState([30, 70, 50]);
+  // const [chartSeries, setChartSeries] = useState([30, 70, 50]);
 
   const TABLE_ROWS1 = [
     { teamLeader: "Team Lead 1", assignedTask: "Task A" },
@@ -132,14 +153,20 @@ function Task() {
     // Add more entries as needed
   ];
 
+  
+  // alert(ID);
   const [formData, setFormData] = useState({
-    taskName: "",
+    projectid: "",
+    task: "",
+    TeamId: "",
+    TlId: ID,
+    startdate: "",
+    enddate: "",
     description: "",
     priority: "",
-    startDate: "",
-    endDate: "",
-    estimatedHours: "",
+    
   });
+  console.log(formData);
 
   const drawerRef = useRef(null);
   const buttonRef = useRef(null);
@@ -147,12 +174,15 @@ function Task() {
 
   const openDrawer = () => {
     setFormData({
-      taskName: "",
+      projectid: "",
+      task: "",
+      TeamId: "",
+      TlId: ID,
+      startdate: "",
+      enddate: "",
       description: "",
       priority: "",
-      startDate: "",
-      endDate: "",
-      estimatedHours: "",
+      progress: "Pending",
     });
     setDrawerOpen(true);
   };
@@ -170,22 +200,34 @@ function Task() {
     closeDrawer();
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission for task
-    // ...
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    let result =
+    validateDropdown("projectid", "Project Name", "projectidspan") &&
+      checkEmpty("task", "Task Name", "taskspan") &&
+      validateDropdown("TeamId", "Team Member", "TeamIdspan") &&
+      validateDropdown("priority","Priority","priorityspan");
 
-    // Reset form after submission
-    setFormData({
-      taskName: "",
-      description: "",
-      priority: "",
-      startDate: "",
-      endDate: "",
-      estimatedHours: "",
-    });
+    // alert(result);
+    if (result) {
+      try {
+        const response = await axios.post(
+          "http://localhost:3001/Task/AddNewTask",
+          formData
+        );
+        var count = response.data.data.affectedRows;
 
-    // Close the drawer
+        if (count === 1) {
+          alert("Task Added Sucsessfully");
+        } else {
+          alert("there are some error");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      return false;
+    }
     closeDrawer();
   };
 
@@ -206,6 +248,14 @@ function Task() {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
+  const [chartSeries, setChartSeries] = useState([]);
+  useEffect(() => {
+    // When values change, update the chart series
+    if (totalCompletedTask !== null && totalPendingTask !== null && totalCancelTask !== null) {
+      const series = [totalCompletedTask, totalPendingTask, totalCancelTask];
+      setChartSeries(series);
+    }
+  }, [totalCompletedTask, totalPendingTask, totalCancelTask]);
 
   return (
     <div className="w-full h-full mt-16">
@@ -244,22 +294,112 @@ function Task() {
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label
-                  htmlFor="taskName"
+                  htmlFor="projectid"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Project Names
+                </label>
+                <select
+                  name="projectid"
+                  id="projectid"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={formData.projectid}
+                  onChange={handleChange}
+                >
+                  <option value="" disabled>
+                    Select Project
+                  </option>
+                  {ProjectName.map((project) => (
+                    <option key={project.Project_id} value={project.Project_id}>
+                      {project.Project_name}
+                    </option>
+                  ))}
+                </select>
+
+                
+              </div>
+              <span id="projectidspan" className="text-red-700"></span>
+              <div>
+                <label
+                  htmlFor="task"
                   className="block mb-2 text-sm font-medium text-gray-900 "
                 >
                   Task Name
                 </label>
                 <input
                   type="text"
-                  name="taskName"
-                  id="taskName"
-                  value={formData.taskName}
+                  name="task"
+                  id="task"
+                  value={formData.task}
                   onChange={handleChange}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Task Name"
                 />
-              </div>
+                
 
+              </div>
+              <span id="taskspan" className="text-red-700"></span>
+              <div>
+                <label
+                  htmlFor="TeamId"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Team Names
+                </label>
+                <select
+                  name="TeamId"
+                  id="TeamId"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={formData.TeamId}
+                  onChange={handleChange}
+                >
+                  <option value="" disabled>
+                    Select Team Member
+                  </option>
+                  {teamFormMember.map((member) => (
+                    <option key={member.Team_id} value={member.Team_id}>
+                      {member.Team_name}
+                    </option>
+                  ))}
+                </select>
+
+               
+              </div> <span id="TeamIdspan" className="text-red-700"></span>
+              <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 sm:space-x-0 md:space-x-5 lg:space-x-5">
+                <div>
+                  <label
+                    htmlFor="startdate"
+                    className="block mb-2 text-sm font-medium text-gray-900 "
+                  >
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    name="startdate"
+                    id="startdate"
+                    value={formData.startdate}
+                    onChange={handleChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="enddate"
+                    className="block mb-2 text-sm font-medium text-gray-900 "
+                  >
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    name="enddate"
+                    id="enddate"
+                    value={formData.enddate}
+                    onChange={handleChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  />
+                </div>
+              </div>
               <div>
                 <label
                   htmlFor="description"
@@ -284,9 +424,11 @@ function Task() {
                   }}
                   value={formData.description}
                   onEditorChange={(content, editor) =>
-                    setFormData({ ...formData, description: content })
-                  }
-                />
+                    setFormData({
+                      ...formData,
+                      description: content.replace(/<[^>]*>/g, ""),
+                    })
+                  } />
               </div>
 
               <div>
@@ -300,7 +442,6 @@ function Task() {
                   name="priority"
                   id="priority"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
                   value={formData.priority}
                   onChange={handleChange}
                 >
@@ -311,29 +452,18 @@ function Task() {
                   <option value="Moderate">Moderate</option>
                   <option value="Low">Low</option>
                 </select>
-              </div>
+                <span id="priorityspan" className="text-red-700"></span>
 
-              <div>
-                <label
-                  htmlFor="estimatedHours"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
-                  Estimated Hours
-                </label>
-                <input
-                  type="text"
-                  name="estimatedHours"
-                  id="estimatedHours"
-                  value={formData.estimatedHours}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Estimated Hours"
-                />
               </div>
-
+              <button
+                type="reset"
+                className="w-1/2 text-black font-bold hover:text-customBlue px-5 py-2.5 text-center rounded-md"
+              >
+                Reset
+              </button>
               <button
                 type="submit"
-                className="w-full bg-bgButton text-white px-5 py-2.5 text-center rounded-md"
+                className="w-1/2 bg-customBlue text-white px-5 py-2.5 text-center rounded-md"
               >
                 Create Task
               </button>
@@ -345,9 +475,7 @@ function Task() {
         <div className="w-full">
           <div className="bg-white  shadow-lg flex items-center py-10">
             <div className="text-left ml-10">
-              <h1 className="text-4xl font-bold mb-2 text-customBlue">
-               Task 
-              </h1>
+              <h1 className="text-4xl font-bold mb-2 text-customBlue">Task</h1>
               <p className="text-gray-600">
                 Welcome to the Project Management Dashboard! Your hub for
                 project progress, collaboration, and success. Let's get started!
@@ -403,27 +531,25 @@ function Task() {
                       Task Name
                     </th>
                     <th className="border border-blue-gray-300 p-2 text-gray-700">
-                     Team Member
+                      Team Member
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                    {taskTeam.map(
-                      ({ Task_id, Task_name, Team_name}, index) => (
-                        <tr key={index}>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Task_id}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Task_name}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Team_name}
-                          </td>
-                        </tr>
-                      )
-                    )}
-                  </tbody>
+                  {taskTeam.map(({ Task_id, Task_name, Team_name }, index) => (
+                    <tr key={index}>
+                      <td className="border border-blue-gray-300 p-2">
+                        {Task_id}
+                      </td>
+                      <td className="border border-blue-gray-300 p-2">
+                        {Task_name}
+                      </td>
+                      <td className="border border-blue-gray-300 p-2">
+                        {Team_name}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
               </table>
             </div>
           </div>
@@ -435,62 +561,72 @@ function Task() {
             </h2>
             <div className="overflow-auto">
               <table className="w-full text-left">
-              <thead className="bg-gray-400">
-                    <tr>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
+                <thead className="bg-gray-400">
+                  <tr>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
                       Sr.No
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Task
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Description
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Start_date
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       End_date
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Priority
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Comments
-                      </th>
-                    </tr>
-                  </thead>
+                    </th>
+                  </tr>
+                </thead>
                 <tbody>
-                    {taskList.map(
-                      ({ Task_id,Task_name,Description,start_date,End_date,Priority,Comments }, index) => (
-                        <tr key={index}>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Task_id}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Task_name}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Description}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {start_date}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {End_date}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Priority}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Comments}
-                          </td>
-                        </tr>
-                      )
-                    )}
-                  </tbody>
+                  {taskList.map(
+                    (
+                      {
+                        Task_id,
+                        Task_name,
+                        Description,
+                        start_date,
+                        End_date,
+                        Priority,
+                        Comments,
+                      },
+                      index
+                    ) => (
+                      <tr key={index}>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Task_id}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Task_name}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Description}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {start_date}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {End_date}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Priority}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Comments}
+                        </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
               </table>
-
             </div>
           </div>
         </div>
@@ -501,68 +637,79 @@ function Task() {
             </h2>
             <div className="overflow-auto">
               <table className="w-full text-left">
-              <thead className="bg-gray-400">
-                    <tr>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
+                <thead className="bg-gray-400">
+                  <tr>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
                       Sr.No
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Task
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Description
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Start_date
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       End_date
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Priority
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Progress
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Comments
-                      </th>
-                    </tr>
-                  </thead>
+                    </th>
+                  </tr>
+                </thead>
                 <tbody>
-                    {taskAllData.map(
-                      ({ Task_id,Task_name,Description,start_date,End_date,Priority,Progress,Comments }, index) => (
-                        <tr key={index}>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Task_id}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Task_name}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Description}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {start_date}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {End_date}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Priority}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Progress}
-                          </td>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Comments}
-                          </td>
-                        </tr>
-                      )
-                    )}
-                  </tbody>
+                  {taskAllData.map(
+                    (
+                      {
+                        Task_id,
+                        Task_name,
+                        Description,
+                        start_date,
+                        End_date,
+                        Priority,
+                        Progress,
+                        Comments,
+                      },
+                      index
+                    ) => (
+                      <tr key={index}>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Task_id}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Task_name}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Description}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {start_date}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {End_date}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Priority}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Progress}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Comments}
+                        </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
               </table>
-              
             </div>
           </div>
         </div>

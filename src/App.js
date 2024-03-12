@@ -8,6 +8,8 @@ import Task from "./component/AdminDashboard/Task";
 import Project from './component/AdminDashboard/Project';
 import Message from './component/AdminDashboard/Message';
 import Tracking from './component/AdminDashboard/Tracking';
+import Profile from './component/AdminDashboard/Profile';
+import TeamSideBar from './component/TeamDashbord/TeamSideBar';
 
 
 function App() {
@@ -23,6 +25,14 @@ function App() {
         <Route  path="/AdminDashbord/project" element={<Project />}/> 
         <Route  path="/AdminDashbord/project/task" element={<Task />}/>
         <Route  path="/AdminDashbord/project/tracking" element={<Tracking />}/>
+        <Route  path="AdminDashbord/profile" element={<Profile />}/>
+      </Route>
+      <Route path="/TeamDashbord" element={<TeamSideBar />}>
+        <Route  index element={<TeamSideBar />}/>
+        {/* <Route  path="/AdminDashbord/Message" element={<Message />}/> 
+        <Route  path="/AdminDashbord/project" element={<Project />}/> 
+        <Route  path="/AdminDashbord/project/task" element={<Task />}/>
+        <Route  path="/AdminDashbord/project/tracking" element={<Tracking />}/> */}
       </Route>
       {/* <Route path="/" element={<Dashbord />}/> */}
     </Routes>

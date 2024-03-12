@@ -1,0 +1,14 @@
+.form-container {
+    position: fixed;
+    top: 0;
+    right: -100%; /* Initially off-screen */
+    height: 100%;
+    width: 80%;
+    background-color: white;
+    transition: right 0.3s ease-out;
+  }
+  
+  .form-container.open {
+    right: 0; /* Move on-screen when the 'open' class is present */
+  }
+  

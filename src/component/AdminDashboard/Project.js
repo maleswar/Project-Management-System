@@ -7,7 +7,9 @@ const Project = () => {
   const [project, setProject] = useState([]);
 
   const ProjectData = async () => {
-    await axios.get("http://localhost:3001/Project/ProjectData").then((res) => {
+    const tlid = sessionStorage.getItem("TLID");
+    
+    await axios.get(`http://localhost:3001/Project/ProjectData?tlid=${tlid}`).then((res) => {
       let list = res.data;
       let project = list.data;
       setProject(project);
@@ -20,9 +22,9 @@ const Project = () => {
   }, []);
 
   return (
-    <div className="w-full h-full">
-      <div className="p-5 bg-bgSky  grid grid-cols-1 gap-y-4">
-        <div className="w-full p-5  bg-bgSky">
+    <div className="w-full h-screen pt-10">
+      <div className="p-5 bg-bgSky h-full grid grid-cols-1 gap-y-4">
+        <div className="w-full p-5 h-full  bg-bgSky">
           <div className="mx-auto bg-white  shadow-lg px-5 py-5 mt-7 rounded-lg">
             <h2 className="text-2xl font-bold mb-4 text-customBlue">Project Details</h2>
             <div className="overflow-auto">

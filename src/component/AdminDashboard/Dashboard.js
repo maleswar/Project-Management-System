@@ -69,9 +69,11 @@ const Dashboard = () => {
   };
 
   const TotalProject = async () => {
+
     try {
+      const tlid = sessionStorage.getItem("TLID");
       const response = await axios.get(
-        "http://localhost:3001/Project/ProjectCount"
+        `http://localhost:3001/Project/ProjectCount?tlid=${tlid}`
       );
       const totalProjectCount = response.data.data[0]["count(*)"];
       // alert(totalProjectCount);
@@ -82,12 +84,17 @@ const Dashboard = () => {
   };
 
   const TotalMember = async () => {
+  
     try {
-      const response = await axios.get("http://localhost:3001/Team/TeamCount");
+      const tlid = sessionStorage.getItem("TLID");
+      const response = await axios.get(
+        `http://localhost:3001/Team/TeamCount?tlid=${tlid}`
+      );
       const totalTeamMember = response.data.data[0]["Count(*)"];
+      // alert(totalProjectCount);
       setTotalTeamMember(totalTeamMember);
     } catch (error) {
-      console.error("Error fetching TeamMember count:", error);
+      console.error("Error fetching project count:", error);
     }
   };
 
@@ -104,25 +111,29 @@ const Dashboard = () => {
   };
 
   const ProjectBudgetList = async () => {
-    await axios
-      .get("http://localhost:3001/Project/ProjectBudgetList")
-      .then((res) => {
-        let list = res.data;
-        let BudgetList = list.data;
-        setBudgetList(BudgetList);
-        // alert(BudgetList);
-      });
+    try {
+      const tlid = sessionStorage.getItem("TLID");
+      const response = await axios.get(
+        `http://localhost:3001/Project/ProjectBudgetList?tlid=${tlid}`
+      );
+      const BudgetList = response.data.data;
+      setBudgetList(BudgetList);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
   };
 
   const TeamMemberList = async () => {
-    await axios
-      .get("http://localhost:3001/TL/TLInformationForDashbord")
-      .then((res) => {
-        let list = res.data;
-        let TeamMember = list.data;
-        setTeamMember(TeamMember);
-        // alert(BudgetList);
-      });
+    try {
+      const tlid = sessionStorage.getItem("TLID");
+      const response = await axios.get(
+        `http://localhost:3001/Team/TeamInformationForDashbord?tlid=${tlid}`
+      );
+      const TeamMember = response.data.data;
+      setTeamMember(TeamMember);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
   };
 
   const fetchTeamMemberList = async () => {
@@ -151,8 +162,8 @@ const Dashboard = () => {
 
   const [formData, setFormData] = useState({
     name: "",
-    startDate: "",
-    endDate: "",
+    startDate: new Date(), // Set startDate to the current date as a Date object
+    endDate: new Date(),
     TlId: ID,
     description: "",
     budget: "",
@@ -186,10 +197,11 @@ const Dashboard = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     let result =
       checkEmpty("name", "Project Name", "PNamespan") &&
-      // validateDropdown("teamid", "Team Member", "TeamNameSpan") &&
-      // validateDropdown("priority", "Priority", "PriorityNameSpan")&&
+      validateDropdown("teamid", "Team Member", "TeamNameSpan") &&
+      validateDropdown("priority", "Priority", "PriorityNamespan") &&
       checkEmpty("budget", "Budget", "BudgetSpan") &&
       validateNumber("budget", "BudgetSpan");
 
@@ -201,7 +213,7 @@ const Dashboard = () => {
           formData
         );
         var count = response.data.data.affectedRows;
-       
+
         if (count === 1) {
           alert("Project Added Sucsessfully");
         } else {
@@ -246,7 +258,7 @@ const Dashboard = () => {
   }, []);
 
   const [chartOptions, setChartOptions] = useState({
-    labels: ["Project A", "Project B", "Project C"],
+    labels: ["Completed Project", "Cancled Project", "Pending Project"],
     colors: ["#008FFB", "#00E396", "#FEB019"],
   });
 
@@ -265,6 +277,9 @@ const Dashboard = () => {
     },
   ];
 
+
+ 
+  
   return (
     <div className="w-full h-full mt-16">
       {/* no */}
@@ -334,7 +349,6 @@ const Dashboard = () => {
                     name="teamid"
                     id="teamid"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    
                     value={formData.teamid}
                     onChange={handleChange}
                   >
@@ -347,7 +361,7 @@ const Dashboard = () => {
                       </option>
                     ))}
                   </select>
-                  <span id="TeamNamespan" className="text-red-700"></span>
+                  <span id="TeamNameSpan" className="text-red-700"></span>
                 </div>
 
                 <div>
@@ -361,7 +375,6 @@ const Dashboard = () => {
                     name="priority"
                     id="priority"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    
                     value={formData.priority}
                     onChange={handleChange}
                   >
@@ -390,7 +403,6 @@ const Dashboard = () => {
                     value={formData.startDate}
                     onChange={handleChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    
                   />
                 </div>
 
@@ -408,7 +420,6 @@ const Dashboard = () => {
                     value={formData.endDate}
                     onChange={handleChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    
                   />
                 </div>
               </div>
@@ -455,7 +466,10 @@ const Dashboard = () => {
                   }}
                   value={formData.description}
                   onEditorChange={(content, editor) =>
-                    setFormData({ ...formData, description: content })
+                    setFormData({
+                      ...formData,
+                      description: content.replace(/<[^>]*>/g, ""),
+                    })
                   }
                 />
               </div>
@@ -717,7 +731,7 @@ const Dashboard = () => {
             {/* Project List */}
             <div className="bg-white shadow-lg rounded-xl px-5 py-5 text-left">
               <h2 className="text-2xl font-bold mb-4 text-customBlue">
-                Project List
+               Budget List
               </h2>
               <div className="overflow-auto">
                 <table className="w-full">
@@ -727,7 +741,7 @@ const Dashboard = () => {
                         Project Name
                       </th>
                       <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
-                        Team Leader
+                        Team Member
                       </th>
                       <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                         Budget
@@ -736,13 +750,13 @@ const Dashboard = () => {
                   </thead>
                   <tbody>
                     {BudgetList.map(
-                      ({ TL_fname, TL_lname, Budget, Project_name }, index) => (
+                      ({ Project_name, Budget, Team_name }, index) => (
                         <tr key={index}>
                           <td className="border border-blue-gray-300 p-2">
                             {Project_name}
                           </td>
                           <td className="border border-blue-gray-300 p-2">
-                            {`${TL_fname} ${TL_lname}`}
+                            {Team_name}
                           </td>
                           <td className="border border-blue-gray-300 p-2">
                             {Budget}
@@ -795,33 +809,41 @@ const Dashboard = () => {
         <div className="w-full">
           <div className="mx-auto bg-white rounded-xl shadow-lg px-5 py-5 mt-7">
             <h2 className="text-2xl font-bold mb-4 text-customBlue">
-              Team Leaders
+              Team Members
             </h2>
             <div className="overflow-auto">
               <table className="w-full">
-                <thead className="border-t border-b border-blue-gray-300">
+                <thead className="border-t border-b bg-gray-400">
                   <tr className="text-left">
-                    <th className="p-2 text-gray-700">Name</th>
-                    <th className="p-2 text-gray-700">Email</th>
-                    <th className="p-2 text-gray-700">Degignation</th>
-                    <th className="p-2 text-gray-700">Phone Number</th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">Name</th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">Email</th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">Degignation</th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">Phone Number</th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">Qualification</th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">Skills</th>
                   </tr>
                 </thead>
                 <tbody>
                   {/* {BudgetList.map(({ TL_fname, TL_lname, Budget, Project_name }, index) => ( */}
                   {TeamMember.map(
                     (
-                      { TL_fname, TL_lname, Email, role, Phone_number },
+                      {
+                        Team_name,
+                        Email,
+                        Roles,
+                        Phone_number,
+                        Qualification,
+                        Skills,
+                      },
                       index
                     ) => (
                       <tr key={index} className="text-left">
-                        <td className="p-2">
-                          {TL_fname} {TL_lname}
-                        </td>
-                        {/* <td className="p-2">{TL_lname}</td> */}
-                        <td className="p-2">{Email}</td>
-                        <td className="p-2">{role}</td>
-                        <td className="p-2">{Phone_number}</td>
+                        <td className="border border-blue-gray-300 p-2">{Team_name}</td>
+                        <td className="border border-blue-gray-300 p-2">{Email}</td>
+                        <td className="border border-blue-gray-300 p-2">{Roles}</td>
+                        <td className="border border-blue-gray-300 p-2">{Phone_number}</td>
+                        <td className="border border-blue-gray-300 p-2">{Qualification}</td>
+                        <td className="border border-blue-gray-300 p-2">{Skills}</td>
                       </tr>
                     )
                   )}

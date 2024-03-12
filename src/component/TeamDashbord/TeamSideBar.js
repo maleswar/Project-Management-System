@@ -7,10 +7,8 @@ import { GrTask } from "react-icons/gr";
 import { MdInsertChartOutlined } from "react-icons/md";
 import Logo from "./Assest/img/Logo.svg";
 import Profile from "./Assest/img/Profile.jpg";
-import { useNavigate } from "react-router-dom";
 
-
-function Sidebar() {
+function TeamSideBar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -21,18 +19,7 @@ function Sidebar() {
   const toggleProfile = () => {
     setProfileOpen(!profileOpen);
   };
-  const navigate = useNavigate();
 
-  const SignOut=()=>{
-    var result=window.confirm("Are You Sure to Logout");
-    if(result){
-        sessionStorage.removeItem("TLID");
-        sessionStorage.removeItem("TLName");
-        sessionStorage.removeItem("TeamID");
-        sessionStorage.removeItem("TeamName");
-        navigate("/");
-    }
-  }
   return (
     <div>
       {/* Navbar */}
@@ -110,13 +97,16 @@ function Sidebar() {
                     </p>
                   </div>
                   <ul className="py-1" role="none">
-                    <Link to="AdminDashbord/profile">
-                      <li className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white">
+                    <li>
+                      <a
+                        href="#"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                        role="menuitem"
+                      >
                         My Profile
-                        {/* </a> */}
-                      </li>
-                    </Link>
-                    {/* <li>
+                      </a>
+                    </li>
+                    <li>
                       <a
                         href="#"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
@@ -133,9 +123,15 @@ function Sidebar() {
                       >
                         Account Settings
                       </a>
-                    </li> */}
-                    <li onClick={SignOut} className="block px-4 cursor-pointer py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white">
-                      Sign out
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                        role="menuitem"
+                      >
+                        Sign out
+                      </a>
                     </li>
                   </ul>
                 </div>
@@ -188,10 +184,7 @@ function Sidebar() {
               </div>
 
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link
-                  to="/AdminDashbord/project/task"
-                  className="flex items-center"
-                >
+                <Link to="/AdminDashbord/project/task" className="flex items-center">
                   <GrTask className="w-8 h-8 text-white" />
                   <div className="text-xl font-semibold text-white ml-3">
                     <span className="hover:underline">Task</span>
@@ -199,17 +192,14 @@ function Sidebar() {
                 </Link>
               </div>
 
-              {/* <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link
-                  to="/AdminDashbord/project/tracking"
-                  className="flex items-center"
-                >
+              <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
+                <Link to="/AdminDashbord/project/tracking" className="flex items-center">
                   <MdInsertChartOutlined className="w-8 h-8 text-white" />
                   <div className="text-xl font-semibold text-white ml-3">
                     <span className="hover:underline">Tracking</span>
                   </div>
                 </Link>
-              </div> */}
+              </div>
             </div>
           </ul>
         </div>
@@ -225,4 +215,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default TeamSideBar;
