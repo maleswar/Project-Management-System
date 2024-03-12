@@ -40,4 +40,25 @@ router.get("/TeamData", (req, res) => {
     });
   });
 
+  router.get("/TeamNames", (req, res) => {
+    const tlid = req.query.tlid;
+  
+    pool.getConnection((err, connection) => {
+      if (err) {
+        return res.json({ error: "Internal Server Error" });
+      }
+  
+      let query = "SELECT Team_id, Team_name FROM Team WHERE Tl_id=?";
+      connection.query(query, [tlid], (err, data) => {
+        connection.release();
+  
+        if (err) {
+          return res.json({ error: err });
+        } else {
+          return res.json({ data: data });
+        }
+      });
+    });
+  });
+
   module.exports = router;

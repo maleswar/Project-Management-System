@@ -40,7 +40,7 @@ function SignUp() {
       checkEmpty("companyname", "Company Name", "CompanyNamespan") &&
       checkEmpty("email", "Email", "emailspan") &&
       validateEmail("email", "emailspan")&&
-    checkEmpty("uid", "Uniq ID", "uidspan") &&
+      checkEmpty("uid", "Uniq ID", "uidspan") &&
       validateNumber("uid", "uidspan") &&
       checkEmpty("password", "Password", "passwordNamespan") &&
       validateNumber("password", "passwordNamespan");

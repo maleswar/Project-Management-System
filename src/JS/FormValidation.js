@@ -65,9 +65,24 @@ export function validateNumber(inputId,span) {
         return true;
     } else {
         // Display error message if the input is not a valid number
-        errorMessage.textContent = "Please enter a valid number.";
+        errorMessage.textContent = "Please enter a  number.";
         return false;
     }
 }
 
-
+export function validateDropdown(ID,Message,span) {
+    const selectedValue = document.getElementById(ID).value;
+    var errorMessage = document.getElementById(span);
+  
+    // Check if a valid option is selected
+    if (selectedValue === '') {
+        errorMessage.textContent = "Please Select "+Message;
+      return false; // Prevent form submission
+    }else{
+        errorMessage.textContent="";
+    }
+  
+    // Additional validation logic can be added here if needed
+  
+    return true; // Allow form submission
+  }

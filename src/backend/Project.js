@@ -84,10 +84,11 @@ router.get("/ProjectData", (req, res) => {
     req.body.name,
     req.body.startdate,
     req.body.enddate,
-    req.body.TL_Id,
-     req.body.description,
+    req.body.TlId,
+    req.body.description,
     req.body.budget,
-    req.body.priority
+    req.body.priority,
+    req.body.teamid,
    
     ];
     pool.getConnection((err, connection) => {
@@ -95,7 +96,8 @@ router.get("/ProjectData", (req, res) => {
         return res.json({ error: "Internal Server Error" });
       }
   
-      let query = "insert into Project (`Project_name`,`Start_date`,`End_date`,`TL_id`,`Description`,`Budget`,`Priority`) values(?)";
+      let query = "insert into Project (`Project_name`,`Start_date`,`End_date`,`TL_id`,`Description`,`Budget`,`Priority`,Team_id) values(?)";
+
       connection.query(query,[value] ,(err, data) => {
         connection.release();
   

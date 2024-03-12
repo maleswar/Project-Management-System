@@ -29,8 +29,8 @@ const Project = () => {
               <table className="w-full text-left overflow-x-scroll ">
                 <thead className="border-t border-b text-black border-gray-100 bg-gray-200">
                   <tr>
-                    <th className="p-2 sticky left-0">Project Id</th>
-                    <th className="p-2 sticky left-0 text-slate-700">Project Name</th>
+                    <th className="p-2  left-0">Project Id</th>
+                    <th className="p-2  left-0 text-slate-700">Project Name</th>
                     <th className="p-2 text-slate-700">Start Date</th>
                     <th className="p-2 text-slate-700">End Date</th>
                     <th className="p-2 text-slate-700">Status</th>
@@ -56,10 +56,10 @@ const Project = () => {
                       index
                     ) => (
                       <tr key={index}>
-                        <td className="border-t border-b sticky left-0 border-blue-gray-300 p-4">
+                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
                           {Project_id}
                         </td>{" "}
-                        <td className="border-t border-b sticky left-0 border-blue-gray-300 ">
+                        <td className="border-t border-b  left-0 border-blue-gray-300 ">
                           {Project_name}
                         </td>{" "}
                         <td className="border-t border-b border-blue-gray-300">

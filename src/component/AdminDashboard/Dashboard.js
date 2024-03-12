@@ -10,6 +10,11 @@ import { IoBriefcaseOutline } from "react-icons/io5";
 import { SlPeople } from "react-icons/sl";
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { Editor } from "@tinymce/tinymce-react";
+import {
+  checkEmpty,
+  validateDropdown,
+  validateNumber,
+} from "../../JS/FormValidation";
 
 const Dashboard = () => {
   const ID = sessionStorage.getItem("TLID");
@@ -20,6 +25,7 @@ const Dashboard = () => {
   const [projectCompleted, setProjectCompleted] = useState(null);
   const [BudgetList, setBudgetList] = useState([]);
   const [TeamMember, setTeamMember] = useState([]);
+  const [teamFormMember, setTeamFormMember] = useState([]);
 
   const [todos, setTodos] = useState([
     {
@@ -119,6 +125,19 @@ const Dashboard = () => {
       });
   };
 
+  const fetchTeamMemberList = async () => {
+    try {
+      const tlid = sessionStorage.getItem("TLID");
+      const response = await axios.get(
+        `http://localhost:3001/Team/TeamNames?tlid=${tlid}`
+      );
+      const teamFormMember = response.data.data;
+      setTeamFormMember(teamFormMember);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
+  };
+
   useEffect(() => {
     // Call the functions when the component mounts
     TotalProject();
@@ -126,18 +145,22 @@ const Dashboard = () => {
     ProjectComplete();
     ProjectBudgetList();
     TeamMemberList();
+    fetchTeamMemberList();
     // getOtherData2();
   }, []);
 
   const [formData, setFormData] = useState({
-    pname: "",
+    name: "",
     startDate: "",
     endDate: "",
-    tlName: "",
-    priority: "",
-    budget: "",
+    TlId: ID,
     description: "",
+    budget: "",
+    priority: "",
+    teamid: "",
   });
+
+  console.log(formData);
 
   const drawerRef = useRef(null);
   const buttonRef = useRef(null);
@@ -145,13 +168,14 @@ const Dashboard = () => {
 
   const openDrawer = () => {
     setFormData({
-      pname: "",
+      name: "",
       startDate: "",
       endDate: "",
-      tlName: "",
-      priority: "",
-      budget: "",
+      TlId: ID,
       description: "",
+      budget: "",
+      priority: "",
+      teamid: "",
     });
     setDrawerOpen(true);
   };
@@ -160,32 +184,46 @@ const Dashboard = () => {
     setDrawerOpen(false);
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    let result =
+      checkEmpty("name", "Project Name", "PNamespan") &&
+      // validateDropdown("teamid", "Team Member", "TeamNameSpan") &&
+      // validateDropdown("priority", "Priority", "PriorityNameSpan")&&
+      checkEmpty("budget", "Budget", "BudgetSpan") &&
+      validateNumber("budget", "BudgetSpan");
+
+    // alert(result);
+    if (result) {
+      try {
+        const response = await axios.post(
+          "http://localhost:3001/Project/AddNewProject",
+          formData
+        );
+        var count = response.data.data.affectedRows;
+       
+        if (count === 1) {
+          alert("Project Added Sucsessfully");
+        } else {
+          alert("there are some error");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      return false;
+    }
+    closeDrawer();
+  };
+
+  // Close the drawer
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleCloseForm = () => {
-    closeDrawer();
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission
-    // ...
-
-    // Reset form after submission
-    setFormData({
-      pname: "",
-      startDate: "",
-      endDate: "",
-      tlName: "",
-      priority: "",
-      budget: "",
-      description: "",
-    });
-
-    // Close the drawer
     closeDrawer();
   };
 
@@ -267,22 +305,76 @@ const Dashboard = () => {
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label
-                  htmlFor="pname"
+                  htmlFor="name"
                   className="block mb-2 text-sm font-medium text-gray-900 "
                 >
                   Project Name
                 </label>
                 <input
                   type="text"
-                  name="pname"
-                  id="pname"
-                  value={formData.pname}
+                  name="name"
+                  id="name"
+                  value={formData.name}
                   onChange={handleChange}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Prime Project"
                 />
+                <span id="PNamespan" className="text-red-700"></span>
               </div>
 
+              <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 sm:space-x-0 md:space-x-5  lg:space-x-5 ">
+                <div>
+                  <label
+                    htmlFor="teamid"
+                    className="block mb-2 text-sm font-medium text-gray-900 "
+                  >
+                    Team Member Name
+                  </label>
+                  <select
+                    name="teamid"
+                    id="teamid"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+    
+                    value={formData.teamid}
+                    onChange={handleChange}
+                  >
+                    <option value="" disabled>
+                      Select Team Member
+                    </option>
+                    {teamFormMember.map((member) => (
+                      <option key={member.Team_id} value={member.Team_id}>
+                        {member.Team_name}
+                      </option>
+                    ))}
+                  </select>
+                  <span id="TeamNamespan" className="text-red-700"></span>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="priority"
+                    className="block mb-2 text-sm font-medium text-gray-900 "
+                  >
+                    Priority
+                  </label>
+                  <select
+                    name="priority"
+                    id="priority"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    
+                    value={formData.priority}
+                    onChange={handleChange}
+                  >
+                    <option value="" disabled>
+                      Select Priority
+                    </option>
+                    <option value="High">High</option>
+                    <option value="Moderate">Moderate</option>
+                    <option value="Low">Low</option>
+                  </select>
+                  <span id="PriorityNamespan" className="text-red-700"></span>
+                </div>
+              </div>
               <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 sm:space-x-0 md:space-x-5 lg:space-x-5">
                 <div>
                   <label
@@ -298,7 +390,7 @@ const Dashboard = () => {
                     value={formData.startDate}
                     onChange={handleChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
+                    
                   />
                 </div>
 
@@ -316,56 +408,8 @@ const Dashboard = () => {
                     value={formData.endDate}
                     onChange={handleChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
+                    
                   />
-                </div>
-              </div>
-              <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 sm:space-x-0 md:space-x-5  lg:space-x-5 ">
-                <div>
-                  <label
-                    htmlFor="tlName"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
-                    Team Lead Name
-                  </label>
-                  <select
-                    name="tlName"
-                    id="tlName"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    value={formData.tlName}
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled>
-                      Select Team Lead
-                    </option>
-                    <option value="tl1">Team Lead 1</option>
-                    <option value="tl2">Team Lead 2</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="priority"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
-                    Priority
-                  </label>
-                  <select
-                    name="priority"
-                    id="priority"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    value={formData.priority}
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled>
-                      Select Priority
-                    </option>
-                    <option value="High">High</option>
-                    <option value="Moderate">Moderate</option>
-                    <option value="Low">Low</option>
-                  </select>
                 </div>
               </div>
               <div>
@@ -376,7 +420,7 @@ const Dashboard = () => {
                   Budget
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   name="budget"
                   id="budget"
                   value={formData.budget}
@@ -384,6 +428,7 @@ const Dashboard = () => {
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Prime Project"
                 />
+                <span id="BudgetSpan" className="text-red-700"></span>
               </div>
 
               <div>
@@ -416,8 +461,14 @@ const Dashboard = () => {
               </div>
 
               <button
+                type="reset"
+                className="w-1/2 text-black font-bold hover:text-customBlue px-5 py-2.5 text-center rounded-md"
+              >
+                Reset
+              </button>
+              <button
                 type="submit"
-                className="w-full bg-bgButton text-white px-5 py-2.5 text-center rounded-md"
+                className="w-1/2 bg-customBlue text-white px-5 py-2.5 text-center rounded-md"
               >
                 Create Project
               </button>
