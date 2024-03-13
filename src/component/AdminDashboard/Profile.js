@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import userSix from "../AdminDashboard/Assest/img/Profile.jpg";
 
 function Profile() {
+  const ID = sessionStorage.getItem("TLID");
+  const Name = sessionStorage.getItem("TLName");
   return (
     <div className="w-full h-full mt-16">
       <div className="text-3xl font-semibold m-10">Profile</div>
@@ -81,7 +83,7 @@ function Profile() {
           </div>
           <div className="mt-4">
             <h3 className="mb-1.5 text-2xl font-semibold text-black dark:text-white">
-              John Deo
+              {Name}
             </h3>
             <p className="font-medium">Ui/Ux Designer</p>
             <div className="mx-auto mt-4.5 mb-5.5 grid max-w-94 grid-cols-3 rounded-md border border-stroke py-2.5 shadow-1 dark:border-strokedark dark:bg-[#37404F] mt-4">

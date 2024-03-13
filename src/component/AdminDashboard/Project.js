@@ -39,7 +39,7 @@ const Project = () => {
                     <th className="p-2 text-slate-700">Description</th>
                     <th className="p-2 text-slate-700">Budget</th>
                     <th className="p-2 text-slate-700">Priority</th>
-                    <th className="p-2 text-slate-700">Action</th>
+                    {/* <th className="p-2 text-slate-700">Action</th> */}
                   </tr>
                 </thead>
                 <tbody >
@@ -82,13 +82,13 @@ const Project = () => {
                         <td className="border-t border-b border-blue-gray-300">
                           {Priority}
                         </td>
-                        <td className="border-t border-b border-blue-gray-300">
+                        {/* <td className="border-t border-b border-blue-gray-300">
                           <button><MdEditSquare className="h-7 w-6 "/>
                           
                           </button>
                         </td><td className="border-t border-b border-blue-gray-300">
                           <button><MdDelete  className="h-7 w-6 "/></button>
-                        </td>
+                        </td> */}
                       </tr>
                     )
                   )}

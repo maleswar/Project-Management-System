@@ -1,16 +1,19 @@
 import emailjs from "emailjs-com";
 
-export const sendEmail = (emailData) => {
+const sendEmail = (emailData) => {
 
   const data = {
-    to_name: emailData.to_name,
-    to_email: emailData.to_email,
-  };
+    email: emailData.email,
+     name : emailData.name,
+    // message: emailData.message,
+  };    
   emailjs
-    .send(your_service_id, templateId, data, userId)
+    .send("service_5mzbjm8", "template_j7s5efz", data, "3haCka_H9w88h8U5t")
     .then((response) => {
+      console.log(response);
     })
     .catch((error) => {
       console.error(error.message);
     });
 };
+ export default sendEmail;
