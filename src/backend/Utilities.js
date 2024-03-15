@@ -80,4 +80,109 @@ router.post("/signup", (req, res) => {
   });
 });
 
+
+router.post("/EmailCheckTL", (req, res) => {
+  const email = req.body.email;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+    let query = "SELECT COUNT(*) AS count FROM TL WHERE Email = ?";
+    connection.query(query,[email], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+router.post("/EmailCheckTeam", (req, res) => {
+  const email = req.body.email;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+    let query = "SELECT COUNT(*) AS count FROM Team WHERE Email = ?";
+    connection.query(query,[email], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+
+router.put("/TLFogotPassword", (req, res) => {
+  const password = req.body.password;
+  const email = req.body.email;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+    let query = "UPDATE TL SET password = ? WHERE email = ?";
+    connection.query(query,[password,email], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+router.put("/TeamFogotPassword", (req, res) => {
+  const password = req.body.password;
+  const email = req.body.email;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+    let query = "UPDATE Team SET password = ? WHERE email = ?";
+    connection.query(query,[password,email], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+router.post("/AddNewContact", (req, res) => {
+  const value=[
+       Name = req.body.name,
+   Comment = req.body.message,
+
+     email = req.body.email,
+  ];
+  
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+    let query = "insert into Contact (`Name`,`Comment`,`email`) values(?)";
+    connection.query(query,[value], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+
 module.exports = router;

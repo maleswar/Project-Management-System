@@ -2,7 +2,7 @@ import React from "react";
 import img from "./assets/Vector/SignUp.png";
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,Link} from "react-router-dom";
 import {
   checkEmpty,
   validateEmail,
@@ -192,7 +192,7 @@ function SignUp() {
             </button>
             <div className="text-sm text-gray-500 mt-5">
               <p className="text-center">
-                Already have an account?<a href="/login"> Login</a>
+                Already have an account?<Link to="/login"> Login</Link>
               </p>
             </div>
           </form>

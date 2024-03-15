@@ -2,6 +2,7 @@ import React, { useState,useEffect } from "react";
 import axios from "axios";
 import { MdEditSquare } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
+import { useHistory } from 'react-router-dom';
 
 const Project = () => {
   const [project, setProject] = useState([]);
@@ -15,6 +16,11 @@ const Project = () => {
       setProject(project);
       // (project);
     });
+  };
+
+
+  const handleEditClick = (Project_id) => {
+    alert(Project_id);
   };
 
   useEffect(() => {
@@ -31,15 +37,16 @@ const Project = () => {
               <table className="w-full text-left overflow-x-scroll ">
                 <thead className="border-t border-b text-black border-gray-100 bg-gray-200">
                   <tr>
-                    <th className="p-2  left-0">Project Id</th>
-                    <th className="p-2  left-0 text-slate-700">Project Name</th>
+                    <th className="p-2  ext-slate-700">Project Id</th>
+                    <th className="p-2 text-slate-700">Project Name</th>
                     <th className="p-2 text-slate-700">Start Date</th>
                     <th className="p-2 text-slate-700">End Date</th>
                     <th className="p-2 text-slate-700">Status</th>
                     <th className="p-2 text-slate-700">Description</th>
                     <th className="p-2 text-slate-700">Budget</th>
                     <th className="p-2 text-slate-700">Priority</th>
-                    {/* <th className="p-2 text-slate-700">Action</th> */}
+                    <th className="p-2 text-slate-700 ">Action</th>
+                    <th className="p-2 text-slate-700 "></th>
                   </tr>
                 </thead>
                 <tbody >
@@ -73,7 +80,7 @@ const Project = () => {
                         <td className="border-t border-b border-blue-gray-300">
                           {Status}
                         </td>
-                        <td className="border-t border-b border-blue-gray-300">
+                        <td className="border-t border-b border-blue-gray-300 text-center">
                           {Description}
                         </td>
                         <td className="border-t border-b border-blue-gray-300">
@@ -82,13 +89,14 @@ const Project = () => {
                         <td className="border-t border-b border-blue-gray-300">
                           {Priority}
                         </td>
-                        {/* <td className="border-t border-b border-blue-gray-300">
-                          <button><MdEditSquare className="h-7 w-6 "/>
+                        <td className="border-t border-b border-blue-gray-300 text-center">
+                          <button><MdEditSquare className="h-7 w-6 "onClick={() => handleEditClick(Project_id)}/>
                           
                           </button>
-                        </td><td className="border-t border-b border-blue-gray-300">
+                        </td>
+                        <td className="border-t border-b border-blue-gray-300 text-center">
                           <button><MdDelete  className="h-7 w-6 "/></button>
-                        </td> */}
+                        </td>
                       </tr>
                     )
                   )}

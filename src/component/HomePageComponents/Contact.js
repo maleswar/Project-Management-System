@@ -2,6 +2,7 @@ import { React, useState } from "react";
 import Button from "./Layouts2/Button";
 import { checkEmpty, validateEmail } from "../../JS/FormValidation";
 import sendEmail from "../../JS/Email";
+import axios from "axios";
 
 function Contact() {
   const [value, setValues] = useState({
@@ -14,17 +15,43 @@ function Contact() {
     setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const sendEmailData = (e) => {
+  const sendEmailData = async (e) => {
     e.preventDefault();
     let result =
       checkEmpty("email", "Email", "emailspan") &&
       validateEmail("email", "emailspan") &&
       checkEmpty("name", "Name", "namespan") &&
       checkEmpty("message", "Meassage", "messagespan");
-      console.log(result);
+    console.log(result);
     if (result) {
-      sendEmail(value);
+      try {
+        const response = await axios.post(
+          "http://localhost:3001/Utilities/AddNewContact",
+          value
+        );
+        var count = response.data.data.affectedRows;
+        if(count){
+          alert("Feedback Succefull ! Check Email");
+          sendEmail(value);
+          clearForm();
+
+        }else{
+          alert("Feedback Not Submitted");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      return false;
     }
+  };
+
+  const clearForm = () => {
+    setValues({
+      email: "",
+      name: "",
+      message: "",
+    });
   };
 
   return (
@@ -70,7 +97,7 @@ function Contact() {
               type="text"
               id="name"
               name="name"
-              value={value.subject}
+              value={value.name}
               className="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg  border-neutral-900 border-2 shadow-sm focus:ring-primary-500 focus:border-customBlue dark:focus:border-customBlue dark:shadow-sm-light"
               placeholder="Let us know how we can help you"
               onChange={handleInput}

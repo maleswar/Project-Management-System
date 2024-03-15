@@ -41,6 +41,6 @@ router.get("/TLData", (req, res) => {
   });
 
 
- 
+  
   
   module.exports = router;

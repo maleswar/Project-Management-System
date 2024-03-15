@@ -3,6 +3,8 @@ import img from "./assets/Vector/Login.jpeg";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 import {
   checkEmpty,
   validateEmail,
@@ -71,7 +73,7 @@ function Login() {
             alert("Login Unsuccessful");
             console.log("Login Unsuccessful");
           }
-        }else if(selectedValue == "Team") {
+        } else if (selectedValue == "Team") {
           const response = await axios.post(
             "http://localhost:3001/Utilities/loginForTeam",
             value
@@ -89,13 +91,14 @@ function Login() {
             alert("Login Unsuccessfull");
           }
           // alert("team ");
-        }else{
+        } else {
           alert("Login Unsuccessfull");
         }
       } catch (err) {
         console.log(err);
       }
     } else {
+      alert("Login Unsuccefull");
       return false;
     }
   };
@@ -234,8 +237,18 @@ function Login() {
             </button>
             <div className="text-sm text-gray-500 mt-5">
               {/* <p className="text-center">Forgot Password?</p> */}
-              <p className="text-center">
-                Don't have an account?<a href="/signup"> Sign up</a>
+              <p
+                className="text-center  hover:text-black cursor-pointer "
+                data-dialog-target="sign-in-dialog"
+              >
+                <Link to="/forgotpassword"> Forgot Password</Link>
+              </p>
+            </div>
+            
+            <div className="text-sm text-gray-500 mt-1 ">
+              {/* <p className="text-center">Forgot Password?</p> */}
+              <p className="text-center hover:text-black cursor-pointer">
+                Don't have an account?<Link to="/signup"> Sign up</Link>
               </p>
             </div>
           </form>
@@ -250,3 +263,5 @@ function Login() {
 }
 
 export default Login;
+
+
