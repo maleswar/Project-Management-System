@@ -6,6 +6,7 @@ import ForgotPassword from "./component/HomePageComponents/ForgotPassword";
 import SideBar from "./component/AdminDashboard/SideBar";
 import Dashbord from "./component/AdminDashboard/Dashboard";
 import Task from "./component/AdminDashboard/Task";
+import Team from "./component/AdminDashboard/Team";
 import Project from './component/AdminDashboard/Project';
 import EditProjectForm from './component/AdminDashboard/EditProjectForm';
 import Message from './component/AdminDashboard/Message';
@@ -26,6 +27,7 @@ function App() {
         <Route  index element={<Dashbord />}/>
         <Route  path="/AdminDashbord/Message" element={<Message />}/> 
         <Route  path="/AdminDashbord/project" element={<Project />}/> 
+        <Route  path="/AdminDashbord/team" element={<Team />}/> 
         <Route  path="/AdminDashbord/EditProjectForm" element={<EditProjectForm />}/> 
         <Route  path="/AdminDashbord/project/task" element={<Task />}/>
         <Route  path="/AdminDashbord/project/tracking" element={<Tracking />}/>

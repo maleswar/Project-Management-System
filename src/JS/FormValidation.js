@@ -102,4 +102,49 @@ export function matchPassword(password, confirmpass, Passspan,Confirmspan) {
     }
     return true;
   }
+
+  export function validatePhoneNumber(phoneid, span) {
+    let phoneNumberInput = document.getElementById(phoneid);
+    let errorMessage = document.getElementById(span);
+// alert(phoneNumberInput.value.length);
+    
+
+    let phoneNumber = phoneNumberInput.value.trim();
+
+    // Remove any non-digit characters from the input
+    phoneNumber = phoneNumber.replace(/\D/g, '');
+
+    // If the remaining input has exactly 10 digits, it's valid
+    if (phoneNumber.length !== 10) {
+        errorMessage.textContent = "Phone Number Should be 10 digits";
+        return false;
+    } else {
+        errorMessage.textContent = ""; // Clear the error message
+        return true; // Also try clearing using innerText
+    }
+
+}
+
+
+
+function validateDates() {
+// Set min attribute of date inputs to today's date
+document.getElementById("startDate").min = new Date().toISOString().split('T')[0];
+document.getElementById("endDate").min = new Date().toISOString().split('T')[0];
+
+// Set min attribute of date inputs to today's date
+
+
+  const startDateInput = document.getElementById("startDate");
+  const endDateInput = document.getElementById("endDate");
+  
+  // Ensure end date is not before start date
+  if (startDateInput.value && endDateInput.value && startDateInput.value > endDateInput.value) {
+      alert("End date cannot be before start date. Please select a valid end date.");
+      endDateInput.value = startDateInput.value; // Reset end date to start date
+  }
+}
+
+
+
   

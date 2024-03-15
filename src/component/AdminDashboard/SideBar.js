@@ -3,6 +3,7 @@ import { Link, Outlet } from "react-router-dom";
 import { BiHome } from "react-icons/bi";
 import { BiMessageDetail } from "react-icons/bi";
 import { GoProjectRoadmap } from "react-icons/go";
+import { RiTeamLine } from "react-icons/ri";
 import { GrTask } from "react-icons/gr";
 import { MdInsertChartOutlined } from "react-icons/md";
 import Logo from "./Assest/img/Logo.svg";
@@ -177,6 +178,14 @@ const Name=sessionStorage.getItem("TLName");
                   </div>
                 </Link>
               </div>
+              <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
+                <Link to="/AdminDashbord/team" className="flex items-center">
+                <RiTeamLine className="w-8 h-8 text-white"/>
+                  <div className="text-xl font-semibold text-white ml-3">
+                    <span className="hover:underline">Team</span>
+                  </div>
+                </Link>
+              </div>
               <hr className="mt-5" />
 
               <div className="flex items-center px-5 py-3 mt-12 space-x-3 cursor-pointer">
@@ -200,6 +209,7 @@ const Name=sessionStorage.getItem("TLName");
                   </div>
                 </Link>
               </div>
+            
 
               {/* <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link

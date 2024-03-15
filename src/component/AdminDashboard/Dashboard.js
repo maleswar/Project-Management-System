@@ -24,7 +24,6 @@ const Dashboard = () => {
   const [totalTeamMember, setTotalTeamMember] = useState(null);
   const [projectCompleted, setProjectCompleted] = useState(null);
   const [BudgetList, setBudgetList] = useState([]);
-  const [TeamMember, setTeamMember] = useState([]);
   const [teamFormMember, setTeamFormMember] = useState([]);
 
   const [todos, setTodos] = useState([
@@ -123,18 +122,7 @@ const Dashboard = () => {
     }
   };
 
-  const TeamMemberList = async () => {
-    try {
-      const tlid = sessionStorage.getItem("TLID");
-      const response = await axios.get(
-        `http://localhost:3001/Team/TeamInformationForDashbord?tlid=${tlid}`
-      );
-      const TeamMember = response.data.data;
-      setTeamMember(TeamMember);
-    } catch (error) {
-      console.error("Error fetching team members:", error);
-    }
-  };
+ 
 
   const fetchTeamMemberList = async () => {
     try {
@@ -155,7 +143,7 @@ const Dashboard = () => {
     TotalMember();
     ProjectComplete();
     ProjectBudgetList();
-    TeamMemberList();
+    // TeamMemberList();
     fetchTeamMemberList();
     // getOtherData2();
   }, []);
@@ -806,52 +794,7 @@ const Dashboard = () => {
           </div>
         </div>
         {/* Team Leader List */}
-        <div className="w-full">
-          <div className="mx-auto bg-white rounded-xl shadow-lg px-5 py-5 mt-7">
-            <h2 className="text-2xl font-bold mb-4 text-customBlue">
-              Team Members
-            </h2>
-            <div className="overflow-auto">
-              <table className="w-full">
-                <thead className="border-t border-b bg-gray-400">
-                  <tr className="text-left">
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">Name</th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">Email</th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">Degignation</th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">Phone Number</th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">Qualification</th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">Skills</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* {BudgetList.map(({ TL_fname, TL_lname, Budget, Project_name }, index) => ( */}
-                  {TeamMember.map(
-                    (
-                      {
-                        Team_name,
-                        Email,
-                        Roles,
-                        Phone_number,
-                        Qualification,
-                        Skills,
-                      },
-                      index
-                    ) => (
-                      <tr key={index} className="text-left">
-                        <td className="border border-blue-gray-300 p-2">{Team_name}</td>
-                        <td className="border border-blue-gray-300 p-2">{Email}</td>
-                        <td className="border border-blue-gray-300 p-2">{Roles}</td>
-                        <td className="border border-blue-gray-300 p-2">{Phone_number}</td>
-                        <td className="border border-blue-gray-300 p-2">{Qualification}</td>
-                        <td className="border border-blue-gray-300 p-2">{Skills}</td>
-                      </tr>
-                    )
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+      
       </div>
     </div>
   );

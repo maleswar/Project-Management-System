@@ -184,5 +184,25 @@ router.post("/AddNewContact", (req, res) => {
   });
 });
 
+router.get("/roles", (req, res) => {
+  
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "select roles_names from roles";
+    connection.query(query, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
 
 module.exports = router;

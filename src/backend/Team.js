@@ -83,6 +83,36 @@ router.get("/TeamData", (req, res) => {
     });
   });
 
+  router.post("/addNewTeamMember", (req, res) => {
+    const values = [
+        req.body.name,
+        req.body.email,
+        req.body.phone,
+        req.body.roles,
+        req.body.qualification,
+        req.body.skills, // Convert skills array to a comma-separated string
+        req.body.tlid,
+    ];
+
+    pool.getConnection((err, connection) => {
+        if (err) {
+            return res.json({ error: "Internal Server Error" });
+        }
+
+        let query = "INSERT INTO Team (`Team_name`, `Email`, `Phone_number`, `Roles`, `Qualification`, `Skills`, `Tl_id`) VALUES (?)";
+        connection.query(query, [values], (err, data) => {
+            connection.release();
+
+            if (err) {
+                return res.json({ error: err });
+            } else {
+                return res.json({ data: data });
+            }
+        });
+    });
+});
+
+
   
 
   module.exports = router;
