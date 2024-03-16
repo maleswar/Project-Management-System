@@ -23,6 +23,8 @@ const Dashboard = () => {
   const [totalProjectCount, setTotalProjectCount] = useState(null);
   const [totalTeamMember, setTotalTeamMember] = useState(null);
   const [projectCompleted, setProjectCompleted] = useState(null);
+  const [projectPending, setProjectPending] = useState(null);
+  const [projectCancled, setProjectCancled] = useState(null);
   const [BudgetList, setBudgetList] = useState([]);
   const [teamFormMember, setTeamFormMember] = useState([]);
 
@@ -98,12 +100,38 @@ const Dashboard = () => {
   };
 
   const ProjectComplete = async () => {
+    const tlid=sessionStorage.getItem("TLID");
     try {
       const response = await axios.get(
-        "http://localhost:3001/Project/ProjectCompleteCount"
+        `http://localhost:3001/Project/ProjectCompleteCount?tlid=${tlid}`
       );
       const projectCompleted = response.data.data[0]["count(*)"];
       setProjectCompleted(projectCompleted);
+    } catch (error) {
+      console.error("Error fetching CompleteProject count:", error);
+    }
+  };
+  const ProjectCancled = async () => {
+    const tlid=sessionStorage.getItem("TLID");
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/Project/ProjectCompleteCount?tlid=${tlid}`
+      );
+      const projectCancled = response.data.data[0]["count(*)"];
+      setProjectCancled(projectCancled);
+    } catch (error) {
+      console.error("Error fetching CompleteProject count:", error);
+    }
+  };
+
+  const ProjectPending = async () => {
+    const tlid=sessionStorage.getItem("TLID");
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/Project/ProjectPendingCount?tlid=${tlid}`
+      );
+      const projectPending = response.data.data[0]["count(*)"];
+      setProjectPending(projectPending);
     } catch (error) {
       console.error("Error fetching CompleteProject count:", error);
     }
@@ -121,8 +149,6 @@ const Dashboard = () => {
       console.error("Error fetching team members:", error);
     }
   };
-
- 
 
   const fetchTeamMemberList = async () => {
     try {
@@ -143,9 +169,9 @@ const Dashboard = () => {
     TotalMember();
     ProjectComplete();
     ProjectBudgetList();
-    // TeamMemberList();
+    ProjectCancled();
     fetchTeamMemberList();
-    // getOtherData2();
+    ProjectPending();
   }, []);
 
   const [formData, setFormData] = useState({
@@ -157,6 +183,9 @@ const Dashboard = () => {
     budget: "",
     priority: "",
     teamid: "",
+    Status:"Pending",
+    Active:"Acttive",
+
   });
 
   console.log(formData);
@@ -245,12 +274,24 @@ const Dashboard = () => {
     };
   }, []);
 
+
+
   const [chartOptions, setChartOptions] = useState({
     labels: ["Completed Project", "Cancled Project", "Pending Project"],
     colors: ["#008FFB", "#00E396", "#FEB019"],
   });
 
-  const [chartSeries, setChartSeries] = useState([30, 70, 50]);
+  const [chartSeries, setChartSeries] = useState([]);
+  useEffect(() => {
+    // When values change, update the chart series
+    if (projectCancled !== null && projectCompleted !== null && projectPending !== null) {
+      const series = [projectCancled, projectCompleted, projectPending];
+      setChartSeries(series);
+    }
+  }, [projectCancled, projectCompleted, projectPending]);
+
+
+
 
   const TABLE_HEAD1 = ["Issues", "Team Member Name"];
 

@@ -10,7 +10,7 @@ router.get("/ProjectData", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "SELECT * FROM Project where TL_id=?";
+    let query = "SELECT * FROM Project where TL_id=? And Active='Active'";
     connection.query(query,tlid, (err, data) => {
       connection.release();
 
@@ -45,13 +45,56 @@ router.get("/ProjectCount", (req, res) => {
 });
 
 router.get("/ProjectCompleteCount", (req, res) => {
+  const tlId=req.query.tlid;
+
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "SELECT count(*) from Project where status='completed'";
-    connection.query(query, (err, data) => {
+    let query = "SELECT count(*) from Project where status='completed' And Tl_id=?";
+    connection.query(query,tlId, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+router.get("/ProjectCancledCount", (req, res) => {
+  const tlId=req.query.tlid;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "SELECT count(*) from Project where status='Cancled' And Tl_id=?";
+    connection.query(query,tlId, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+router.get("/ProjectPendingCount", (req, res) => {
+  const tlId=req.query.tlid;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "SELECT count(*) from Project where status='Pending' And Tl_id=?";
+    connection.query(query,tlId, (err, data) => {
       connection.release();
 
       if (err) {
@@ -90,10 +133,13 @@ router.post("/AddNewProject", (req, res) => {
     req.body.startDate,
     req.body.endDate,
     req.body.TlId,
+    req.body.Status,
     req.body.description,
     req.body.budget,
     req.body.priority,
     req.body.teamid,
+    req.body.Active,
+    
   ];
   pool.getConnection((err, connection) => {
     if (err) {
@@ -101,7 +147,7 @@ router.post("/AddNewProject", (req, res) => {
     }
 
     let query =
-      "insert into Project (`Project_name`,`Start_date`,`End_date`,`TL_id`,`Description`,`Budget`,`Priority`,Team_id) values(?)";
+      "insert into Project (`Project_name`,`Start_date`,`End_date`,`TL_id`,`Status`,`Description`,`Budget`,`Priority`,`Team_id`,`Active`) values(?)";
 
     connection.query(query, [value], (err, data) => {
       connection.release();
@@ -124,6 +170,28 @@ router.get("/ProjectNames", (req, res) => {
 
     let query = "SELECT Project_id,Project_name from Project where TL_id= ?";
     connection.query(query, tlid, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+router.put("/ProjectInactive", (req, res) => {
+  const tlid = req.query.tlid;
+  const Project_id = req.query.Project_id;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "update Project set Active='Inactive' where TL_ID=? And Project_id = ?";
+    connection.query(query, [tlid,Project_id], (err, data) => {
       connection.release();
 
       if (err) {

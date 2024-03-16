@@ -13,6 +13,7 @@ import Message from './component/AdminDashboard/Message';
 import Tracking from './component/AdminDashboard/Tracking';
 import Profile from './component/AdminDashboard/Profile';
 import TeamSideBar from './component/TeamDashbord/TeamSideBar';
+import NotFound from "./pages/NotFound";
 
 
 function App() {
@@ -40,7 +41,8 @@ function App() {
         <Route  path="/AdminDashbord/project/task" element={<Task />}/>
         <Route  path="/AdminDashbord/project/tracking" element={<Tracking />}/> */}
       </Route>
-      {/* <Route path="/" element={<Dashbord />}/> */}
+      <Route path="*" element={<NotFound />} /> 
+      
     </Routes>
   </Router>
   );
