@@ -14,6 +14,7 @@ import {
   checkEmpty,
   validateDropdown,
   validateNumber,
+  validateDates,
 } from "../../JS/FormValidation";
 
 const Dashboard = () => {
@@ -70,7 +71,6 @@ const Dashboard = () => {
   };
 
   const TotalProject = async () => {
-
     try {
       const tlid = sessionStorage.getItem("TLID");
       const response = await axios.get(
@@ -85,7 +85,6 @@ const Dashboard = () => {
   };
 
   const TotalMember = async () => {
-  
     try {
       const tlid = sessionStorage.getItem("TLID");
       const response = await axios.get(
@@ -100,7 +99,7 @@ const Dashboard = () => {
   };
 
   const ProjectComplete = async () => {
-    const tlid=sessionStorage.getItem("TLID");
+    const tlid = sessionStorage.getItem("TLID");
     try {
       const response = await axios.get(
         `http://localhost:3001/Project/ProjectCompleteCount?tlid=${tlid}`
@@ -112,7 +111,7 @@ const Dashboard = () => {
     }
   };
   const ProjectCancled = async () => {
-    const tlid=sessionStorage.getItem("TLID");
+    const tlid = sessionStorage.getItem("TLID");
     try {
       const response = await axios.get(
         `http://localhost:3001/Project/ProjectCompleteCount?tlid=${tlid}`
@@ -125,7 +124,7 @@ const Dashboard = () => {
   };
 
   const ProjectPending = async () => {
-    const tlid=sessionStorage.getItem("TLID");
+    const tlid = sessionStorage.getItem("TLID");
     try {
       const response = await axios.get(
         `http://localhost:3001/Project/ProjectPendingCount?tlid=${tlid}`
@@ -183,9 +182,8 @@ const Dashboard = () => {
     budget: "",
     priority: "",
     teamid: "",
-    Status:"Pending",
-    Active:"Acttive",
-
+    Status: "Pending",
+    Active: "Active",
   });
 
   console.log(formData);
@@ -204,6 +202,8 @@ const Dashboard = () => {
       budget: "",
       priority: "",
       teamid: "",
+      Status: "Pending",
+      Active: "Active",
     });
     setDrawerOpen(true);
   };
@@ -219,6 +219,7 @@ const Dashboard = () => {
       checkEmpty("name", "Project Name", "PNamespan") &&
       validateDropdown("teamid", "Team Member", "TeamNameSpan") &&
       validateDropdown("priority", "Priority", "PriorityNamespan") &&
+      validateDates("startDate", "endDate","datespan") &&
       checkEmpty("budget", "Budget", "BudgetSpan") &&
       validateNumber("budget", "BudgetSpan");
 
@@ -274,8 +275,6 @@ const Dashboard = () => {
     };
   }, []);
 
-
-
   const [chartOptions, setChartOptions] = useState({
     labels: ["Completed Project", "Cancled Project", "Pending Project"],
     colors: ["#008FFB", "#00E396", "#FEB019"],
@@ -284,14 +283,15 @@ const Dashboard = () => {
   const [chartSeries, setChartSeries] = useState([]);
   useEffect(() => {
     // When values change, update the chart series
-    if (projectCancled !== null && projectCompleted !== null && projectPending !== null) {
+    if (
+      projectCancled !== null &&
+      projectCompleted !== null &&
+      projectPending !== null
+    ) {
       const series = [projectCancled, projectCompleted, projectPending];
       setChartSeries(series);
     }
   }, [projectCancled, projectCompleted, projectPending]);
-
-
-
 
   const TABLE_HEAD1 = ["Issues", "Team Member Name"];
 
@@ -306,9 +306,6 @@ const Dashboard = () => {
     },
   ];
 
-
- 
-  
   return (
     <div className="w-full h-full mt-16">
       {/* no */}
@@ -421,7 +418,7 @@ const Dashboard = () => {
                 <div>
                   <label
                     htmlFor="startDate"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
+                    className="block mb-2 text-sm font-medium text-gray-900"
                   >
                     Start Date
                   </label>
@@ -431,14 +428,15 @@ const Dashboard = () => {
                     id="startDate"
                     value={formData.startDate}
                     onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    min={new Date().toISOString().split("T")[0]} // Set min attribute to today's date
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
                 </div>
 
                 <div>
                   <label
                     htmlFor="endDate"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
+                    className="block mb-2 text-sm font-medium text-gray-900"
                   >
                     End Date
                   </label>
@@ -448,9 +446,16 @@ const Dashboard = () => {
                     id="endDate"
                     value={formData.endDate}
                     onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    min={
+                      new Date(Date.now() + 86400000)
+                        .toISOString()
+                        .split("T")[0]
+                    } // Set min attribute to tomorrow's date
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
                 </div>
+                <span id="datespan" className="text-red-700"></span>
+
               </div>
               <div>
                 <label
@@ -760,7 +765,7 @@ const Dashboard = () => {
             {/* Project List */}
             <div className="bg-white shadow-lg rounded-xl px-5 py-5 text-left">
               <h2 className="text-2xl font-bold mb-4 text-customBlue">
-               Budget List
+                Budget List
               </h2>
               <div className="overflow-auto">
                 <table className="w-full">
@@ -835,7 +840,6 @@ const Dashboard = () => {
           </div>
         </div>
         {/* Team Leader List */}
-      
       </div>
     </div>
   );

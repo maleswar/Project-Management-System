@@ -11,6 +11,7 @@ import axios from "axios";
 import {
   checkEmpty,
   validateDropdown,
+  validateDates,
 } from "../../JS/FormValidation";
 
 function Task() {
@@ -25,9 +26,10 @@ function Task() {
   const [teamFormMember, setTeamFormMember] = useState([]);
 
   const CompletedTask = async () => {
+    const tlid = sessionStorage.getItem("TLID");
     try {
       const response = await axios.get(
-        "http://localhost:3001/Task/TaskCompleteCount"
+        `http://localhost:3001/Task/TaskCompleteCount?tlid=${tlid}`
       );
       const TaskCompleted = response.data.data[0]["count(*)"];
       setTotalCompletedTask(TaskCompleted);
@@ -37,9 +39,11 @@ function Task() {
   };
 
   const PendingTask = async () => {
+    const tlid = sessionStorage.getItem("TLID");
+
     try {
       const response = await axios.get(
-        "http://localhost:3001/Task/TaskPendingCount"
+        `http://localhost:3001/Task/TaskPendingCount?tlid=${tlid}`
       );
       const totalPendingTask = response.data.data[0]["count(*)"];
       setTotalPendingTask(totalPendingTask);
@@ -49,9 +53,11 @@ function Task() {
   };
 
   const CancledTask = async () => {
+    const tlid = sessionStorage.getItem("TLID");
+
     try {
       const response = await axios.get(
-        "http://localhost:3001/Task/TaskCancelCount"
+        `http://localhost:3001/Task/TaskCancelCount?tlid=${tlid}`
       );
       const totalCancelTask = response.data.data[0]["count(*)"];
       setTotalCancelTask(totalCancelTask);
@@ -61,8 +67,10 @@ function Task() {
   };
 
   const TaskData = async () => {
+    const tlid = sessionStorage.getItem("TLID");
+
     await axios
-      .get("http://localhost:3001/Task/TaskDashbordData")
+      .get(`http://localhost:3001/Task/TaskDashbordData?tlid=${tlid}`)
       .then((res) => {
         let list = res.data;
         let taskList = list.data;
@@ -72,21 +80,28 @@ function Task() {
   };
 
   const TaskAllData = async () => {
-    await axios.get("http://localhost:3001/Task/TaskData").then((res) => {
-      let list = res.data;
-      let taskAllData = list.data;
-      setTaskAllData(taskAllData);
-      // alert(BudgetList);
-    });
+    const tlid = sessionStorage.getItem("TLID");
+    await axios
+      .get(`http://localhost:3001/Task/TaskData?tlid=${tlid}`)
+      .then((res) => {
+        let list = res.data;
+        let taskAllData = list.data;
+        setTaskAllData(taskAllData);
+        // alert(BudgetList);
+      });
   };
 
   const TaskTeam = async () => {
-    await axios.get("http://localhost:3001/Task/TaskTeamData").then((res) => {
-      let list = res.data;
-      let taskTeam = list.data;
-      setTaskTeam(taskTeam);
-      // alert(BudgetList);
-    });
+    const tlid = sessionStorage.getItem("TLID");
+
+    await axios
+      .get(`http://localhost:3001/Task/TaskTeamData?tlid=${tlid}`)
+      .then((res) => {
+        let list = res.data;
+        let taskTeam = list.data;
+        setTaskTeam(taskTeam);
+        // alert(BudgetList);
+      });
   };
 
   const fetchProjectData = async () => {
@@ -153,7 +168,6 @@ function Task() {
     // Add more entries as needed
   ];
 
-  
   // alert(ID);
   const [formData, setFormData] = useState({
     projectid: "",
@@ -164,7 +178,7 @@ function Task() {
     enddate: "",
     description: "",
     priority: "",
-    
+    Progress: "Pending",
   });
   console.log(formData);
 
@@ -182,7 +196,7 @@ function Task() {
       enddate: "",
       description: "",
       priority: "",
-      progress: "Pending",
+      Progress: "Pending",
     });
     setDrawerOpen(true);
   };
@@ -203,10 +217,11 @@ function Task() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     let result =
-    validateDropdown("projectid", "Project Name", "projectidspan") &&
+      validateDropdown("projectid", "Project Name", "projectidspan") &&
       checkEmpty("task", "Task Name", "taskspan") &&
       validateDropdown("TeamId", "Team Member", "TeamIdspan") &&
-      validateDropdown("priority","Priority","priorityspan");
+      validateDates("startDate", "endDate","datespan") &&
+      validateDropdown("priority", "Priority", "priorityspan");
 
     // alert(result);
     if (result) {
@@ -251,11 +266,34 @@ function Task() {
   const [chartSeries, setChartSeries] = useState([]);
   useEffect(() => {
     // When values change, update the chart series
-    if (totalCompletedTask !== null && totalPendingTask !== null && totalCancelTask !== null) {
+    if (
+      totalCompletedTask !== null &&
+      totalPendingTask !== null &&
+      totalCancelTask !== null
+    ) {
       const series = [totalCompletedTask, totalPendingTask, totalCancelTask];
       setChartSeries(series);
     }
   }, [totalCompletedTask, totalPendingTask, totalCancelTask]);
+
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" }; // Customize date format
+    return date.toLocaleDateString(undefined, options); // Customize based on options
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "text-green-500"; // Green color for completed projects
+      case "Cancled":
+        return "text-red-500"; // Red color for canceled projects
+      case "Pending":
+        return "text-blue-500"; // Blue color for ongoing projects
+      default:
+        return ""; // Default color if status doesn't match any case
+    }
+  };
 
   return (
     <div className="w-full h-full mt-16">
@@ -315,8 +353,6 @@ function Task() {
                     </option>
                   ))}
                 </select>
-
-                
               </div>
               <span id="projectidspan" className="text-red-700"></span>
               <div>
@@ -335,8 +371,6 @@ function Task() {
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Task Name"
                 />
-                
-
               </div>
               <span id="taskspan" className="text-red-700"></span>
               <div>
@@ -362,9 +396,8 @@ function Task() {
                     </option>
                   ))}
                 </select>
-
-               
-              </div> <span id="TeamIdspan" className="text-red-700"></span>
+              </div>{" "}
+              <span id="TeamIdspan" className="text-red-700"></span>
               <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 sm:space-x-0 md:space-x-5 lg:space-x-5">
                 <div>
                   <label
@@ -379,6 +412,7 @@ function Task() {
                     id="startdate"
                     value={formData.startdate}
                     onChange={handleChange}
+                    min={new Date().toISOString().split("T")[0]} // Set min attribute to today's date
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
                 </div>
@@ -396,9 +430,16 @@ function Task() {
                     id="enddate"
                     value={formData.enddate}
                     onChange={handleChange}
+                    min={
+                      new Date(Date.now() + 86400000)
+                        .toISOString()
+                        .split("T")[0]
+                    }
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
                 </div>
+              <span id="datespan" className="text-red-700"></span>
+
               </div>
               <div>
                 <label
@@ -428,9 +469,9 @@ function Task() {
                       ...formData,
                       description: content.replace(/<[^>]*>/g, ""),
                     })
-                  } />
+                  }
+                />
               </div>
-
               <div>
                 <label
                   htmlFor="priority"
@@ -453,7 +494,6 @@ function Task() {
                   <option value="Low">Low</option>
                 </select>
                 <span id="priorityspan" className="text-red-700"></span>
-
               </div>
               <button
                 type="reset"
@@ -639,9 +679,6 @@ function Task() {
               <table className="w-full text-left">
                 <thead className="bg-gray-400">
                   <tr>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
-                      Sr.No
-                    </th>
                     <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Task
                     </th>
@@ -669,7 +706,6 @@ function Task() {
                   {taskAllData.map(
                     (
                       {
-                        Task_id,
                         Task_name,
                         Description,
                         start_date,
@@ -681,30 +717,15 @@ function Task() {
                       index
                     ) => (
                       <tr key={index}>
-                        <td className="border border-blue-gray-300 p-2">
-                          {Task_id}
-                        </td>
-                        <td className="border border-blue-gray-300 p-2">
-                          {Task_name}
-                        </td>
-                        <td className="border border-blue-gray-300 p-2">
-                          {Description}
-                        </td>
-                        <td className="border border-blue-gray-300 p-2">
-                          {start_date}
-                        </td>
-                        <td className="border border-blue-gray-300 p-2">
-                          {End_date}
-                        </td>
-                        <td className="border border-blue-gray-300 p-2">
-                          {Priority}
-                        </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="  p-2">{Task_name}</td>
+                        <td className="  p-2">{Description}</td>
+                        <td className="  p-2">{formatTimestamp(start_date)}</td>
+                        <td className="  p-2">{formatTimestamp(End_date)}</td>
+                        <td className=" p-2">{Priority}</td>
+                        <td className={` p-2 ${getStatusColor(Progress)}`}>
                           {Progress}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
-                          {Comments}
-                        </td>
+                        <td className=" p-2">{Comments}</td>
                       </tr>
                     )
                   )}

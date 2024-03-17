@@ -12,41 +12,36 @@ import EditProjectForm from './component/AdminDashboard/EditProjectForm';
 import Message from './component/AdminDashboard/Message';
 import Tracking from './component/AdminDashboard/Tracking';
 import Profile from './component/AdminDashboard/Profile';
+import ProfileForm from './component/AdminDashboard/ProfileForm';
 import TeamSideBar from './component/TeamDashbord/TeamSideBar';
 import NotFound from "./pages/NotFound";
-
 
 function App() {
   return (
     <Router>
-    <Routes>
-      <Route path="/" element={<Home />} /> 
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<SignUp />}/>
-      <Route path="/forgotpassword" element={<ForgotPassword />}/>
-      <Route path="/AdminDashbord" element={<SideBar />}>
-        <Route  index element={<Dashbord />}/>
-        <Route  path="/AdminDashbord/Message" element={<Message />}/> 
-        <Route  path="/AdminDashbord/project" element={<Project />}/> 
-        <Route  path="/AdminDashbord/team" element={<Team />}/> 
-        <Route  path="/AdminDashbord/EditProjectForm" element={<EditProjectForm />}/> 
-        <Route  path="/AdminDashbord/project/task" element={<Task />}/>
-        <Route  path="/AdminDashbord/project/tracking" element={<Tracking />}/>
-        <Route  path="AdminDashbord/profile" element={<Profile />}/>
-      </Route>
-      <Route path="/TeamDashbord" element={<TeamSideBar />}>
-        <Route  index element={<TeamSideBar />}/>
-        {/* <Route  path="/AdminDashbord/Message" element={<Message />}/> 
-        <Route  path="/AdminDashbord/project" element={<Project />}/> 
-        <Route  path="/AdminDashbord/project/task" element={<Task />}/>
-        <Route  path="/AdminDashbord/project/tracking" element={<Tracking />}/> */}
-      </Route>
-      <Route path="*" element={<NotFound />} /> 
-      
-    </Routes>
-  </Router>
+      <Routes>
+        <Route path="/" element={<Home />} /> 
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />}/>
+        <Route path="/forgotpassword" element={<ForgotPassword />}/>
+        <Route path="/AdminDashbord/*" element={<SideBar />}>
+          <Route index element={<Dashbord />} />
+          <Route path="Message" element={<Message />} /> 
+          <Route path="project" element={<Project />}/> 
+          <Route path="team" element={<Team />}/> 
+          <Route path="EditProjectForm/:projectId" element={<EditProjectForm />} />
+          <Route path="project/task" element={<Task />}/>
+          <Route path="project/tracking" element={<Tracking />}/>
+          <Route path="profile" element={<Profile />}/>
+          <Route path="profile/ProfileForm" element={<ProfileForm />} />
+        </Route>
+        <Route path="/TeamDashbord/*" element={<TeamSideBar />}>
+          <Route index element={<TeamSideBar />} />
+        </Route>
+        <Route path="*" element={<NotFound />} /> 
+      </Routes>
+    </Router>
   );
 }
 
 export default App;
-

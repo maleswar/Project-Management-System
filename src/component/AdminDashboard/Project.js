@@ -22,16 +22,15 @@ const Project = () => {
 
   const DeleteProject = async (Project_id) => {
     const tlid = sessionStorage.getItem("TLID");
-    
+
     const Reply = window.confirm("Are You Sure to Delete The Project");
     if (Reply) {
       try {
         const response = await axios.put(
-          `http://localhost:3001/Project/ProjectInactive?tlid=${tlid}&Project_id=${Project_id}`,
-          
+          `http://localhost:3001/Project/ProjectInactive?tlid=${tlid}&Project_id=${Project_id}`
         );
         var count = response.data.data.affectedRows;
-          // alert(count);
+        // alert(count);
         if (count === 1) {
           alert("Project Deleted Sucsessfully");
         } else {
@@ -43,16 +42,29 @@ const Project = () => {
     } else {
       return false;
     }
-    ProjectData(); 
+    ProjectData();
   };
 
   const handleEditClick = (Project_id) => {
-    alert(Project_id);
+    // alert(Project_id);
   };
-   // Function to format the timestamp
-   const formatTimestamp = (timestamp) => {
+  // Function to format the timestamp
+  const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleString(); // Customize this based on your formatting needs
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" }; // Customize date format
+    return date.toLocaleDateString(undefined, options); // Customize based on options
+  };
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "text-green-500"; // Green color for completed projects
+      case "Cancled":
+        return "text-red-500"; // Red color for canceled projects
+      case "Pending":
+        return "text-blue-500"; // Blue color for ongoing projects
+      default:
+        return ""; // Default color if status doesn't match any case
+    }
   };
 
   useEffect(() => {
@@ -62,8 +74,8 @@ const Project = () => {
   return (
     <div className="w-full h-screen pt-10">
       <div className="p-5 bg-bgSky h-full grid grid-cols-1 gap-y-4 w-full">
-        <div className="w-full p-5 h-full  bg-bgSky">
-          <div className=" bg-white  shadow-lg px-5 py-5 mt-7 rounded-lg">
+        <div className="w-full p-7 h-full  bg-bgSky">
+          <div className=" bg-white  shadow-lg px-7 py-5 mt-7 rounded-lg">
             <h2 className="text-2xl font-bold mb-4 text-customBlue">
               Project Details
             </h2>
@@ -99,10 +111,10 @@ const Project = () => {
                       index
                     ) => (
                       <tr key={index}>
-                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
+                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
                           {Project_id}
                         </td>{" "}
-                        <td className="border-t border-b  left-0 border-blue-gray-300 ">
+                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
                           {Project_name}
                         </td>{" "}
                         <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
@@ -111,7 +123,11 @@ const Project = () => {
                         <td className="border-t border-b  left-0 border-blue-gray-300 p-4 ">
                           {formatTimestamp(End_date)}
                         </td>
-                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
+                        <td
+                          className={`border-t border-b  left-0 border-blue-gray-300 p-4 ${getStatusColor(
+                            Status
+                          )}`}
+                        >
                           {Status}
                         </td>
                         <td className="border-t border-b  left-0 border-blue-gray-300 p-4 ">
@@ -124,12 +140,11 @@ const Project = () => {
                           {Priority}
                         </td>
                         <td className="border-t border-b border-blue-gray-300 text-center">
-                          <Link to="/AdminDashbord/EditProjectForm">
+                          <Link
+                            to={`/AdminDashbord/EditProjectForm/${Project_id}`}
+                          >
                             <button>
-                              <MdEditSquare
-                                className="h-7 w-6 "
-                                onClick={() => handleEditClick(Project_id)}
-                              />
+                              <MdEditSquare className="h-7 w-6" />
                             </button>
                           </Link>
                         </td>

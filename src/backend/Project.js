@@ -22,6 +22,28 @@ router.get("/ProjectData", (req, res) => {
     });
   });
 });
+router.get("/ProjectDataForEditPage", (req, res) => {
+  const tlid = req.query.tlid;
+  const Project_id = req.query.Project_id;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "SELECT * FROM Project where TL_id=? And Active='Active' and Project_id=?";
+    connection.query(query,[tlid,Project_id] ,(err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
 
 router.get("/ProjectCount", (req, res) => {
   const tlid = req.query.tlid;
@@ -31,7 +53,7 @@ router.get("/ProjectCount", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "SELECT count(*) from Project where TL_id=?";
+    let query = "SELECT count(*) from Project where TL_id=? And Active='Active'";
     connection.query(query,tlid, (err, data) => {
       connection.release();
 
@@ -202,5 +224,40 @@ router.put("/ProjectInactive", (req, res) => {
     });
   });
 });
+
+router.put("/UpdateTheProjectForm", (req, res) => {
+  const value = [
+    req.body.projectName,
+    req.body.startDate,
+    req.body.endDate,
+    req.body.TL_ID,
+    req.body.Status,
+    req.body.description,
+    req.body.budget,
+    req.body.priority,
+    req.body.team_id,
+    req.body.Project_id, // Assuming Project_id is the primary key of your Project table
+  ];
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query =
+      "UPDATE Project SET Project_name=?, Start_date=?, End_date=?, TL_id=?, Status=?, Description=?, Budget=?, Priority=?, Team_id=? WHERE Project_id=?";
+
+    connection.query(query, value, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
 
 module.exports = router;

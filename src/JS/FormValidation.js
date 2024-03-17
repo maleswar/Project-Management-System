@@ -127,23 +127,36 @@ export function matchPassword(password, confirmpass, Passspan,Confirmspan) {
 
 
 
-function validateDates() {
-// Set min attribute of date inputs to today's date
-document.getElementById("startDate").min = new Date().toISOString().split('T')[0];
-document.getElementById("endDate").min = new Date().toISOString().split('T')[0];
+export function validateDates(startDateId, endDateId, errorMessageId) {
+  // Set min attribute of date inputs to today's date
+  document.getElementById(startDateId).min = new Date().toISOString().split('T')[0];
+  document.getElementById(endDateId).min = new Date().toISOString().split('T')[0];
 
-// Set min attribute of date inputs to today's date
-
-
-  const startDateInput = document.getElementById("startDate");
-  const endDateInput = document.getElementById("endDate");
+  const startDateInput = document.getElementById(startDateId);
+  const endDateInput = document.getElementById(endDateId);
+  const errorMessage = document.getElementById(errorMessageId);
   
+  errorMessage.textContent = ""; // Clear previous error message
+
   // Ensure end date is not before start date
-  if (startDateInput.value && endDateInput.value && startDateInput.value > endDateInput.value) {
-      alert("End date cannot be before start date. Please select a valid end date.");
-      endDateInput.value = startDateInput.value; // Reset end date to start date
+  if (startDateInput.value && endDateInput.value) {
+      const startDate = new Date(startDateInput.value);
+      const endDate = new Date(endDateInput.value);
+
+      if (startDate > endDate) {
+          errorMessage.textContent = "End date cannot be before start date. Please select a valid end date.";
+          endDateInput.value = startDateInput.value; // Reset end date to start date
+          return false;
+      } else if (startDate.getTime() === endDate.getTime()) {
+          errorMessage.textContent = "End date cannot be the same as start date. Please select a different end date.";
+          return false;
+      }
   }
+
+  return true;
 }
+
+
 
 
 
