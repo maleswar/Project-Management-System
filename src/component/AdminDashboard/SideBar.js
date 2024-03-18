@@ -113,7 +113,7 @@ const Name=sessionStorage.getItem("TLName");
                     </p>
                   </div>
                   <ul className="py-1" role="none">
-                    <Link to="AdminDashbord/profile">
+                    <Link to="profile">
                       <li className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white">
                         My Profile
                         {/* </a> */}
@@ -170,7 +170,7 @@ const Name=sessionStorage.getItem("TLName");
               </div>
 
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link to="/AdminDashbord/Message" className="flex items-center">
+                <Link to="Message" className="flex items-center">
                   <BiMessageDetail className="w-8 h-8 text-white" />
 
                   <div className="text-xl font-semibold text-white ml-3">
@@ -179,7 +179,7 @@ const Name=sessionStorage.getItem("TLName");
                 </Link>
               </div>
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link to="/AdminDashbord/team" className="flex items-center">
+                <Link to="team" className="flex items-center">
                 <RiTeamLine className="w-8 h-8 text-white"/>
                   <div className="text-xl font-semibold text-white ml-3">
                     <span className="hover:underline">Team</span>
@@ -189,7 +189,7 @@ const Name=sessionStorage.getItem("TLName");
               <hr className="mt-5" />
 
               <div className="flex items-center px-5 py-3 mt-12 space-x-3 cursor-pointer">
-                <Link to="/AdminDashbord/project" className="flex items-center">
+                <Link to="project" className="flex items-center">
                   <GoProjectRoadmap className="w-8 h-8 text-white" />
 
                   <div className="text-xl font-semibold text-white ml-3">
@@ -200,7 +200,7 @@ const Name=sessionStorage.getItem("TLName");
 
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link
-                  to="/AdminDashbord/project/task"
+                  to="project/task"
                   className="flex items-center"
                 >
                   <GrTask className="w-8 h-8 text-white" />

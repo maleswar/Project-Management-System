@@ -16,6 +16,7 @@ module.exports = withMT({
         customPurple: "#735CD2",
       },
       backgroundColor: {
+        lightBg:"#f3faff",
         bgSky: "#E0F2FE",
         bgBlue: "#F9FBFF",
         bgLogin: "#E8F2F7",

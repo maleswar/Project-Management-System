@@ -1,113 +1,206 @@
 import React, { useState } from "react";
-import { MdOutlinePhotoCamera } from "react-icons/md";
+import { RiInstagramFill } from "react-icons/ri";
+import { FaGithubSquare } from "react-icons/fa";
+import { FaTwitter } from "react-icons/fa";
+import { FaLinkedin } from "react-icons/fa6";
+import { FaCamera } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa"; // Import the edit icon
 import { Link } from "react-router-dom";
 
-
 const Profile = () => {
-  const [image, setImage] = useState(null);
+ const [image, setImage] = useState(null);
+ 
 
   const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      setImage(reader.result);
-    };
-
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+    const selectedImage = event.target.files[0];
+    setImage(selectedImage);
   };
 
-  const profileData = {
-    name: "John Doe",
-    email: "johndoe@example.com",
-    role: "Software Engineer",
-    phone: "123-456-7890",
-    skills: "React, JavaScript, CSS",
-    qualification: "Bachelor's in Computer Science",
-    state: "California",
-    city: "San Francisco",
-    hometown: "New York",
-    github: "johndoe",
-    facebook: "johndoe",
-    twitter: "johndoe",
-    instagram: "johndoe",
-    birthday: "January 1, 1990",
-    age: "32"
+  const handleImageReset = () => {
+    setImage(null);
   };
+
+
+
 
   return (
-    <div className="container mx-auto py-20 w-full h-full p-16">
-      <h1 className="text-3xl font-semibold mb-8">Profile Page</h1>
-
-      <div className="flex flex-col md:flex-row">
-        <div className="w-full md:w-1/3 mb-4 md:mr-4">
-          <h2 className="text-xl font-semibold mb-2">Personal Information</h2>
-          <ul className="grid grid-cols-2 gap-4">
-            <li><strong>Team member name:</strong> {profileData.name}</li>
-            <li><strong>Email:</strong> {profileData.email}</li>
-            <li><strong>Phone number:</strong> {profileData.phone}</li>
-            <li><strong>Skills:</strong> {profileData.skills}</li>
-            <li><strong>Qualification:</strong> {profileData.qualification}</li>
-            <li><strong>Address:</strong> {profileData.city}, {profileData.state}, {profileData.hometown}</li>
-            <li><strong>Birthday:</strong> {profileData.birthday}</li>
-            <li><strong>Age:</strong> {profileData.age}</li>
-          </ul>
+    <div className="relative h-full bg-bgSky p-10">
+      <div className=" bg-white shadow-md rounded-lg p-5 w-full h-1/2 pt-14 mt-11 ">
+      <div className="flex justify-start bg-bgSky w-full h-fit p-10 rounded-3xl relative">
+          {/* Existing content */}
+          <div className="flex items-center ">
+            {image ? (
+              <div className="relative">
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt="Profile Picture"
+                  className="w-32 h-32 rounded-full mr-4"
+                />
+                <button
+                  onClick={handleImageReset}
+                  className="absolute bottom-0 right-0 bg-white rounded-full p-1"
+                >
+                  <FaCamera className="text-red-500" />
+                </button>
+              </div>
+            ) : (
+              <label htmlFor="imageUpload">
+                <input
+                  type="file"
+                  id="imageUpload"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+                <span className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer mr-4">
+                  <FaCamera />
+                </span>
+              </label>
+            )}
+            <div>
+              <h2 className="text-2xl font-semibold text-customSky">
+                Jeremy Rose
+              </h2>
+              <p className="text-gray-600 ">Product Designer</p>
+            </div>
+          </div>
+          {/* Edit button */}
+          <button
+            className="absolute bottom-0 right-0 rounded-full p-4"
+            // onClick={handleEditButtonClick} // Open modal when clicked
+          >
+            <Link to="ProfileForm"><FaEdit className="text-red-500 w-8 h-5" /></Link>
+          </button>
         </div>
 
-        <div className="w-full md:w-2/3 relative">
-          <h2 className="text-xl font-semibold mb-2">Profile Image</h2>
-          <div className="max-w-xs border border-gray-300 rounded-lg overflow-hidden relative">
-            {image ? (
-              <img src={image} alt="Uploaded" className="w-full h-auto" />
-            ) : (
-              <div className="h-48 bg-gray-100 flex justify-center items-center">
-                <span className="text-gray-500">Upload Image</span>
-              </div>
-            )}
-            <label htmlFor="fileInput" className="absolute bottom-0 right-0 mb-2 mr-2 cursor-pointer">
-              <MdOutlinePhotoCamera className="w-9 h-9" />
-              <input id="fileInput" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-            </label>
+
+        <div className="grid grid-rows-1 h-fit grid-flow-col gap-7 mt-12  leading-10">
+          <div className="row-span-2 bg-lightBg w-96 p-9 rounded-3xl">
+            <div className="">
+              <h3 className="text-xl font-semibold mb-2 text-customSky">
+                Personal Information
+              </h3>
+              <ul className=" list-inside ml-5 ">
+                <li>
+                  <p className="">
+                    <strong>Date Of Birth : </strong>
+                    <span>12/1/1990</span>
+                  </p>
+                </li>
+
+                <li className="mt-4">
+                  <p className="">
+                    <strong>Age :</strong> <span>40</span>
+                  </p>
+                </li>
+
+                <li className="mt-4">
+                  <ul>
+                    <li>
+                      <strong> Address</strong>
+                      <ul className="leading-6">
+                        <li>
+                          <p className="ml-10">
+                            <strong>State :</strong> <span>Gujarat</span>
+                          </p>
+                        </li>
+                        <li>
+                          <p className="ml-10">
+                            <strong>Country :</strong> <span>India</span>
+                          </p>
+                        </li>
+                        <li>
+                          <p className="ml-10">
+                            <strong> City : </strong>
+                            <span>Surat</span>
+                          </p>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li className="mt-4">
+                  <p className="">
+                    <strong>Skills :</strong> <span>Java , Python</span>
+                  </p>
+                </li>
+                <li className="mt-4">
+                  <p className="">
+                    <strong>Qualification :</strong> <span>BCA , MCA </span>
+                  </p>
+                </li>
+                <li className="mt-4">
+                  <p className="">
+                    <strong>Password :</strong> <span>12345</span>
+                  </p>
+                </li>
+                <li className="mt-4">
+                  <p className="">
+                    <strong>Uniq ID :</strong> <span>222</span>
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="col-span-2  bg-lightBg p-9 rounded-3xl">
+            <h3 className="text-xl font-semibold mb-2 text-customSky">
+              Contact Information
+            </h3>
+            <ul className=" list-inside leading-10 pl-12 ">
+              <li>
+                <strong>Email: </strong>
+                <span>smita@gmail.com</span>
+              </li>
+              <li>
+                <strong>Phone Number: </strong>
+                <span>1234567890</span>
+              </li>
+              <li>
+                <strong>Social Media</strong>
+              </li>
+            </ul>
+
+            <div className="mb-6">
+              <h3 className="text-xl flex justify-evenly font-semibold mb-2"></h3>
+              <ul className="gap-9 list-inside flex pl-12 ">
+                <li>
+                  {/* <a href="#" className="text-blue-500 hover:underline"> */}
+                  <RiInstagramFill className="w-7 h-8 text-black" />
+                  {/* </a> */}
+                </li>
+                <li>
+                  <FaGithubSquare className="w-7 h-8 text-black" />
+                </li>
+                <li>
+                  <FaTwitter className="w-7 h-8 text-black" />
+                </li>
+                <li>
+                  <FaLinkedin className="w-7 h-8 text-black" />
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="row-span-1 col-span-2  bg-lightBg p-9 rounded-3xl">
+            <div className="w-2/3 pl-4 col-span-1 ">
+              <h3 className="text-xl font-semibold mb-2 text-customSky">
+                Professional Information
+              </h3>
+              <ul className="list-inside pl-12 leading-10">
+                <li>
+                  <strong>Company Name:</strong> <span>Smita Enetrprise</span>
+                </li>
+                <li>
+                  <strong> Company Address :</strong>
+                  <span> c.67 , Madhuvan society , Chhaprabhata road</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Remaining profile information */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Professional Information</h2>
-        <ul>
-          <li><strong>Role:</strong> {profileData.role}</li>
-        </ul>
-      </div>
-
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Social Media</h2>
-        <ul className="flex space-x-4">
-          <li>
-            <a href={`https://github.com/${profileData.github}`} target="_blank" rel="noopener noreferrer">
-              {/* GitHub icon */}
-            </a>
-          </li>
-          <li>
-            <a href={`https://facebook.com/${profileData.facebook}`} target="_blank" rel="noopener noreferrer">
-              {/* Facebook icon */}
-            </a>
-          </li>
-          <li>
-            <a href={`https://twitter.com/${profileData.twitter}`} target="_blank" rel="noopener noreferrer">
-              {/* Twitter icon */}
-            </a>
-          </li>
-          <li>
-            <a href={`https://instagram.com/${profileData.instagram}`} target="_blank" rel="noopener noreferrer">
-              {/* Instagram icon */}
-            </a>
-          </li>
-        </ul>
-      </div>
-      <Link to="/AdminDashboard/profile/ProfileForm"><button>Edit</button></Link>
+      
     </div>
   );
 };
