@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect  } from "react";
 import { RiInstagramFill } from "react-icons/ri";
 import { FaGithubSquare } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
@@ -6,73 +6,84 @@ import { FaLinkedin } from "react-icons/fa6";
 import { FaCamera } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa"; // Import the edit icon
 import { Link } from "react-router-dom";
+import axios from "axios"; // Import Axios for making HTTP requests
 
 const Profile = () => {
- const [image, setImage] = useState(null);
- 
+  const [image, setImage] = useState(null);
+
+  
 
   const handleImageChange = (event) => {
     const selectedImage = event.target.files[0];
     setImage(selectedImage);
   };
 
+  const handleImageUpload = async () => {
+    const formData = new FormData();
+    formData.append('profilePhoto', image);
+const tlid=sessionStorage.getItem("TLID");
+    try {
+      const response = await axios.put(`http://localhost:3001/TL/TLProfilePhoto?TL_id=${tlid}`, formData, {
+  headers: {
+    'Content-Type': 'multipart/form-data'
+  }
+});
+      
+      console.log(response.data);
+      alert("Image uploaded successfully");
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert(error);
+    }
+  };
+
   const handleImageReset = () => {
     setImage(null);
   };
 
-
-
-
   return (
     <div className="relative h-full bg-bgSky p-10">
       <div className=" bg-white shadow-md rounded-lg p-5 w-full h-1/2 pt-14 mt-11 ">
-      <div className="flex justify-start bg-bgSky w-full h-fit p-10 rounded-3xl relative">
-          {/* Existing content */}
-          <div className="flex items-center ">
-            {image ? (
-              <div className="relative">
-                <img
-                  src={URL.createObjectURL(image)}
-                  alt="Profile Picture"
-                  className="w-32 h-32 rounded-full mr-4"
-                />
-                <button
-                  onClick={handleImageReset}
-                  className="absolute bottom-0 right-0 bg-white rounded-full p-1"
-                >
-                  <FaCamera className="text-red-500" />
-                </button>
-              </div>
-            ) : (
-              <label htmlFor="imageUpload">
-                <input
-                  type="file"
-                  id="imageUpload"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageChange}
-                />
-                <span className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer mr-4">
-                  <FaCamera />
-                </span>
-              </label>
-            )}
-            <div>
-              <h2 className="text-2xl font-semibold text-customSky">
-                Jeremy Rose
-              </h2>
-              <p className="text-gray-600 ">Product Designer</p>
-            </div>
-          </div>
-          {/* Edit button */}
+      <div className="flex items-center">
+      {image && (
+        <div className="relative">
+          <img
+            src={URL.createObjectURL(image)}
+            alt="Profile Picture"
+            className="w-32 h-32 rounded-full mr-4"
+          />
           <button
-            className="absolute bottom-0 right-0 rounded-full p-4"
-            // onClick={handleEditButtonClick} // Open modal when clicked
+            onClick={handleImageReset}
+            className="absolute bottom-0 right-0 bg-white rounded-full p-1"
           >
-            <Link to="ProfileForm"><FaEdit className="text-red-500 w-8 h-5" /></Link>
+            <FaCamera className="text-red-500" />
           </button>
         </div>
-
+      )}
+      {!image && (
+        <label htmlFor="imageUpload">
+          <input
+            type="file"
+            id="imageUpload"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageChange}
+          />
+          <span className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer mr-4">
+            <FaCamera />
+          </span>
+        </label>
+      )}
+      <div>
+        <h2 className="text-2xl font-semibold text-customSky">
+          Jeremy Rose
+        </h2>
+        <p className="text-gray-600">Product Designer</p>
+      </div>
+      {image && (
+        <button onClick={handleImageUpload}>Upload</button>
+      )}
+    </div>
 
         <div className="grid grid-rows-1 h-fit grid-flow-col gap-7 mt-12  leading-10">
           <div className="row-span-2 bg-lightBg w-96 p-9 rounded-3xl">
@@ -200,7 +211,6 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      
     </div>
   );
 };

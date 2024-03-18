@@ -1,6 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("./databaseConfig");
+const multer = require('multer');
+
+
+// Configure multer for handling file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'profile_photos/'); // Specify the directory where profile photos will be stored
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // Generate a unique filename for each uploaded photo
+  }
+});
+const upload = multer({ storage: storage });
+
+
+
 
 router.get("/TeamData", (req, res) => {
     pool.getConnection((err, connection) => {
