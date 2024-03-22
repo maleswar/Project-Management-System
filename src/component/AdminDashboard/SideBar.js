@@ -153,10 +153,10 @@ const Name=sessionStorage.getItem("TLName");
         id="logo-sidebar"
         className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } bg-customBlue border-r border-gray-200 sm:translate-x-0`}
+        } bg-navyblue border-r border-gray-200 sm:translate-x-0`}
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 pb-4 overflow-y-auto bg-customBlue">
+        <div className="h-full px-3 pb-4 overflow-y-auto bg-navyblue">
           <ul className="space-y-2 font-medium">
             <div className="flex-1">
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">

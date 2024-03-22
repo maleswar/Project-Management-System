@@ -315,7 +315,7 @@ function Task() {
           id="drawer-right-example"
           className={`fixed top-0 right-0 z-50 h-screen p-4 overflow-y-auto transition-transform ${
             isDrawerOpen ? "translate-x-0" : "translate-x-full"
-          } bg-white w-[700px] dark:bg-gray-800 border-l border-gray-300`}
+          } bg-white w-full sm:w-[90%] md:w-[80%] lg:w-[40%] xl:w-[40%] dark:bg-gray-800 border-l border-gray-300`}
         >
           <section className="bg-white w-full max-w-2xl p-7">
             <div className="flex items-center justify-between mb-4">

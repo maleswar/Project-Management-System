@@ -156,8 +156,42 @@ export function validateDates(startDateId, endDateId, errorMessageId) {
   return true;
 }
 
+export function calculateAge(dobId, ageID) {
+  const dobInput = document.getElementById(dobId);
+  const ageInput = document.getElementById(ageID);
 
+  // Check if elements with the provided IDs exist
+  if (!dobInput || !ageInput) {
+    console.error("Input elements not found.");
+    return null;
+  }
 
+  const dob = dobInput.value;
+  const today = new Date();
+  const birthDate = new Date(dob);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  ageInput.value = age; // Set the age value to the age input field
+
+  return age;
+}
+
+export function checkPasswordLength (passwordcheck,spanid) {
+  const password=document.getElementById(passwordcheck).value;
+  const errorMessage=document.getElementById(spanid);
+  if (password.length < 5) {
+    errorMessage.textContent="Password should be at least 5 characters long.";
+    return false;
+  }else{
+    errorMessage.textContent=""
+  }
+  return true;
+};
 
 
   

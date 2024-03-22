@@ -13,7 +13,9 @@ import Message from './component/AdminDashboard/Message';
 import Tracking from './component/AdminDashboard/Tracking';
 import Profile from './component/AdminDashboard/Profile';
 import ProfileForm from './component/AdminDashboard/ProfileForm';
+import UploadImage from './component/AdminDashboard/UploadImage';
 import TeamSideBar from './component/TeamDashbord/TeamSideBar';
+import HomeDashboard from './component/TeamDashbord/HomeDashboard';
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -33,11 +35,12 @@ function App() {
           <Route path="project/task" element={<Task />}/>
           <Route path="project/tracking" element={<Tracking />}/>
           <Route path="profile" element={<Profile />}/>
-          <Route path="profile/ProfileForm" element={<ProfileForm />} />
+          <Route path="profile/UploadImage" element={<UploadImage />} />
+          <Route path="profile/UploadImage/ProfileForm" element={<ProfileForm />} />
         </Route>
         <Route path="/TeamDashbord/*" element={<TeamSideBar />}>
-          <Route index element={<TeamSideBar />} />
-        </Route>
+  <Route index element={<HomeDashboard />} />
+</Route>
         <Route path="*" element={<NotFound />} /> 
       </Routes>
     </Router>

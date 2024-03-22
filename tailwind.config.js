@@ -21,6 +21,7 @@ module.exports = withMT({
         bgBlue: "#F9FBFF",
         bgLogin: "#E8F2F7",
         bgwhite: "#fafaff",
+        navyblue:"#0047ab",
       },
     },
   },

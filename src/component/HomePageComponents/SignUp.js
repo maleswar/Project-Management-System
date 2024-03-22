@@ -10,6 +10,7 @@ import {
   validateNumber,
   togglePasswordVisibility,
 } from "../../JS/FormValidation";
+import SignupEmail from "../../JS/SignupEmail";
 
 function SignUp() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -53,6 +54,7 @@ function SignUp() {
           value
         );
         var count = response.data.data.affectedRows;
+        SignupEmail(value);
        alert("Sign Up Sucsessfull");
 
         navigate("/login");
