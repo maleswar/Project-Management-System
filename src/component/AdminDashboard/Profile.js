@@ -75,22 +75,17 @@
 
 // export default Profile;
 
-import React, { useState, useEffect } from "react";
-import {
-  FaCamera,
-  FaEdit,
-  FaInstagram,
-  FaGithub,
-  FaTwitter,
-  FaLinkedin,
-} from "react-icons/fa";
+import React, { useState, useRef, useEffect } from "react";
+import User from "./Assest/img/Profile.jpg";
+import { FaSquareInstagram } from "react-icons/fa6";
+import { FaGithubSquare, FaTwitter, FaLinkedin } from "react-icons/fa";
 import { Link } from "react-router-dom";
 // Import the edit icon
 // import { Link } from "react-router-dom99";
 import axios from "axios"; //
 
 function Profile() {
-  // const [image, setImage] = useState(null);
+  const [Data, setData] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
   const tlid = sessionStorage.getItem("TLID");
 
@@ -109,33 +104,8 @@ function Profile() {
 
   useEffect(() => {
     fetchImage();
+    AllData();
   }, []);
-  const data = [
-    {
-      label: " Personal Information",
-      desc: `Date Of Birth : 12/1/1990
-      Age : 40
-      Address
-        State : Gujarat
-        Country : India
-        City : Surat
-      Skills : Java , Python
-      Qualification : BCA , MCA
-      Password : 12345
-      Uniq ID : 222`,
-    },
-    {
-      label: "Contact Information",
-      desc: `Email: smita@gmail.com
-      Phone Number: 1234567890
-      Social Media`,
-    },
-    {
-      label: "Professional Information",
-      desc: `Company Name: Smita Enterprise
-      Company Address: C/67 , Madhuvan society , Chhaprabhata road`,
-    },
-  ];
 
   // Placeholder functions
   const handleImageChange = () => {};
@@ -143,67 +113,154 @@ function Profile() {
   const handleEditButtonClick = () => {};
   const image = null; // Placeholder for image
 
-  return (
-    <div className="relative h-full bg-bgSky p-10">
-      <div className="bg-white shadow-md rounded-lg p-5 w-full h-full pt-14 mt-5">
-        <div className="flex justify-start flex-wrap bg-bgSky w-full p-4 rounded-3xl relative">
-          {/* Profile Picture and Information */}
-          <div className="flex items-center w-full sm:w-auto mb-4 sm:mb-0">
-            {/* Profile Picture */}
-            <div className="relative">
-              {imageUrl && (
-                <img
-                  src={require(`../../image/${imageUrl}`)}
-                  alt="student profile"
-                  className="h-40 w-40 rounded-full cursor-pointer"
-                />
-              )}
-              
-            </div>
-            {/* Profile Information */}
-            <div className="ml-14">
-              <h2 className="text-2xl font-semibold text-customSky sm:items-start items-center">
-                Jeremy Rose
-              </h2>
-              <p className="text-gray-600 ">Product Designer</p>
-            </div>
-          </div>
-          {/* Edit button */}
-          <button
-            className="w-full sm:w-auto mt-4 sm:mt-0 rounded-full p-4 "
-            onClick={handleEditButtonClick} // Open modal when clicked
-          >
-            <Link to="UploadImage">
-              <FaEdit className="text-red-500 w-8 h-5" />
-            </Link>
-          </button>
-        </div>
+  const fileInputRef = useRef(null);
+  const [imageSrc, setImageSrc] = useState(User);
 
-        {/* Profile information */}
-        <div className="mt-8 flex flex-wrap">
-          {data.map(({ label, desc }) => (
-            <div
-              key={label}
-              className="w-full sm:w-1/1 md:w-1/1 lg:w-1/3 px-4 border-r border-gray-300 mb-4 lg:mb-0"
-            >
-              <h3 className="text-xl font-semibold mb-4">{label}</h3>
-              <ul className="list-inside text-black">
-                {desc.split("\n").map((item, index) => (
-                  <li key={index} className="text-lg">
-                    {item.trim()}
-                  </li>
-                ))}
-                {label === "Contact Information" && (
-                  <li className="flex items-center mt-4">
-                    <FaInstagram className="ml-2 h-8 w-8" />
-                    <FaGithub className="ml-2 h-8 w-8" />
-                    <FaTwitter className="ml-2 h-8 w-8" />
-                    <FaLinkedin className="ml-2 h-8 w-8" />
-                  </li>
-                )}
-              </ul>
-            </div>
-          ))}
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const AllData = async () => {
+    const tlid = sessionStorage.getItem("TLID");
+
+    await axios
+      .get(`http://localhost:3001/TL/TLData?tlid=${tlid}`)
+      .then((res) => {
+        let list = res.data;
+        let Data = list.data;
+        setData(Data);
+        // (project);
+      });
+  };
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" }; // Customize date format
+    return date.toLocaleDateString(undefined, options); // Customize based on options
+  };
+  return (
+    <div className="w-full h-full">
+      <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4">
+        <div className="min-h-screen flex flex-col justify-center items-center mt-20">
+          <div
+            className="bg-cover bg-center w-full h-60 md:h-80 lg:h-64 rounded-lg shadow-lg mx-10"
+            style={{
+              backgroundImage:
+                'url("https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")',
+            }}
+          ></div>
+
+          {Data.map(
+            (
+              {
+                TL_fname,
+                TL_lname,
+                C_name,
+                Email,
+                Uniq_id,
+                Password,
+                role,
+                Phone_number,
+                Skill,
+                Qualification,
+                Date_of_birth,
+                city,
+                state,
+                country,
+                instagram,
+                linkedin,
+                github,
+                twitter,
+                company_address,
+                Age,
+              },
+              index
+            ) => (
+              <div className="bg-white w-[90%] rounded-lg -mt-20 gap-4 px-4">
+                <div className="justify-end items-end flex">
+                  <Link to="UploadImage">
+                  <button className="bg-customBlue text-white font-bold py-2 px-4 rounded mt-5">
+                    Edit Profile
+                  </button></Link>
+                </div>
+
+                <div className="flex flex-col items-center md:flex-row justify-center md:justify-start mb-11">
+                  <input type="file" className="hidden" />
+                  {imageUrl && (
+                    <img
+                      src={require(`../../image/${imageUrl}`)}
+                      alt="student profile"
+                      className="h-40 w-40 rounded-full cursor-pointer"
+                    />
+                  )}
+
+                  <div className="md:ml-4">
+                    <h1 className="font-bold text-4xl text-customBlue">
+                      {TL_fname} {TL_lname}
+                    </h1>
+                    <h4 className="text-lg">{role}</h4>
+                    <ul className="flex gap-4">
+                      <li>
+                      <a href={`https://www.instagram.com/${Data && Data.instagram}`} target="_blank">
+                          <FaSquareInstagram className="w-6 h-6 text-black" />
+                        </a>
+                      </li>
+                      <li>
+                        <a href={`https://github.com/${Data && Data.github}`} target="_blank">
+                          <FaGithubSquare className="w-6 h-6 text-black" />
+                        </a>
+                      </li>
+                      <li>
+                      <a href={`https://twitter.com/${Data && Data.twitter}`} target="_blank">
+                          <FaTwitter className="w-6 h-6 text-black" />
+                        </a>
+                      </li>
+                      <li>
+                      <a href={`https://www.linkedin.com/${Data && Data.linkedin}`} target="_blank">
+                          <FaLinkedin className="w-6 h-6 text-black" />
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3">
+                  <div className="mb-2">
+                    <h1 className="font-bold text-xl text-customBlue mb-2">
+                      Personal Information
+                    </h1>
+                    <div className="text-gray-700 leading-7">
+                      <p>Date of Birth: {formatTimestamp(Date_of_birth)}</p>
+                      <p>Age: {Age}</p>
+                      <p>City: {city}</p>
+                      <p>State: {state} </p>
+                      <p>Country: {country}</p>
+                      <p>Skills: {Skill}</p>
+                      <p>Qualification: {Qualification}</p>
+                      <p>Password: {Password}</p>
+                      <p>Uniq ID: {Uniq_id}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <h1 className="font-bold text-xl text-customBlue mb-2">
+                      Contact Information
+                    </h1>
+                    <div className="text-gray-700 leading-7">
+                      <p>Email Address: {Email}</p>
+                      <p>Phone Number: {Phone_number}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <h1 className="font-bold text-xl text-customBlue mb-2">
+                      Professional Information
+                    </h1>
+                    <div className="text-gray-700 leading-7">
+                      <p>Company Name: {C_name}</p>
+                      <p>Company Address: {company_address} </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          )}
         </div>
       </div>
     </div>

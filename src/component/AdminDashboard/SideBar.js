@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { BiHome } from "react-icons/bi";
 import { BiMessageDetail } from "react-icons/bi";
@@ -9,10 +9,34 @@ import { MdInsertChartOutlined } from "react-icons/md";
 import Logo from "./Assest/img/Logo.svg";
 import Profile from "./Assest/img/Profile.jpg";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; //
 
 
 function Sidebar() {
 const Name=sessionStorage.getItem("TLName");
+const tlid = sessionStorage.getItem("TLID");
+
+const [imageUrl, setImageUrl] = useState(null);
+
+const fetchImage = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3001/TL/TLPhoto?tlid=${tlid}`
+    );
+    const imageUrl = response.data.imageUrl; // Retrieve imageUrl from the response
+    setImageUrl(imageUrl);
+    // alert(imageUrl); // Set the imageUrl state
+  } catch (error) {
+    console.log(error);
+  }
+};
+useEffect(() => {
+  fetchImage();
+  // AllData();
+}, []);
+
+
+
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -31,8 +55,10 @@ const Name=sessionStorage.getItem("TLName");
     if(result){
         sessionStorage.removeItem("TLID");
         sessionStorage.removeItem("TLName");
-        sessionStorage.removeItem("TeamID");
-        sessionStorage.removeItem("TeamName");
+        sessionStorage.removeItem("TLUID");
+        sessionStorage.removeItem("Password");
+        // sessionStorage.removeItem("TeamID");
+        // sessionStorage.removeItem("TeamName");
         navigate("/");
     }
   }
@@ -83,11 +109,13 @@ const Name=sessionStorage.getItem("TLName");
                     data-dropdown-toggle="dropdown-user"
                     onClick={toggleProfile}
                   >
+                    {imageUrl && (
                     <img
-                      className="w-10 h-10 rounded-full"
-                      src={Profile}
-                      alt="user photo"
+                      src={require(`../../image/${imageUrl}`)}
+                      alt="student profile"
+                      className="h-10 w-10 rounded-full cursor-pointer"
                     />
+                  )}
                   </button>
                 </div>
                 <div

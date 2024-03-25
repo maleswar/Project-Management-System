@@ -184,8 +184,9 @@ function SignUp() {
                       </svg>
                     )}
                   </div>
-                  <span id="passwordNamespan" className="text-red-700"></span>
+                  
                 </div>
+                <span id="passwordNamespan" className="text-red-700"></span>
               </label>
             </div>
 

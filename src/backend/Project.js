@@ -259,5 +259,29 @@ router.put("/UpdateTheProjectForm", (req, res) => {
   });
 });
 
+// team Dashbord
+
+router.get("/TeamProjectNameData", (req, res) => {
+  const teamid = req.query.teamid;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query =
+      "SELECT Project_id,Project_name from project where Team_id=? ";
+       connection.query(query, teamid, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+
 
 module.exports = router;

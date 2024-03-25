@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { MdEditSquare } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
-import { Link, Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Project = () => {
   const [project, setProject] = useState([]);

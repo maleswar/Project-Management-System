@@ -130,7 +130,7 @@ function TeamSidebar() {
           <ul className="space-y-2 font-medium">
             <div className="flex-1">
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link to="/" className="flex items-center">
+                <Link to="" className="flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="36"
@@ -162,7 +162,7 @@ function TeamSidebar() {
               </div>
 
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link to="/" className="flex items-center">
+                <Link to="project" className="flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="36"
@@ -189,7 +189,7 @@ function TeamSidebar() {
               </div>
 
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link to="/" className="flex items-center">
+                <Link to="task" className="flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="36"
@@ -236,7 +236,7 @@ function TeamSidebar() {
               </div>
 
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link to="/" className="flex items-center">
+                <Link to="team" className="flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="36"

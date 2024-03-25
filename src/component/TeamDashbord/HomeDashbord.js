@@ -2,59 +2,125 @@ import React, { useEffect, useState } from "react";
 import Cards from "./Layouts/Cards";
 import Team from "./Assest/Vector/Team.png";
 import ReactApexChart from "react-apexcharts";
+import axios from "axios";
 
-function HomeDashboard() {
-  const series = [
-    {
-      name: "Project A Progress",
-      data: [12, 19, 3, 5, 2, 3, 9],
-    },
-    {
-      name: "Project B Progress",
-      data: [8, 15, 6, 10, 5, 7, 12],
-    },
-  ];
 
-  // Configuration options for the chart
-  const options = {
-    chart: {
-      type: "area",
-      height: 350,
-      toolbar: {
-        show: false,
+function HomeDashbord() {
+const teamid=sessionStorage.getItem("TeamID");
+const TeamName=sessionStorage.getItem("TeamName");
+const [projectName ,setProjectName]=useState([]);
+const [completedTask ,setCompletedTask]=useState([]);
+alert(projectName);
+alert(completedTask);
+
+
+
+useEffect(() => {
+  // Fetch completed tasks for each project
+  projectData.forEach((project) => {
+    fetchCompletedTasks(project.Project_id);
+  });
+}, [projectData]);
+
+const ProjectData = async () => {
+  const tlid = sessionStorage.getItem("TLID");
+
+  await axios
+    .get(`http://localhost:3001/Project/TeamProjectNameData?tlid=${teamid}`)
+    .then((res) => {
+      let list = res.data;
+      let projectName = list.data;
+      setProjectName(projectName);
+      // (project);
+    });
+};
+
+const fetchCompletedTasks = async (projectId) => {
+  const teamid = sessionStorage.getItem("TeamID");
+  try {
+    const res = await axios.get(`http://localhost:3001/Task/TeamTaskCompleted?tlid=${teamid}&projectId=${projectId}`);
+    setCompletedTask(prevCompletedTasks => ({
+      ...prevCompletedTasks,
+      [projectId]: res.data.data
+    }));
+  } catch (error) {
+    console.error("Error fetching completed tasks:", error);
+  }
+};
+
+
+
+
+
+
+
+
+
+  const projectData = {
+    "Project A": { completedTasks: 50, pendingTasks: 20, teamMembers: ["John", "Alice", "Bob"] },
+    "Project B": { completedTasks: 40, pendingTasks: 10, teamMembers: ["Alice", "Charlie", "David"] },
+    "Project C": { completedTasks: 30, pendingTasks: 5, teamMembers: ["John", "David", "Eve"] },
+  };
+
+  const chartData = {
+    series: [
+      {
+        name: 'Completed Tasks',
+        data: Object.values(projectData).map(project => project.completedTasks)
       },
-    },
-    stroke: {
-      curve: "smooth",
-    },
-    xaxis: {
-      categories: [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-      ],
-      title: {
-        text: "Month",
+      {
+        name: 'Pending Tasks',
+        data: Object.values(projectData).map(project => project.pendingTasks)
+      }
+    ],
+    options: {
+      chart: {
+        type: 'bar',
+        height: 400,
       },
-    },
-    yaxis: {
-      title: {
-        text: "Progress",
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%',
+          endingShape: 'rounded'
+        },
       },
-    },
-    legend: {
-      show: true,
-      position: "top",
-    },
-    fill: {
-      type: "solid",
-      opacity: 0.2, // Adjust the opacity value as per your requirement
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: Object.keys(projectData),
+      },
+      yaxis: {
+        title: {
+          text: 'Number of Tasks'
+        }
+      },
+      fill: {
+        opacity: 1
+      },
+      tooltip: {
+        custom: function({ seriesIndex, dataPointIndex, w }) {
+          const project = Object.values(projectData)[dataPointIndex];
+          if (seriesIndex === 0) { // Only show tooltip for completed tasks
+            const teamMembers = project.teamMembers.join(", ");
+            return `<div class="tooltip">Completed Tasks: ${w.globals.series[seriesIndex][dataPointIndex]}`;
+          } else {
+            return false; // Hide tooltip for pending tasks
+          }
+        }
+      }
     },
   };
+
+
+
+  
 
   const [todos, setTodos] = useState([
     {
@@ -97,13 +163,6 @@ function HomeDashboard() {
     }
   };
 
-  const PROJECT_DATA = [
-    { projectName: "Project A", tlName: "Raj", budget: "2,000" },
-    { projectName: "Project B", tlName: "Fenil", budget: "4,000" },
-    { projectName: "Project C", tlName: "Jenil", budget: "5,000" },
-    // Add more projects as needed
-  ];
-
   // State variables to store TL name and description
   const [tlName, setTLName] = useState("");
   const [description, setDescription] = useState("");
@@ -120,6 +179,8 @@ function HomeDashboard() {
     setDescription("");
   };
 
+  const sm = window.innerWidth < 640; // Define 'sm' for small screens
+
   return (
     <div>
       <div className="w-full h-full mt-16">
@@ -127,20 +188,26 @@ function HomeDashboard() {
         <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4">
           <div className="w-full">
             <div className="mx-auto grid grid-cols-1 md:grid-cols-2 bg-white rounded-lg shadow-lg items-center">
-              <div className="flex justify-center items-center sm:ml-0 lg:-ml-80 ">
+              <div className="flex justify-center items-center md:col-span-1 lg:-ml-80">
                 <img src={Team} alt="Illustration" className="w-60 h-60" />
               </div>
-              <div className="sm:text-center md:text-left lg:text-left lg:-ml-80">
-                <h1 className="text-4xl font-bold text-customBlue mb-2 sm:text-sm md:text-4xl lg:text-4xl">
-                  Hello, Team Name
+              <div
+                className={`text-center md:text-left lg:-ml-80 ${
+                  !sm ? "hidden sm:block" : ""
+                }`}
+              >
+                {/* For small screens, text below image and centered */}
+                <h1 className="text-customBlue text-3xl font-bold">
+                  Hello {TeamName}
                 </h1>
-                <p className="text-gray-600">
+                <p>
                   This is your go-to place for tracking progress, collaborating
                   effectively, and ensuring project success.
                 </p>
               </div>
             </div>
           </div>
+
           {/* Cards */}
           <div className="w-full">
             <div class="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-x-10 mx-auto">
@@ -204,23 +271,20 @@ function HomeDashboard() {
           </div>
 
           <div className="w-full">
-            <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 mx-auto mt-7">
-              {/* Timeline Chart */}
-              <div className="bg-white rounded-lg shadow-lg px-3 py-5">
-                <div className="ml-4 justify-center text-gray-600">
-                  <h2 className="text-2xl font-bold mb-4 text-customBlue">
-                    Project Progress Chart
-                  </h2>
-                  <ReactApexChart
-                    options={options}
-                    series={series}
-                    type="area"
-                    height={350}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+  <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:w-full gap-x-10 mx-auto mt-7 space-y-7 sm:space-y-7 md:space-y-7 lg:space-y-0">
+<div className="bg-white rounded-lg shadow-lg px-3 py-5">
+     <h1>Task Completion Status</h1>
+      <div className="w-full h-full">
+        <ReactApexChart
+          options={chartData.options}
+          series={chartData.series}
+          type="bar"
+          height={400}
+        />
+      </div>
+</div>
+  </div>
+</div>
 
           <div className="w-full">
             <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-x-10 mx-auto mt-7 space-y-7 sm:space-y-7 md:space-y-7 lg:space-y-0">
@@ -248,29 +312,28 @@ function HomeDashboard() {
                   <ul>
                     {todos.map((todo) => (
                       <div key={todo.id} className="items-center mb-4">
-                       <input
+<input
   type="checkbox"
-  id={`project-todo-${todo.id}`} // Corrected usage of backticks
+  id={`project-todo-${todo.id}`}
   checked={todo.completed}
   onChange={() => handleToggle(todo.id)}
   className="mr-2"
 />
-<label
-  htmlFor={`project-todo-${todo.id}`} // Corrected usage of backticks
-  className={`text-lg ${
-    todo.completed ? "line-through text-gray-400" : ""
-  }`}
->
-  {todo.text}
-</label>
-
+                        <label
+                          htmlFor={`project-todo-${todo.id}`}
+                          className={`text-lg ${
+                            todo.completed ? "line-through text-gray-400" : ""
+                          }`}
+                        >
+                          {todo.text}
+                        </label>
                       </div>
                     ))}
                   </ul>
                 </div>
               </div>
               {/* TL Deatils */}
-              <div className="bg-white rounded-lg shadow-lg  px-5 py-5 text-left">
+              <div className="bg-white rounded-lg shadow-lg px-5 py-5 text-left">
                 <h2 className="text-2xl font-bold mb-4 text-customBlue">
                   Team Leader List
                 </h2>
@@ -290,21 +353,28 @@ function HomeDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {PROJECT_DATA.map(
-                        ({ projectName, tlName, budget }, index) => (
-                          <tr key={projectName}>
-                            <td className="border border-blue-gray-300 p-2">
-                              {projectName}
-                            </td>
-                            <td className="border border-blue-gray-300 p-2">
-                              {tlName}
-                            </td>
-                            <td className="border border-blue-gray-300 p-2">
-                              {budget}
-                            </td>
-                          </tr>
-                        )
-                      )}
+                      <tr>
+                        <td className="border border-blue-gray-300 p-2">
+                          Project A
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          John Doe
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          $10,000
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-blue-gray-300 p-2">
+                          Project B
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          Jane Smith
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          $12,500
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -366,5 +436,4 @@ function HomeDashboard() {
     </div>
   );
 }
-
-export default HomeDashboard;
+export default HomeDashbord;

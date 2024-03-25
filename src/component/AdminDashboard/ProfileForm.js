@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { MdOutlinePhotoCamera } from "react-icons/md";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 // import { calculateAge, validateEmail } from "../../JS/FormValidation";
 import {
   checkEmpty,
@@ -12,10 +14,10 @@ import {
 } from "../../JS/FormValidation";
 
 const ProfileForm = () => {
-  const ID=sessionStorage.getItem("TLID");
+  const ID = sessionStorage.getItem("TLID");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
-    TL_ID:ID,
+    TL_ID: ID,
     fname: "",
     lname: "",
     role: "",
@@ -49,11 +51,10 @@ const ProfileForm = () => {
 
   console.log(formData);
 
-
   const handleAgeBlur = () => {
     // Calculate age based on current date of birth value
     const age = calculateAge(formData.dob);
-    
+
     setFormData((prevState) => ({
       ...prevState,
       Age: age,
@@ -120,54 +121,49 @@ const ProfileForm = () => {
       console.error("Error fetching project data:", error);
     }
   };
-
+  const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const result=checkEmpty("fname","First Name",'fnamespan')&&
-                 checkEmpty("lname","Last Name",'lnamespan')&&
-                 checkEmpty("role","Designation",'rolespan')&&
-                 checkEmpty("password","Password","pasawordspan")&&
-                 validateNumber("password","pasawordspan")&&
-                 checkPasswordLength("password","pasawordspan")&&
-                 checkEmpty("uid","Uniq ID","uidspan")&&
-                 validateNumber("uid","uidspan")&&
-                 checkEmpty("email","Email","emailspan")&&
-                 validateEmail("email","emailspan")&&
-                 checkEmpty("phoneNumber","Phone Number","phoneNumberspan")&&
-                 validatePhoneNumber("phoneNumber","phoneNumberspan")&&
-                 checkEmpty("companyName","Company Name","companyNamespan");
-                //  alert(result);
-                if (result) {
-                  try {
-                    const formatteddob = formatDate(formData.dob);
-// alert(formatteddob);
-                    const response = await axios.post(
-                      "http://localhost:3001/TL/TLProfileUpdate",
-                      {
-                        ...formData,
-                        dob: formatteddob,
-                       
-                      }
-                    );
-                    var count = response.data.data.affectedRows;
-              
-                    if (count === 1) {
-                      alert("Profile Updated Successfully");
-                      // navigate("/AdminDashbord/project");
-                    } else {
-                      alert("Profile Updated Unsuccessfully");
-                    }
-                  } catch (err) {
-                    console.log(err);
-                  }
-                } else {
-                  return false;
-                }
+    const result =
+      checkEmpty("fname", "First Name", "fnamespan") &&
+      checkEmpty("lname", "Last Name", "lnamespan") &&
+      checkEmpty("role", "Designation", "rolespan") &&
+      checkEmpty("password", "Password", "pasawordspan") &&
+      validateNumber("password", "pasawordspan") &&
+      checkPasswordLength("password", "pasawordspan") &&
+      checkEmpty("uid", "Uniq ID", "uidspan") &&
+      validateNumber("uid", "uidspan") &&
+      checkEmpty("email", "Email", "emailspan") &&
+      validateEmail("email", "emailspan") &&
+      checkEmpty("phoneNumber", "Phone Number", "phoneNumberspan") &&
+      validatePhoneNumber("phoneNumber", "phoneNumberspan") &&
+      checkEmpty("companyName", "Company Name", "companyNamespan");
+    //  alert(result);
+    if (result) {
+      try {
+        const formatteddob = formatDate(formData.dob);
+        // alert(formatteddob);
+        const response = await axios.post(
+          "http://localhost:3001/TL/TLProfileUpdate",
+          {
+            ...formData,
+            dob: formatteddob,
+          }
+        );
+        var count = response.data.data.affectedRows;
 
-
-
-
-
+        if (count === 1) {
+          alert("Profile Updated Successfully");
+          navigate("profile");
+        } else {
+          alert("Profile Updated Unsuccessfully");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      return false;
+    }
   };
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -275,7 +271,7 @@ const ProfileForm = () => {
                           id="dob"
                           value={formatDate(formData.dob)} // Potential source of error
                           onChange={handleChange}
-                          onBlur={() => calculateAge("dob", "age")}
+                          onBlur={() => calculateAge("dob", "Age")}
                           className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                           placeholder="Enter your Birthdate"
                         />
@@ -286,7 +282,7 @@ const ProfileForm = () => {
                       <div className="relative w-full mb-3">
                         <label
                           className="block  text-blueGray-600 text-xs font-bold mb-2"
-                          htmlFor="age"
+                          htmlFor="Age"
                         >
                           Age
                         </label>
@@ -422,51 +418,51 @@ const ProfileForm = () => {
                       </label>
                       <div className="relative">
                         <input
-                        type={passwordVisible ? "text" : "password"}
-                        name="password"
-                        id="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="12345"
-                      />
+                          type={passwordVisible ? "text" : "password"}
+                          name="password"
+                          id="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          placeholder="12345"
+                        />
                       </div>
                       <div
-                      onClick={togglePasswordVisibility}
-                      style={{
-                        cursor: "pointer",
-                        position: "absolute",
-                        top: "70%",
-                        right: "10px",
-                        transform: "translateY(-50%)",
-                      }}
-                    >
-                      {passwordVisible ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="bi bi-eye-fill"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-                          <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
-                        </svg>
-                      ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="bi bi-eye-slash-fill"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7 7 0 0 0 2.79-.588M5.21 3.088A7 7 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474z" />
-                          <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12z" />
-                        </svg>
-                      )}
-                    </div>
+                        onClick={togglePasswordVisibility}
+                        style={{
+                          cursor: "pointer",
+                          position: "absolute",
+                          top: "70%",
+                          right: "10px",
+                          transform: "translateY(-50%)",
+                        }}
+                      >
+                        {passwordVisible ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="bi bi-eye-fill"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="bi bi-eye-slash-fill"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7 7 0 0 0 2.79-.588M5.21 3.088A7 7 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474z" />
+                            <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12z" />
+                          </svg>
+                        )}
+                      </div>
                       <span id="pasawordspan" className="text-red-700"></span>
                     </div>
                   </div>
@@ -525,20 +521,20 @@ const ProfileForm = () => {
                         Phone Number
                       </label>
                       <div className="relative flex items-center">
-                      <span class="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-600">
-                      91
-                    </span>
-                     <input
-                        type="text"
-                        name="phoneNumber"
-                        id="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleChange}
-                        className="pl-8 pr-4 py-2  border-0 px-3 h-11 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="97473899321"
-                      />
+                        <span class="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-600">
+                          91
+                        </span>
+                        <input
+                          type="text"
+                          name="phoneNumber"
+                          id="phoneNumber"
+                          value={formData.phoneNumber}
+                          onChange={handleChange}
+                          className="pl-8 pr-4 py-2  border-0 px-3 h-11 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          placeholder="97473899321"
+                        />
                       </div>
-                     
+
                       <span
                         id="phoneNumberspan"
                         className="text-red-700"

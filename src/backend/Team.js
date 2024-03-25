@@ -86,7 +86,7 @@ router.get("/TeamData", (req, res) => {
         return res.json({ error: "Internal Server Error" });
       }
   
-      let query = "SELECT Team_id,Team_name,Email,Roles,Phone_number,Qualification,Skills FROM Team where Tl_id= ?";
+      let query = "SELECT team.Team_id, team.Team_name, team.Email, team.Roles, team.Phone_number, team.Qualification, team.Skills, project.Project_id, project.Project_name FROM Team JOIN Project ON team.Project_id = project.Project_id WHERE team.Tl_id = ?";
       connection.query(query,tlid, (err, data) => {
         connection.release();
   
@@ -108,6 +108,8 @@ router.get("/TeamData", (req, res) => {
         req.body.qualification,
         req.body.skills, // Convert skills array to a comma-separated string
         req.body.tlid,
+        req.body.uid,
+        req.body.password,
     ];
 
     pool.getConnection((err, connection) => {
@@ -115,7 +117,7 @@ router.get("/TeamData", (req, res) => {
             return res.json({ error: "Internal Server Error" });
         }
 
-        let query = "INSERT INTO Team (`Team_name`, `Email`, `Phone_number`, `Roles`, `Qualification`, `Skills`, `Tl_id`) VALUES (?)";
+        let query = "INSERT INTO Team (`Team_name`, `Email`, `Phone_number`, `Roles`, `Qualification`, `Skills`, `Tl_id`,`Uniq_id`,`password`) VALUES (?)";
         connection.query(query, [values], (err, data) => {
             connection.release();
 
@@ -128,7 +130,49 @@ router.get("/TeamData", (req, res) => {
     });
 });
 
+router.post("/TeamProjectUpdation", (req, res) => {
+  const value=[
+    req.body.projectid,
+    req.body.roles,
+    req.body.teamid,
+  ];
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
 
+    let query = "Update Team set Project_id=?,Roles=? where Team_id=?";
+    connection.query(query,value, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
   
+router.post("/DeleteTeamMember", (req, res) => {
+  const tlid = req.query.tlid;
+  const TeamId=req.query.TeamId
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "update Team set  Active='Inactive'  where TL_id= ? AND Team_id=?";
+    connection.query(query, [tlid,TeamId],(err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
 
   module.exports = router;

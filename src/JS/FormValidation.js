@@ -93,9 +93,11 @@ export function matchPassword(password, confirmpass, Passspan,Confirmspan) {
     if (Password.length < 5) {
         PasswordMessage.textContent = "Password must be at least 5 characters long";
       document.getElementById(password).focus();
+      return false;
     } else if (Password !== ConfirmPassword) {
         ConfirmPasswordMessage.textContent = "Password does not match Confirm Password";
       document.getElementById(confirmpass).focus();
+      return false;
     } else {
         PasswordMessage.textContent = "";
         ConfirmPasswordMessage.textContent = "";

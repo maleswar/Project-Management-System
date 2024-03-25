@@ -68,6 +68,8 @@ function Login() {
             alert("Login Successful");
             sessionStorage.setItem("TLID", tlId);
             sessionStorage.setItem("TLName", tlFname + " " + tlLname);
+            sessionStorage.setItem("TLUID",value.uid);
+            sessionStorage.setItem("Password",value.password);
             navigate("/AdminDashbord");
           } else {
             alert("Login Unsuccessful");

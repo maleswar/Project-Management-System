@@ -174,8 +174,8 @@ function Task() {
     task: "",
     TeamId: "",
     TlId: ID,
-    startdate: "",
-    enddate: "",
+    startDate: "",
+    endDate: "",
     description: "",
     priority: "",
     Progress: "Pending",
@@ -192,8 +192,8 @@ function Task() {
       task: "",
       TeamId: "",
       TlId: ID,
-      startdate: "",
-      enddate: "",
+      startDate: "",
+      endDate: "",
       description: "",
       priority: "",
       Progress: "Pending",
@@ -244,6 +244,7 @@ function Task() {
       return false;
     }
     closeDrawer();
+    // TaskAllData();
   };
 
   useEffect(() => {
@@ -401,16 +402,16 @@ function Task() {
               <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 sm:space-x-0 md:space-x-5 lg:space-x-5">
                 <div>
                   <label
-                    htmlFor="startdate"
+                    htmlFor="startDate"
                     className="block mb-2 text-sm font-medium text-gray-900 "
                   >
                     Start Date
                   </label>
                   <input
                     type="date"
-                    name="startdate"
-                    id="startdate"
-                    value={formData.startdate}
+                    name="startDate"
+                    id="startDate"
+                    value={formData.startDate}
                     onChange={handleChange}
                     min={new Date().toISOString().split("T")[0]} // Set min attribute to today's date
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -419,16 +420,16 @@ function Task() {
 
                 <div>
                   <label
-                    htmlFor="enddate"
+                    htmlFor="endDate"
                     className="block mb-2 text-sm font-medium text-gray-900 "
                   >
                     End Date
                   </label>
                   <input
                     type="date"
-                    name="enddate"
-                    id="enddate"
-                    value={formData.enddate}
+                    name="endDate"
+                    id="endDate"
+                    value={formData.endDate}
                     onChange={handleChange}
                     min={
                       new Date(Date.now() + 86400000)
@@ -651,10 +652,10 @@ function Task() {
                           {Description}
                         </td>
                         <td className="border border-blue-gray-300 p-2">
-                          {start_date}
+                          {formatTimestamp(start_date)}
                         </td>
                         <td className="border border-blue-gray-300 p-2">
-                          {End_date}
+                          {formatTimestamp(End_date)}
                         </td>
                         <td className="border border-blue-gray-300 p-2">
                           {Priority}

@@ -1,15 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaPlus } from "react-icons/fa";
-import ReactApexChart from "react-apexcharts";
-import Welcome from "../AdminDashboard/Assest/Vector/Dashboard.png";
-import Cards from "./Layouts/Cards";
-import axios from "axios";
 import { Link } from "react-router-dom";
+
+import axios from "axios";
+import { MdEditSquare } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 import { FaTimes } from "react-icons/fa";
-import { IoBriefcaseOutline } from "react-icons/io5";
-import { SlPeople } from "react-icons/sl";
-import { IoCheckmarkCircleOutline } from "react-icons/io5";
-import { Editor } from "@tinymce/tinymce-react";
+
 import {
   checkEmpty,
   validateDropdown,
@@ -19,9 +16,43 @@ import {
 
 const Team = () => {
   const ID = sessionStorage.getItem("TLID");
-
+  const uid = sessionStorage.getItem("TLUID");
+  const password = sessionStorage.getItem("Password");
+  const [showModal, setShowModal] = useState(false);
+  const [name, setName] = useState("");
+  const [TeamId, setTeamId] = useState("");
   const [TeamMember, setTeamMember] = useState([]);
   const [roles, setRoles] = useState([]);
+  const [ProjectName, setProjectName] = useState([]);
+
+  const fetchProjectData = async () => {
+    try {
+      const tlid = sessionStorage.getItem("TLID");
+      const response = await axios.get(
+        `http://localhost:3001/Project/ProjectNames?tlid=${tlid}`
+      );
+      const ProjectName = response.data.data;
+      setProjectName(ProjectName);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
+  };
+
+  const handleEditClick = (teamId, teamName) => {
+    setName(teamName);
+
+    setTeamId(teamId);
+    setShowModal(true);
+  };
+  console.log(TeamId);
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleSaveChanges = () => {
+    // Handle saving changes here
+    setShowModal(false);
+  };
 
   const [formData, setFormData] = useState({
     tlid: ID,
@@ -31,6 +62,8 @@ const Team = () => {
     roles: "",
     qualification: "",
     skills: "",
+    uid: uid,
+    password: password,
   });
   const Roles = async () => {
     try {
@@ -50,6 +83,8 @@ const Team = () => {
       roles: "",
       qualification: "",
       skills: "",
+      uid: uid,
+      password: password,
     });
     setDrawerOpen(true);
   };
@@ -78,6 +113,7 @@ const Team = () => {
   useEffect(() => {
     TeamMemberList();
     Roles();
+    fetchProjectData();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -137,6 +173,29 @@ const Team = () => {
     closeDrawer();
   };
 
+  const DeleteTeam = async (Team_id) => {
+    const result = window.confirm("Are You sure To Delete the Team Member");
+    if (result) {
+      const tlid = sessionStorage.getItem("TLID");
+      const TeamId = Team_id;
+
+      try {
+        const response = await axios.post(
+          `http://localhost:3001/Team/DeleteTeamMember?tlid=${tlid}&TeamId=${TeamId}`
+        );
+        var count = response.data.data.affectedRows;
+
+        if (count >= 1) {
+          alert("Team Member Deleted Successfully");
+        } else {
+          alert("there are some error");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -155,6 +214,45 @@ const Team = () => {
     };
   }, []);
 
+  const [modalFormData, setModalFormData] = useState({
+    teamid: "",
+    projectid: "",
+    roles: "",
+  });
+
+  const handleChangeForModal = (e) => {
+    const { name, value } = e.target;
+    setModalFormData({ ...modalFormData, [name]: value });
+  };
+
+  useEffect(() => {
+    setModalFormData((prevFormData) => ({
+      ...prevFormData,
+      teamid: TeamId,
+    }));
+  }, [TeamId]);
+  console.log(modalFormData);
+
+  const handleUpdateChange = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/Team/TeamProjectUpdation",
+        modalFormData
+      );
+      var count = response.data.data.affectedRows;
+
+      if (count >= 1) {
+        alert("Updation Successfully");
+      } else {
+        alert("there are some error");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    TeamMemberList();
+    handleModalClose();
+  };
   return (
     <div className="w-full h-screen pt-10">
       <div className="p-5 bg-bgSky h-full grid grid-cols-1 gap-y-4">
@@ -171,14 +269,14 @@ const Team = () => {
               Add New Team Member
             </button>
           </div>
-         
+
           <div
-          ref={drawerRef}
-          id="drawer-right-example"
-          className={`fixed top-0 right-0 z-50 h-screen p-4 overflow-y-auto transition-transform ${
-            isDrawerOpen ? "translate-x-0" : "translate-x-full"
-          } bg-white w-full sm:w-[90%] md:w-[80%] lg:w-[40%] xl:w-[40%] dark:bg-gray-800 border-l border-gray-300`}
-        >
+            ref={drawerRef}
+            id="drawer-right-example"
+            className={`fixed top-0 right-0 z-50 h-screen p-4 overflow-y-auto transition-transform ${
+              isDrawerOpen ? "translate-x-0" : "translate-x-full"
+            } bg-white w-full sm:w-[90%] md:w-[80%] lg:w-[40%] xl:w-[40%] dark:bg-gray-800 border-l border-gray-300`}
+          >
             <section className="p-7">
               <div className="flex items-center justify-between mb-4">
                 <h1 className="text-2xl font-bold text-center text-gray-900 -mt-3">
@@ -342,6 +440,9 @@ const Team = () => {
                       <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
                         Name
                       </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
+                        Project Name
+                      </th>
                       <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                         Email
                       </th>
@@ -357,6 +458,12 @@ const Team = () => {
                       <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                         Skills
                       </th>
+                      <th
+                        className="border-r-0 border-l-0 border-t-0 border-b  border-blue-gray-300 p-2"
+                        colSpan={2}
+                      >
+                        Action
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -364,7 +471,9 @@ const Team = () => {
                     {TeamMember.map(
                       (
                         {
+                          Team_id,
                           Team_name,
+                          Project_name,
                           Email,
                           Roles,
                           Phone_number,
@@ -376,6 +485,9 @@ const Team = () => {
                         <tr key={index} className="text-left">
                           <td className="border border-blue-gray-300 p-2">
                             {Team_name}
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            {Project_name}
                           </td>
                           <td className="border border-blue-gray-300 p-2">
                             {Email}
@@ -392,6 +504,23 @@ const Team = () => {
                           <td className="border border-blue-gray-300 p-2">
                             {Skills}
                           </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            <button
+                              onClick={() =>
+                                handleEditClick(Team_id, Team_name, Email)
+                              }
+                            >
+                              <MdEditSquare className="h-7 w-6 " />
+                            </button>
+                          </td>
+                          <td className="border border-blue-gray-300 p-2">
+                            <button>
+                              <MdDelete
+                                className="h-7 w-6 "
+                                onClick={() => DeleteTeam(Team_id)}
+                              />
+                            </button>
+                          </td>
                         </tr>
                       )
                     )}
@@ -400,6 +529,95 @@ const Team = () => {
               </div>
             </div>
           </div>
+          {showModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white rounded-lg overflow-hidden shadow-xl h-fit w-1/2">
+                <div className="p-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">
+                      Assign Project To Team Member
+                    </h3>
+                    <button
+                      onClick={handleModalClose}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      <FaTimes />
+                    </button>
+                  </div>
+                  <form onSubmit={handleUpdateChange}>
+                    <div className="space-y-6">
+                      <div className="mt-4">
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                          Team Member Name
+                        </label>
+                        <input
+                          disabled
+                          type="text"
+                          placeholder="Name"
+                          value={name}
+                          className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                          Project Names
+                        </label>
+                        <select
+                          name="projectid"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                          value={modalFormData.projectid}
+                          onChange={handleChangeForModal}
+                        >
+                          <option value="" disabled>
+                            Select Project
+                          </option>
+                          {ProjectName.map((project) => (
+                            <option
+                              key={project.Project_id}
+                              value={project.Project_id}
+                            >
+                              {project.Project_name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                          Designations
+                        </label>
+                        <select
+                          name="roles"
+                          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                          value={modalFormData.roles}
+                          onChange={handleChangeForModal}
+                        >
+                          <option value="" disabled>
+                            Select One
+                          </option>
+                          {roles.map((role) => (
+                            <option
+                              key={role.roles_names}
+                              value={role.roles_names}
+                            >
+                              {role.roles_names}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex justify-end">
+                      <button
+                        type="submit"
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

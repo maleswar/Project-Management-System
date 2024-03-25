@@ -47,34 +47,35 @@ function UploadImage() {
   return (
     <div className="h-screen bg-bgSky flex justify-center items-center">
     <div className="p-5 bg-white rounded-lg shadow-lg flex  w-96 justify-center">
-      <div>
-        <label htmlFor="upload-image" className="cursor-pointer">
-          <div className="rounded-full w-64 h-64 flex justify-center items-center bg-gray-200">
-            {image ? (
-              <img src={URL.createObjectURL(image)} alt="Uploaded" className="w-full h-full rounded-full object-cover" />
-            ) : (
-              <FaCamera size={64} color="#333" />
-            )}
-          </div>
-        </label>
-        <input
-          type="file"
-          id="upload-image"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="hidden"
-        />
-        <div className="gap-x-4">
-           <button onClick={handleImageUpload} className="mt-2 mr-2 px-4 py-2 bg-blue-500 text-white rounded-md">
-          Upload Image
-        </button>
-        <Link to="ProfileForm">
-        <button  className="mt-2  ml-2 px-4 py-2 w-40   bg-blue-500 text-white rounded-md">
-          Next
-        </button></Link>
-        </div>
-       
-      </div>
+    <div className="flex flex-col items-center">
+  <label htmlFor="upload-image" className="cursor-pointer">
+    <div className="rounded-full w-64 h-64 flex justify-center items-center bg-gray-200 border border-double ">
+      {image ? (
+        <img src={URL.createObjectURL(image)} alt="Uploaded" className="w-full h-full rounded-full object-cover" />
+      ) : (
+        <FaCamera size={64} color="#333" />
+      )}
+    </div>
+  </label>
+  <input
+    type="file"
+    id="upload-image"
+    accept="image/*"
+    onChange={handleImageChange}
+    className="hidden"
+  />
+  <div className="gap-x-4 mt-4">
+    <button onClick={handleImageUpload} className="px-4 mr-2 py-2 bg-blue-500 text-white rounded-md">
+      Upload Image
+    </button>
+    <Link to="ProfileForm">
+      <button className="px-4 py-2 w-40 bg-blue-500 ml-2 text-white rounded-md">
+        Next
+      </button>
+    </Link>
+  </div>
+</div>
+
     </div>
   </div>
   );

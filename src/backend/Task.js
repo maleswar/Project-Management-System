@@ -33,7 +33,7 @@ router.post("/AddNewTask", (req, res) => {
     req.body.priority,
     req.body.projectid,
     req.body.TlId,
-    req.body.progress,
+    req.body.Progress,
  ];
   pool.getConnection((err, connection) => {
     if (err) {
@@ -42,7 +42,7 @@ router.post("/AddNewTask", (req, res) => {
 
     let query =
       "insert into Task (`Task_name`,`Description`,`Team_id`,`Start_date`,`End_date`,`Priority`,`Project_id`,`TL_id`,`Progress`) values(?)";
-    connection.query(query, [value], (err, data) => {
+    connection.query(query,[value], (err, data) => {
       connection.release();
 
       if (err) {
@@ -155,6 +155,27 @@ router.get("/TaskTeamData", (req, res) => {
   });
 });
 
+//Team Dashbord Routes
+
+router.get("/TeamTaskCompleted", (req, res) => {
+  const teamid=req.query.teamid;
+const projectId=req.query.projectId;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+    let query = "SELECT count(*) from Task where Progress='Completed' and Team_id=? and Project_id=?";
+    connection.query(query,[teamid,projectId], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
 
 
 module.exports = router;
