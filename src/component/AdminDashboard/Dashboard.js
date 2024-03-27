@@ -114,7 +114,7 @@ const Dashboard = () => {
     const tlid = sessionStorage.getItem("TLID");
     try {
       const response = await axios.get(
-        `http://localhost:3001/Project/ProjectCompleteCount?tlid=${tlid}`
+        `http://localhost:3001/Project/ProjectCancledCount?tlid=${tlid}`
       );
       const projectCancled = response.data.data[0]["count(*)"];
       setProjectCancled(projectCancled);
@@ -288,10 +288,10 @@ const Dashboard = () => {
       projectCompleted !== null &&
       projectPending !== null
     ) {
-      const series = [projectCancled, projectCompleted, projectPending];
+      const series = [projectCompleted,projectCancled,  projectPending];
       setChartSeries(series);
     }
-  }, [projectCancled, projectCompleted, projectPending]);
+  }, [ projectCompleted,projectCancled, projectPending]);
 
   const TABLE_HEAD1 = ["Issues", "Team Member Name"];
 
@@ -774,9 +774,9 @@ const Dashboard = () => {
                       <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
                         Project Name
                       </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      {/* <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                         Team Member
-                      </th>
+                      </th> */}
                       <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                         Budget
                       </th>
@@ -784,14 +784,14 @@ const Dashboard = () => {
                   </thead>
                   <tbody>
                     {BudgetList.map(
-                      ({ Project_name, Budget, Team_name }, index) => (
+                      ({ Project_name, Budget }, index) => (
                         <tr key={index}>
                           <td className="border border-blue-gray-300 p-2">
                             {Project_name}
                           </td>
-                          <td className="border border-blue-gray-300 p-2">
+                          {/* <td className="border border-blue-gray-300 p-2">
                             {Team_name}
-                          </td>
+                          </td> */}
                           <td className="border border-blue-gray-300 p-2">
                             {Budget}
                           </td>

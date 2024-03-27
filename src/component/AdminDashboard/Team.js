@@ -64,6 +64,7 @@ const Team = () => {
     skills: "",
     uid: uid,
     password: password,
+    Active: 'Active',
   });
   const Roles = async () => {
     try {
@@ -85,6 +86,7 @@ const Team = () => {
       skills: "",
       uid: uid,
       password: password,
+      Active: 'Active',
     });
     setDrawerOpen(true);
   };
@@ -143,10 +145,12 @@ const Team = () => {
         }
       } catch (err) {
         console.log(err);
+
       }
     } else {
       return false;
     }
+    closeDrawer();
     TeamMemberList();
   };
 
@@ -194,6 +198,7 @@ const Team = () => {
         console.log(err);
       }
     }
+    TeamMemberList();
   };
 
   useEffect(() => {
@@ -434,32 +439,32 @@ const Team = () => {
                 Team Members
               </h2>
               <div className="overflow-auto">
-                <table className="w-full">
-                  <thead className="border-t border-b bg-gray-400">
-                    <tr className="text-left">
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
+                <table className="w-full  overflow-x -scroll ">
+                  <thead className="border-t border-b text-black text-left border-gray-100 bg-gray-200">
+                    <tr >
+                      <th className="p-4  text-slate-700 ">
                         Name
                       </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
+                      <th className="p-4  text-slate-700">
                         Project Name
                       </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      <th className="p-4  text-slate-700">
                         Email
                       </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      <th className="p-4  text-slate-700">
                         Designation
                       </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      <th className="p-4  text-slate-700">
                         Phone Number
                       </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      <th className="p-4  text-slate-700">
                         Qualification
                       </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      <th className="p-4  text-slate-700">
                         Skills
                       </th>
                       <th
-                        className="border-r-0 border-l-0 border-t-0 border-b  border-blue-gray-300 p-2"
+                        className="p-4  text-slate-700"
                         colSpan={2}
                       >
                         Action
@@ -482,29 +487,29 @@ const Team = () => {
                         },
                         index
                       ) => (
-                        <tr key={index} className="text-left">
-                          <td className="border border-blue-gray-300 p-2">
+                        <tr key={index} className="">
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
                             {Team_name}
                           </td>
-                          <td className="border border-blue-gray-300 p-2">
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
                             {Project_name}
                           </td>
-                          <td className="border border-blue-gray-300 p-2">
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-9">
                             {Email}
                           </td>
-                          <td className="border border-blue-gray-300 p-2">
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
                             {Roles}
                           </td>
-                          <td className="border border-blue-gray-300 p-2">
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
                             {Phone_number}
                           </td>
-                          <td className="border border-blue-gray-300 p-2">
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
                             {Qualification}
                           </td>
-                          <td className="border border-blue-gray-300 p-2">
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
                             {Skills}
                           </td>
-                          <td className="border border-blue-gray-300 p-2">
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
                             <button
                               onClick={() =>
                                 handleEditClick(Team_id, Team_name, Email)
@@ -513,7 +518,7 @@ const Team = () => {
                               <MdEditSquare className="h-7 w-6 " />
                             </button>
                           </td>
-                          <td className="border border-blue-gray-300 p-2">
+                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
                             <button>
                               <MdDelete
                                 className="h-7 w-6 "

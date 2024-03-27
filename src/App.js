@@ -21,6 +21,8 @@ import TeamTable from "./component/TeamDashbord/TeamTable ";
 import TeamTask from "./component/TeamDashbord/TeamTask ";
 import NotFound from "./pages/NotFound";
 import ProjectCalendarChart from "./component/TeamDashbord/ProjectCalendarChart";
+import TeamMessage from "./component/TeamDashbord/TeamMessage";
+import TeamReport from "./component/TeamDashbord/TeamReport";
 
 function App() {
   return (
@@ -51,8 +53,10 @@ function App() {
         <Route path="/TeamDashbord/*" element={<TeamSideBar />}>
           <Route index element={<HomeDashboard />} />
           <Route path="project" element={<TeamProject />} />
+          <Route path="message" element={<TeamMessage />} />
           <Route path="team" element={<TeamTable />} />
           <Route path="task" element={<TeamTask />} />
+          <Route path="report" element={<TeamReport />} />
           <Route path="calendar" element={<ProjectCalendarChart />} />
 
         </Route>

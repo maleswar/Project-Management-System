@@ -4,123 +4,155 @@ import Team from "./Assest/Vector/Team.png";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
 
-
 function HomeDashbord() {
-const teamid=sessionStorage.getItem("TeamID");
-const TeamName=sessionStorage.getItem("TeamName");
-const [projectName ,setProjectName]=useState([]);
-const [completedTask ,setCompletedTask]=useState([]);
-alert(projectName);
-alert(completedTask);
-
-
-
-useEffect(() => {
-  // Fetch completed tasks for each project
-  projectData.forEach((project) => {
-    fetchCompletedTasks(project.Project_id);
-  });
-}, [projectData]);
-
-const ProjectData = async () => {
-  const tlid = sessionStorage.getItem("TLID");
-
-  await axios
-    .get(`http://localhost:3001/Project/TeamProjectNameData?tlid=${teamid}`)
-    .then((res) => {
-      let list = res.data;
-      let projectName = list.data;
-      setProjectName(projectName);
-      // (project);
-    });
-};
-
-const fetchCompletedTasks = async (projectId) => {
   const teamid = sessionStorage.getItem("TeamID");
-  try {
-    const res = await axios.get(`http://localhost:3001/Task/TeamTaskCompleted?tlid=${teamid}&projectId=${projectId}`);
-    setCompletedTask(prevCompletedTasks => ({
-      ...prevCompletedTasks,
-      [projectId]: res.data.data
-    }));
-  } catch (error) {
-    console.error("Error fetching completed tasks:", error);
-  }
-};
+  const TeamName = sessionStorage.getItem("TeamName");
+  const [completedProject, setCompletedProject] = useState([]);
+  const [PendingProject, setPendingProject] = useState([]);
+  const [TeamLeader, setTeamLeader] = useState([]);
+  const [completedTask, setCompletedTask] = useState([]);
 
+  const ProjectCompletedCount = async () => {
+    const teamID = sessionStorage.getItem("TeamID");
 
-
-
-
-
-
-
-
-  const projectData = {
-    "Project A": { completedTasks: 50, pendingTasks: 20, teamMembers: ["John", "Alice", "Bob"] },
-    "Project B": { completedTasks: 40, pendingTasks: 10, teamMembers: ["Alice", "Charlie", "David"] },
-    "Project C": { completedTasks: 30, pendingTasks: 5, teamMembers: ["John", "David", "Eve"] },
+    await axios
+      .get(
+        `http://localhost:3001/Project/TeamIDCompletedProject?TeamID=${teamID}`
+      )
+      .then((res) => {
+        const completedProject = res.data.data[0]["count(*)"];
+        setCompletedProject(completedProject);
+        // (project);
+      });
   };
+  const ProjectPendingCount = async () => {
+    const teamID = sessionStorage.getItem("TeamID");
+
+    await axios
+      .get(
+        `http://localhost:3001/Project/TeamIDPendingProject?TeamID=${teamID}`
+      )
+      .then((res) => {
+        const PendingProject = res.data.data[0]["count(*)"];
+        setPendingProject(PendingProject);
+        // (project);
+      });
+  };
+
+  const TeamLeaderList = async () => {
+    const teamid = sessionStorage.getItem("TeamID");
+
+    await axios
+      .get(`http://localhost:3001/TL/TeamTLDetailDashbord?teamid=${teamid}`)
+      .then((res) => {
+        let list = res.data;
+        let TeamLeader = list.data;
+        
+        setTeamLeader(TeamLeader);
+        // (project);
+      });
+  };
+
+  const fetchCompletedTasks = async (projectId) => {
+    const teamid = sessionStorage.getItem("TeamID");
+    try {
+      const res = await axios.get(
+        `http://localhost:3001/Task/TeamTaskCompleted?tlid=${teamid}&projectId=${projectId}`
+      );
+      setCompletedTask((prevCompletedTasks) => ({
+        ...prevCompletedTasks,
+        [projectId]: res.data.data,
+      }));
+    } catch (error) {
+      console.error("Error fetching completed tasks:", error);
+    }
+  };
+
+  useEffect(() => {
+    ProjectCompletedCount();
+    ProjectPendingCount();
+    TeamLeaderList();
+  }, []);
+
+  const projectData = [
+    {
+      name: "Project A",
+      completedTasks: 50,
+      pendingTasks: 20,
+      teamMembers: ["John", "Alice", "Bob"],
+    },
+    {
+      name: "Project B",
+      completedTasks: 40,
+      pendingTasks: 10,
+      teamMembers: ["Alice", "Charlie", "David"],
+    },
+    {
+      name: "Project C",
+      completedTasks: 30,
+      pendingTasks: 5,
+      teamMembers: ["John", "David", "Eve"],
+    },
+  ];
 
   const chartData = {
     series: [
       {
-        name: 'Completed Tasks',
-        data: Object.values(projectData).map(project => project.completedTasks)
+        name: "Completed Tasks",
+        data: Object.values(projectData).map(
+          (project) => project.completedTasks
+        ),
       },
       {
-        name: 'Pending Tasks',
-        data: Object.values(projectData).map(project => project.pendingTasks)
-      }
+        name: "Pending Tasks",
+        data: Object.values(projectData).map((project) => project.pendingTasks),
+      },
     ],
     options: {
       chart: {
-        type: 'bar',
+        type: "bar",
         height: 400,
       },
       plotOptions: {
         bar: {
           horizontal: false,
-          columnWidth: '55%',
-          endingShape: 'rounded'
+          columnWidth: "55%",
+          endingShape: "rounded",
         },
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       stroke: {
         show: true,
         width: 2,
-        colors: ['transparent']
+        colors: ["transparent"],
       },
       xaxis: {
         categories: Object.keys(projectData),
       },
       yaxis: {
         title: {
-          text: 'Number of Tasks'
-        }
+          text: "Number of Tasks",
+        },
       },
       fill: {
-        opacity: 1
+        opacity: 1,
       },
       tooltip: {
-        custom: function({ seriesIndex, dataPointIndex, w }) {
+        custom: function ({ seriesIndex, dataPointIndex, w }) {
           const project = Object.values(projectData)[dataPointIndex];
-          if (seriesIndex === 0) { // Only show tooltip for completed tasks
+          if (seriesIndex === 0) {
+            // Only show tooltip for completed tasks
             const teamMembers = project.teamMembers.join(", ");
             return `<div class="tooltip">Completed Tasks: ${w.globals.series[seriesIndex][dataPointIndex]}`;
           } else {
             return false; // Hide tooltip for pending tasks
           }
-        }
-      }
+        },
+      },
     },
   };
-
-
-
-  
 
   const [todos, setTodos] = useState([
     {
@@ -178,6 +210,13 @@ const fetchCompletedTasks = async (projectId) => {
     setTLName("");
     setDescription("");
   };
+  // useEffect(() => {
+
+  //   // Fetch completed tasks for each project
+  //   projectData.forEach((project) => {
+  //     fetchCompletedTasks(project.Project_id);
+  //   });
+  // }, [projectData]);
 
   const sm = window.innerWidth < 640; // Define 'sm' for small screens
 
@@ -211,7 +250,7 @@ const fetchCompletedTasks = async (projectId) => {
           {/* Cards */}
           <div className="w-full">
             <div class="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-x-10 mx-auto">
-              <Cards title="Completed Projects" value="10">
+              <Cards title="Completed Projects" value={completedProject}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="36"
@@ -237,7 +276,7 @@ const fetchCompletedTasks = async (projectId) => {
                 </svg>
               </Cards>
 
-              <Cards title="Pending Projects" value="25">
+              <Cards title="Pending Projects" value={PendingProject}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="36"
@@ -271,20 +310,20 @@ const fetchCompletedTasks = async (projectId) => {
           </div>
 
           <div className="w-full">
-  <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:w-full gap-x-10 mx-auto mt-7 space-y-7 sm:space-y-7 md:space-y-7 lg:space-y-0">
-<div className="bg-white rounded-lg shadow-lg px-3 py-5">
-     <h1>Task Completion Status</h1>
-      <div className="w-full h-full">
-        <ReactApexChart
-          options={chartData.options}
-          series={chartData.series}
-          type="bar"
-          height={400}
-        />
-      </div>
-</div>
-  </div>
-</div>
+            <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:w-full gap-x-10 mx-auto mt-7 space-y-7 sm:space-y-7 md:space-y-7 lg:space-y-0">
+              <div className="bg-white rounded-lg shadow-lg px-3 py-5">
+                <h1>Task Completion Status</h1>
+                <div className="w-full h-full">
+                  <ReactApexChart
+                    options={chartData.options}
+                    series={chartData.series}
+                    type="bar"
+                    height={400}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="w-full">
             <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-x-10 mx-auto mt-7 space-y-7 sm:space-y-7 md:space-y-7 lg:space-y-0">
@@ -312,13 +351,13 @@ const fetchCompletedTasks = async (projectId) => {
                   <ul>
                     {todos.map((todo) => (
                       <div key={todo.id} className="items-center mb-4">
-<input
-  type="checkbox"
-  id={`project-todo-${todo.id}`}
-  checked={todo.completed}
-  onChange={() => handleToggle(todo.id)}
-  className="mr-2"
-/>
+                        <input
+                          type="checkbox"
+                          id={`project-todo-${todo.id}`}
+                          checked={todo.completed}
+                          onChange={() => handleToggle(todo.id)}
+                          className="mr-2"
+                        />
                         <label
                           htmlFor={`project-todo-${todo.id}`}
                           className={`text-lg ${
@@ -338,43 +377,46 @@ const fetchCompletedTasks = async (projectId) => {
                   Team Leader List
                 </h2>
                 <div className="overflow-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-100">
+                  <table className="w-full text-left overflow-x -scroll">
+                    <thead className="border-t border-b text-black border-gray-100 bg-gray-200">
                       <tr>
-                        <th className="border border-blue-gray-300 p-2 text-gray-700">
-                          Project Name
+                        <th className="p-4  text-slate-700">
+                          Profile Image
                         </th>
-                        <th className="border border-blue-gray-300 p-2 text-gray-700">
+                        <th className="p-4  text-slate-700">
                           Team Leader Name
                         </th>
-                        <th className="border border-blue-gray-300 p-2 text-gray-700">
-                          Budget
+                        <th className="p-4  text-slate-700">
+                          Project Name
+                        </th>
+                        <th className="p-4  text-slate-700">
+                           Budget
                         </th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td className="border border-blue-gray-300 p-2">
-                          Project A
-                        </td>
-                        <td className="border border-blue-gray-300 p-2">
-                          John Doe
-                        </td>
-                        <td className="border border-blue-gray-300 p-2">
-                          $10,000
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border border-blue-gray-300 p-2">
-                          Project B
-                        </td>
-                        <td className="border border-blue-gray-300 p-2">
-                          Jane Smith
-                        </td>
-                        <td className="border border-blue-gray-300 p-2">
-                          $12,500
-                        </td>
-                      </tr>
+                      {TeamLeader.map(
+                        ({ TL_fname, TL_lname, profile_image,Project_name,Budget }, index) => (
+                          <tr key={index}>
+                            <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                              <img
+                                src={require(`../../image/${profile_image}`)}
+                                alt="student profile"
+                                className="h-10 w-10 rounded-full cursor-pointer"
+                              />
+                            </td>
+                            <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                              {TL_fname} {TL_lname}
+                            </td>
+                            <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                              {Project_name}
+                            </td>
+                            <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                              {Budget}
+                            </td>
+                          </tr>
+                        )
+                      )}
                     </tbody>
                   </table>
                 </div>

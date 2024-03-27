@@ -4,22 +4,37 @@ const bodyParser = require("body-parser");
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
-// import image from ""
+const xlsx = require('xlsx');
+
+
+
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public'));
 
-
-// Multer configuration for storing uploaded images
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../image/'));  // Specify the directory where uploaded images will be stored
+    // Determine the destination directory based on the file type
+    let destination;
+    if (file.fieldname === 'image') {
+      destination = '../image/'; // For profile photos
+    } else if (file.fieldname === 'excelFile') {
+      destination = path.join(__dirname, '../Excel/'); // For Excel files
+    } else {
+      destination = '../Default/'; // Default destination directory
+    }
+    cb(null, destination);
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + path.extname(file.originalname));// Generate a unique filename for each uploaded image
-  }
+    // Generate a unique filename for each uploaded file
+    cb(null, Date.now() + "-" + path.extname(file.originalname));
+  },
 });
-const upload = multer({ storage: storage });
+
+// Create separate instances of multer for uploading profile photos and Excel files
+const uploadImage = multer({ storage: storage });
+const uploadExcel = multer({ storage: storage });
+
 
 // Import routers
 const ManagerRouter = require("./Manager");

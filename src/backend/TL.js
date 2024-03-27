@@ -12,10 +12,13 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + "-" + path.extname(file.originalname)); // Generate a unique filename for each uploaded image
   },
 });
-const upload = multer({ storage: storage });
+const uploadImage = multer({ storage: storage });
+
+
+
 
 // Route to upload profile photo
-router.post("/TLProfilePhoto", upload.single("image"), (req, res) => {
+router.post("/TLProfilePhoto", uploadImage.single("image"), (req, res) => {
   const image = req.file.filename;
   const tlid = req.query.tlid;
   try {
@@ -166,6 +169,32 @@ router.post("/TLProfileUpdate", (req, res) => {
     });
   } catch (error) {
     console.error( error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// team Dashbord;
+router.get("/TeamTLDetailDashbord", (req, res) => {
+  const teamid=req.query.teamid;
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) {
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      let query = "select tl.TL_id, tl.TL_fname, tl.TL_lname,tl.profile_image,Project.Project_name,Project.Budget,team.team_id from TL join Project on  tl.TL_id=Project.TL_id join  team  on tl.TL_id=team.TL_id and Team.Project_id=Project.Project_id where Team.team_id=?  ";
+      connection.query(query,teamid, (err, data) => {
+        connection.release();
+
+        if (err) {
+          return res.status(500).json({ error: "Database Error" });
+        } else {
+          return res.status(200).json({ data: data });
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Error fetching TL names:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });

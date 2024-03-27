@@ -186,11 +186,13 @@ function Profile() {
                 <div className="flex flex-col items-center md:flex-row justify-center md:justify-start mb-11">
                   <input type="file" className="hidden" />
                   {imageUrl && (
+                    <a href={require(`../../image/${imageUrl}`)} download>
                     <img
                       src={require(`../../image/${imageUrl}`)}
                       alt="student profile"
                       className="h-40 w-40 rounded-full cursor-pointer"
-                    />
+                      download
+                    /></a>
                   )}
 
                   <div className="md:ml-4">

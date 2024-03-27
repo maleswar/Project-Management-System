@@ -15,6 +15,7 @@ const Project = () => {
       .then((res) => {
         let list = res.data;
         let project = list.data;
+        project.sort((a, b) => a.Project_id - b.Project_id);
         setProject(project);
         // (project);
       });
@@ -66,6 +67,20 @@ const Project = () => {
         return ""; // Default color if status doesn't match any case
     }
   };
+  const isDateCloser = (endDate) => {
+    const today = new Date(); // Today's date
+    const end = new Date(endDate); // End date
+  
+    // Calculate the difference in months between the end date and today's date
+    const monthsDiff = (end.getFullYear() - today.getFullYear()) * 12 + (end.getMonth() - today.getMonth());
+  
+    // Check if the difference in months is less than or equal to 2
+    if (monthsDiff <= 2) {
+      return true;
+    }
+  
+    return false;
+  };
 
   useEffect(() => {
     ProjectData();
@@ -85,6 +100,7 @@ const Project = () => {
                   <tr>
                     <th className="p-4  text-slate-700">Project Id</th>
                     <th className="p-4 text-slate-700">Project Name</th>
+                    <th className="p-4 text-slate-700">Team Name</th>
                     <th className="p-4 text-slate-700">Start Date</th>
                     <th className="p-4 text-slate-700">End Date</th>
                     <th className="p-4 text-slate-700">Status</th>
@@ -101,6 +117,7 @@ const Project = () => {
                       {
                         Project_id,
                         Project_name,
+                        Team_name,
                         Start_date,
                         End_date,
                         Status,
@@ -117,10 +134,13 @@ const Project = () => {
                         <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
                           {Project_name}
                         </td>{" "}
+                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                          {Team_name}
+                        </td>{" "}
                         <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
                           {formatTimestamp(Start_date)}
                         </td>{" "}
-                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4 ">
+                        <td className={`border-t border-b  left-0 border-blue-gray-300 p-4 ${isDateCloser(End_date) ? 'text-red-500' : ''}`}>
                           {formatTimestamp(End_date)}
                         </td>
                         <td
