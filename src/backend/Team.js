@@ -3,8 +3,9 @@ const router = express.Router();
 const pool = require("./databaseConfig");
 const multer = require("multer");
 const xlsx = require('xlsx');
+const path = require('path');
+const app = express();
 
-// Configure multer for handling file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Determine the destination directory based on the file type
@@ -21,6 +22,7 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     // Generate a unique filename for each uploaded file
     cb(null, Date.now() + "-" + path.extname(file.originalname));
+    req.uploadTimestamp = new Date();
   },
 });
 
@@ -28,22 +30,43 @@ const storage = multer.diskStorage({
 const uploadImage = multer({ storage: storage });
 const uploadExcel = multer({ storage: storage });
 
-router.post("/updateTLExcelFile", uploadExcel.single("file"), (req, res) => {
-  const { tl_id, description } = req.body;
-  const excelFile = req.file.file;
+app.use('/Excel', express.static(path.join(__dirname, '../Excel/')));
+// Custom error handling middleware for multer
+const handleMulterError = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    // A Multer error occurred when uploading.
+    console.error('Multer Error:', err);
+    return res.status(400).json({ error: 'File Upload Error' });
+  } else if (err) {
+    // An unknown error occurred when uploading.
+    console.error('Unknown Error:', err);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+  next();
+};
 
+router.post("/updateTLExcelFile", (req, res, next) => {
+  req.uploadTimestamp = new Date();
+  next(); // Call next middleware
+}, uploadExcel.single("file"), handleMulterError, (req, res) => {
+  const teamID = req.query.teamID;
+  const { teamLeader, description,Active } = req.body;
+  const excelFile = req.file.filename; // Use req.file.filename to get the filename
+  const uploadTimestamp = req.uploadTimestamp;
+  console.log(uploadTimestamp);
   try {
     pool.getConnection((err, connection) => {
       if (err) {
         return res.status(500).json({ error: "Internal Server Error" });
       }
-
-      let query = "UPDATE TL SET Excel_file = ?, description = ? WHERE TL_id = ?";
-      connection.query(query, [excelFile, description, tl_id], (err, data) => {
+      let query="INSERT INTO Report (TL_id, Team_id, File_name, Description, Uploaded_at,Active) VALUES (?, ?, ?, ?, ?,?) ON DUPLICATE KEY UPDATE TL_id = VALUES(TL_id), Team_id = VALUES(Team_id), File_name = VALUES(File_name), Description = VALUES(Description), Uploaded_at = VALUES(Uploaded_at),Active = VALUES(Active)";
+      // let query = "UPDATE TL JOIN Team ON Team.Tl_id = TL.TL_id SET TL.Report =?, TL.Description =? WHERE  TL.TL_id = ? AND Team.Team_id = ?";
+      connection.query(query, [teamLeader,teamID,excelFile,description,uploadTimestamp,Active], (err, data) => {
+       
         connection.release();
-
+        
         if (err) {
-          console.error('Error updating TL data:', err);
+          console.error('Error updating Report data:', err);
           return res.status(500).json({ error: "Database Error" });
         } else {
           return res.status(200).json({ data: data });
@@ -51,10 +74,37 @@ router.post("/updateTLExcelFile", uploadExcel.single("file"), (req, res) => {
       });
     });
   } catch (error) {
-    console.error("Error updating TL data:", error);
+    console.error("Error updating Report data:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+router.get("/FetchTheReportData", (req, res) => {
+  const TeamId = req.query.TeamId;
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) {
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      let query = "SELECT TL.TL_fname, TL.TL_lname, Team.Team_name, Report.Upload_id, Report.File_name, Report.Description, Report.Uploaded_at, Report.Comment  FROM TL JOIN Team ON TL.TL_id = Team.TL_id JOIN Report ON (Team.Team_id = Report.Team_id OR TL.TL_id = Report.TL_id) WHERE Team.Team_id = ? AND Report.Active = 'Active'";
+      connection.query(query, TeamId, (err, data) => {
+        connection.release();
+        if (err) {
+          console.error('Error Fetching Report data:', err);
+          return res.status(500).json({ error: "Database Error" });
+        } else {
+          return res.status(200).json({ data: data });
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Error updating Report data:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+
 
 
 

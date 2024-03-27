@@ -3,64 +3,87 @@ import { FaTimes } from "react-icons/fa";
 import { HiOutlineCloudDownload } from "react-icons/hi";
 import axios from "axios";
 
-function TeamReport() {
-  const [formData, setFormData] = useState({
-    teamLeader: "",
-    description: "",
-    fileName: "",
-  });
-  console.log(FormData);
 
+function TeamReport() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [excelFile, setExcelFile] = useState(null);
   const drawerRef = useRef(null);
   const buttonRef = useRef(null);
 
+  const [formData, setFormData] = useState({
+    teamLeader: "",
+    description: "",
+    file: null,
+    fileName: "",
+    Active:"Active",
+  });
+  
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setExcelFile(file);
-    setFormData((prevData) => ({
-      ...prevData,
-      fileName: file.name,
-    }));
+    setFormData({
+      ...formData,
+      file: file,
+      fileName: file ? file.name : "",
+    });
   };
+  console.log(formData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const teamID = sessionStorage.getItem("TeamID");
+
     try {
-      const formData = new FormData();
-      formData.append("excelFile", excelFile);
-      formData.append("teamLeader", formData.teamLeader); // Change to formData.get("teamLeader")
-      formData.append("description", formData.description); // Change to formData.get("description")
-      
-      // Make a POST request to update the Excel file and description
-      await axios.post(``, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-  
-      // Reset form data after submission
-      setFormData({
-        teamLeader: "",
-        description: "",
-        fileName: "",
-      });
-      // Close drawer after submission
-      setIsDrawerOpen(false);
+      const form = new FormData(); // Create a new FormData object
+
+      // Append the values directly from the form data state
+      form.append("file", formData.file);
+      form.append("teamLeader", formData.teamLeader); 
+      form.append("description", formData.description);
+      form.append("Active",formData.Active);
+
+      const response = await fetch(
+        `http://localhost:3001/Team/updateTLExcelFile?teamID=${teamID}`,
+        {
+          method: "POST",
+          body: form, // Use the FormData object
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update Excel file.");
+      }
+
+      const data = await response.json();
+      alert("Excel file updated successfully:", data);
+      fetchReportData();
+      // You can perform additional actions after successful update, like showing a success message or redirecting the user.
     } catch (error) {
-      console.error("Error updating Excel file and description:", error);
-      // Handle error
+      console.error("Error updating Excel file:", error.message);
+      // Handle error, such as displaying an error message to the user.
     }
   };
+
+  const [reportData, setReportData] = useState([]);
+  const fetchReportData = async () => {
+    const teamID = sessionStorage.getItem("TeamID");
+
+    await axios
+      .get(`http://localhost:3001/Team/FetchTheReportData?TeamId=${teamID}`)
+      .then((res) => {
+        let list = res.data;
+        let reportData = list.data;
+        setReportData(reportData);
+        // (project);
+      });
+  };
+
+  useEffect(() => {
+    fetchReportData();
+  }, []);
 
   const openDrawer = () => {
     setIsDrawerOpen(true);
@@ -71,8 +94,6 @@ function TeamReport() {
     setIsDrawerOpen(false);
     buttonRef.current.focus();
   };
-
-  
 
   const [TeamLeaderList, setTeamLeaderList] = useState([]);
   const TeamLederList = async () => {
@@ -90,6 +111,19 @@ function TeamReport() {
   useEffect(() => {
     TeamLederList();
   }, []);
+
+  function formatDateTime(dateTimeString) {
+    const dateTime = new Date(dateTimeString);
+
+    // Extract date and time components
+    const date = dateTime.toLocaleDateString();
+    const time = dateTime.toLocaleTimeString();
+
+    // Concatenate date and time
+    const formattedDateTime = `${date}  ${time}`;
+
+    return formattedDateTime;
+}
   return (
     <div className="w-full h-full mt-10">
       <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4 h-screen">
@@ -131,9 +165,9 @@ function TeamReport() {
                   <option value="" disabled>
                     Select Project
                   </option>
-                  {TeamLeaderList.map((TL) => (
-                    <option key={TL.TL_ID} value={TL.TL_ID}>
-                      {TL.TL_fname} {TL.TL_lname}
+                  {TeamLeaderList.map((TeamMember) => (
+                    <option key={TeamMember.TL_ID} value={TeamMember.TL_ID}>
+                      {TeamMember.TL_fname} {TeamMember.TL_lname}
                     </option>
                   ))}
                 </select>
@@ -167,7 +201,6 @@ function TeamReport() {
                 <label
                   htmlFor="file"
                   className="bg-cover bg-center bg-gray-50 border border-gray-300 border-dashed text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 w-full p-10 cursor-pointer text-center relative z-10 flex flex-col justify-center items-center"
-                  
                 >
                   <HiOutlineCloudDownload className="w-14 h-14" />
                   <p className="mt-2">Drag & drop to upload or browse</p>
@@ -178,12 +211,11 @@ function TeamReport() {
                   {formData.fileName}
                 </p>
               )}
-
               <button
                 type="submit"
-                className="w-full bg-customBlue text-white px-5 py-2.5 text-center rounded-md"
+                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
               >
-                Send
+                Submit
               </button>
             </form>
           </section>
@@ -193,36 +225,74 @@ function TeamReport() {
           <div className="mx-auto bg-white shadow-lg px-5 py-5 mt-7 rounded-lg">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold text-customBlue">
-                Project Report
+                Project Reports
               </h2>
               <button
                 ref={buttonRef}
                 className="bg-customBlue text-white font-semibold p-2 rounded-md"
                 onClick={openDrawer}
               >
-                Send Report
+                Send Reports
               </button>
             </div>
             <div className="overflow-auto">
               <table className="w-full text-left">
                 <thead className="bg-blue-gray-200">
                   <tr>
+                    <th className="p-2">Name</th>
                     <th className="p-2">TL Name</th>
                     <th className="p-2">Description</th>
-                    <th className="p-2">File Name</th>
+                    <th className="p-2">TimeStamp</th>
+                    <th className="p-2">Files</th>
+                    <th className="p-2">Comment Of TL</th>
+                    
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="p-2">John Deo</td>
-                    <td className="p-2">Description for John Deo's Report</td>
-                    <td className="p-2">report_john_deo.pdf</td>
-                  </tr>
-                  <tr>
-                    <td className="p-2">John Smith</td>
-                    <td className="p-2">Description for John Smith's Report</td>
-                    <td className="p-2">report_john_smith.pdf</td>
-                  </tr>
+                  {reportData.map(
+                    (
+                      {
+                        Upload_id,
+                        TL_fname,
+                        TL_lname,
+                        Team_name,
+                        File_name,
+                        Description,
+                        Uploaded_at,
+                        Comment,
+                      },
+                      index
+                    ) => (
+                      <tr key={index}>
+                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                          {Team_name}
+                        </td>{" "}
+                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                          {TL_fname} {TL_lname}
+                        </td>{" "}
+                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                          {Description}
+                        </td>{" "}
+                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
+                          {formatDateTime(Uploaded_at)}
+                        </td>{" "}
+                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4 " title="Download">
+                          <a
+                            href={require(`../../Excel/${File_name}`)}
+                            download={File_name}
+                            target="_blank"
+                            className="text-blue-900"
+                          >
+                            {File_name}
+                          </a>
+                        </td>
+                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
+                          {Comment}
+                        </td>
+                        
+                      </tr>
+                    )
+                  )}
                 </tbody>
               </table>
             </div>

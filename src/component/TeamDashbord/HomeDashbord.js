@@ -39,7 +39,7 @@ function HomeDashbord() {
       });
   };
 
-  const TeamLeaderList = async () => {
+  const TeamLeaderListWithData = async () => {
     const teamid = sessionStorage.getItem("TeamID");
 
     await axios
@@ -68,10 +68,25 @@ function HomeDashbord() {
     }
   };
 
+  const [TeamLeaderList, setTeamLeaderList] = useState([]);
+  const TeamLederList = async () => {
+    try {
+      const TeamID = sessionStorage.getItem("TeamID");
+      const response = await axios.get(
+        `http://localhost:3001/Team/TeamLeaderList?TeamId=${TeamID}`
+      );
+      const TeamLeaderList = response.data.data;
+      setTeamLeaderList(TeamLeaderList);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
+  };
+
   useEffect(() => {
     ProjectCompletedCount();
     ProjectPendingCount();
-    TeamLeaderList();
+    TeamLeaderListWithData();
+     TeamLederList();
   }, []);
 
   const projectData = [
@@ -434,26 +449,36 @@ function HomeDashbord() {
                   </h2>
                   <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                      <label
-                        htmlFor="tlName"
-                        className="block mb-2 text-base font-medium text-gray-900 "
-                      >
-                        Team Leader Name:
-                      </label>
-                      <input
-                        type="text"
-                        id="tlName"
-                        value={tlName}
-                        onChange={(e) => setTLName(e.target.value)}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      />
+                    <label
+                  htmlFor="teamLeader"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Team Leader
+                </label>
+                <select
+                  name="teamLeader"
+                  id="teamLeader"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  required
+                  
+                 
+                >
+                  <option value="" disabled>
+                    Select Project
+                  </option>
+                  {TeamLeaderList.map((TeamMember) => (
+                    <option key={TeamMember.TL_ID} value={TeamMember.TL_ID}>
+                      {TeamMember.TL_fname} {TeamMember.TL_lname}
+                    </option>
+                  ))}
+                </select>
                     </div>
                     <div className="form-group mt-3">
                       <label
                         htmlFor="description"
                         className="block mb-2 text-base font-medium text-gray-900"
                       >
-                        Description:
+                        Issue:
                       </label>
                       <textarea
                         id="description"
