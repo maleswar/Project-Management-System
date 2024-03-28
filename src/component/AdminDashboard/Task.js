@@ -7,6 +7,8 @@ import { IoTrophyOutline } from "react-icons/io5";
 import { RxCounterClockwiseClock } from "react-icons/rx";
 import { IoTrashOutline } from "react-icons/io5";
 import { Editor } from "@tinymce/tinymce-react";
+import { MdEditSquare } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 import axios from "axios";
 import {
   checkEmpty,
@@ -24,6 +26,46 @@ function Task() {
   const [taskAllData, setTaskAllData] = useState([]);
   const [ProjectName, setProjectName] = useState([]);
   const [teamFormMember, setTeamFormMember] = useState([]);
+  const [Taskid, setTaskid] = useState("");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleEditClick = (Task_id) => {
+    setIsModalOpen(true);
+    setTaskid(Task_id);
+  };
+  const StatusUpdated = async (e) => {
+    e.preventDefault();
+    const Progress = document.getElementById("status").value;
+    const tlid = sessionStorage.getItem("TLID");
+
+    try {
+      const response = await axios.post(
+        `http://localhost:3001/Task/TaskStatusUpdate?tlid=${tlid}&TaskID=${Taskid}`,
+        { Progress: Progress }
+      );
+      const UpdatedStatus = response.data.data.affectedRows;
+      if (UpdatedStatus >= 1) {
+        alert("Task Updated Sucessfully");
+      } else {
+        alert("Task Updated Unsucessfully");
+      }
+    } catch (error) {
+      console.error("Error fetching Completed Task count:", error);
+    }
+    closeModal();
+    TaskAllData();
+    TaskData();
+    TaskTeam();
+  };
 
   const CompletedTask = async () => {
     const tlid = sessionStorage.getItem("TLID");
@@ -220,7 +262,7 @@ function Task() {
       validateDropdown("projectid", "Project Name", "projectidspan") &&
       checkEmpty("task", "Task Name", "taskspan") &&
       validateDropdown("TeamId", "Team Member", "TeamIdspan") &&
-      validateDates("startDate", "endDate","datespan") &&
+      validateDates("startDate", "endDate", "datespan") &&
       validateDropdown("priority", "Priority", "priorityspan");
 
     // alert(result);
@@ -439,8 +481,7 @@ function Task() {
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
                 </div>
-              <span id="datespan" className="text-red-700"></span>
-
+                <span id="datespan" className="text-red-700"></span>
               </div>
               <div>
                 <label
@@ -701,12 +742,16 @@ function Task() {
                     <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Comments
                     </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {taskAllData.map(
                     (
                       {
+                        Task_id,
                         Task_name,
                         Description,
                         start_date,
@@ -727,6 +772,11 @@ function Task() {
                           {Progress}
                         </td>
                         <td className=" p-2">{Comments}</td>
+                        <td className=" p-2">
+                          <button onClick={() => handleEditClick(Task_id)}>
+                            <MdEditSquare className="h-7 w-6 " />
+                          </button>
+                        </td>
                       </tr>
                     )
                   )}
@@ -735,6 +785,47 @@ function Task() {
             </div>
           </div>
         </div>
+        {isModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg overflow-hidden shadow-xl max-w-3xl w-full">
+              <div className="p-8">
+                <h2 className="text-lg font-semibold mb-4">Edit Task</h2>
+                <form className="mb-4" onSubmit={StatusUpdated}>
+                  <label
+                    htmlFor="status"
+                    className="block mb-2 font-medium text-gray-700"
+                  >
+                    Select Status:
+                  </label>
+                  <select
+                    name="status"
+                    id="status"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Cancel">Cancel</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={closeModal}
+                      className="text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit" // Changed to type "submit"
+                      className="ml-2 inline-flex justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-customBlue hover:bg-primary-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
