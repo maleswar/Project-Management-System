@@ -129,16 +129,16 @@ function TeamReport() {
     return formattedDateTime;
 }
   return (
-    <div className="w-full h-full mt-10">
-      <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4 h-screen">
+    <div className="w-full h-full mt-10  bg-bgSky">
+      <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4 h-full">
         <div
           ref={drawerRef}
           id="drawer-right-example"
-          className={`fixed top-0 right-0 z-50 h-screen p-4 overflow-y-auto transition-transform ${
+          className={`fixed top-0 right-0 z-50 h-full p-4 overflow-y-auto transition-transform ${
             isDrawerOpen ? "translate-x-0" : "translate-x-full"
           } bg-white w-full sm:w-[90%] md:w-[80%] lg:w-[40%] xl:w-[40%] dark:bg-gray-800 border-l border-gray-300`}
         >
-          <section className="bg-white w-full max-w-2xl p-7 max-h-screen overflow-y-auto">
+          <section className="bg-white w-full max-w-2xl p-7 max-h-full overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-2xl font-bold text-center text-gray-900 -mt-3">
                 Report Send

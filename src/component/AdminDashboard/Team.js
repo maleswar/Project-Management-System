@@ -44,7 +44,7 @@ const Team = () => {
     setTeamId(teamId);
     setShowModal(true);
   };
-  console.log(TeamId);
+  // console.log(TeamId);
   const handleModalClose = () => {
     setShowModal(false);
   };
@@ -64,7 +64,7 @@ const Team = () => {
     skills: "",
     uid: uid,
     password: password,
-    Active: 'Active',
+    Active: "Active",
   });
   const Roles = async () => {
     try {
@@ -86,7 +86,7 @@ const Team = () => {
       skills: "",
       uid: uid,
       password: password,
-      Active: 'Active',
+      Active: "Active",
     });
     setDrawerOpen(true);
   };
@@ -145,7 +145,6 @@ const Team = () => {
         }
       } catch (err) {
         console.log(err);
-
       }
     } else {
       return false;
@@ -441,32 +440,16 @@ const Team = () => {
               <div className="overflow-auto">
                 <table className="w-full  overflow-x -scroll ">
                   <thead className="border-t border-b text-black text-left border-gray-100 bg-gray-200">
-                    <tr >
-                      <th className="p-4  text-slate-700 ">
-                        Name
-                      </th>
-                      <th className="p-4  text-slate-700">
-                        Project Name
-                      </th>
-                      <th className="p-4  text-slate-700">
-                        Email
-                      </th>
-                      <th className="p-4  text-slate-700">
-                        Designation
-                      </th>
-                      <th className="p-4  text-slate-700">
-                        Phone Number
-                      </th>
-                      <th className="p-4  text-slate-700">
-                        Qualification
-                      </th>
-                      <th className="p-4  text-slate-700">
-                        Skills
-                      </th>
-                      <th
-                        className="p-4  text-slate-700"
-                        colSpan={2}
-                      >
+                    <tr>
+                      <th className="p-4  text-slate-700 ">Profile</th>
+                      <th className="p-4  text-slate-700 ">Name</th>
+                      <th className="p-4  text-slate-700">Project Name</th>
+                      <th className="p-4  text-slate-700">Email</th>
+                      <th className="p-4  text-slate-700">Designation</th>
+                      <th className="p-4  text-slate-700">Phone Number</th>
+                      <th className="p-4  text-slate-700">Qualification</th>
+                      <th className="p-4  text-slate-700">Skills</th>
+                      <th className="p-4  text-slate-700" colSpan={2}>
                         Action
                       </th>
                     </tr>
@@ -476,6 +459,7 @@ const Team = () => {
                     {TeamMember.map(
                       (
                         {
+                          Profile_image,
                           Team_id,
                           Team_name,
                           Project_name,
@@ -488,6 +472,17 @@ const Team = () => {
                         index
                       ) => (
                         <tr key={index} className="">
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
+                          {Profile_image ? (
+  <img
+    src={require(`../../image/${Profile_image}`)}
+    alt="student profile"
+    className="h-10 w-10 rounded-full cursor-pointer"
+  />
+) : (
+  <span>No profile </span>
+)}
+                          </td>
                           <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
                             {Team_name}
                           </td>

@@ -16,9 +16,9 @@ function Profile() {
   const fetchImage = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3001/TL/TLPhoto?tlid=${tlid}`
+        `http://localhost:3001/TL/TLData?tlid=${tlid}`
       );
-      const imageUrl = response.data.imageUrl; // Retrieve imageUrl from the response
+      const imageUrl = response.data.data[0].profile_image; // Retrieve imageUrl from the response
       setImageUrl(imageUrl);
       // alert(imageUrl); // Set the imageUrl state
     } catch (error) {
@@ -35,10 +35,10 @@ function Profile() {
   const handleImageChange = () => {};
   const handleImageReset = () => {};
   const handleEditButtonClick = () => {};
-  const image = null; // Placeholder for image
+// Placeholder for image
 
   const fileInputRef = useRef(null);
-  const [imageSrc, setImageSrc] = useState(User);
+  
 
   const handleImageClick = () => {
     fileInputRef.current.click();
@@ -76,6 +76,7 @@ function Profile() {
           {Data.map(
             (
               {
+                profile_image,
                 TL_fname,
                 TL_lname,
                 C_name,

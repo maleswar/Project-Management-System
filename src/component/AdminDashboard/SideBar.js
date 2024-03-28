@@ -24,24 +24,32 @@ function Sidebar() {
       setName(Name);
       setTLID(tlid);
     }
-    fetchImage();
+   
     // AllData();
   }, []);
 
-  const [imageUrl, setImageUrl] = useState(null);
+  
 
+  const [imageUrl, setImageUrl] = useState(null);
   const fetchImage = async () => {
+    const ID = sessionStorage.getItem("TLID");
     try {
       const response = await axios.get(
-        `http://localhost:3001/TL/TLPhoto?tlid=${TLID}`
+        `http://localhost:3001/TL/TLData?tlid=${ID}`
       );
-      const imageUrl = response.data.imageUrl; // Retrieve imageUrl from the response
+      const imageUrl = response.data.data[0].profile_image; // Retrieve imageUrl from the response
       setImageUrl(imageUrl);
       // alert(imageUrl); // Set the imageUrl state
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    fetchImage();
+  }, []);
+
+
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -121,6 +129,7 @@ function Sidebar() {
                         className="h-10 w-10 rounded-full cursor-pointer"
                       />
                     )}
+                    
                   </button>
                 </div>
                 <div

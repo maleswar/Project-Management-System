@@ -3,46 +3,16 @@ const router = express.Router();
 const pool = require("./databaseConfig");
 const multer = require("multer");
 const path = require("path");
-const app = express();
 // Configure multer for handling file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Determine the destination directory based on the file type
-    let destination;
-    if (file.fieldname === 'image') {
-      destination = '../image/'; // For profile photos
-    } else if (file.fieldname === 'file') {
-      destination = path.join(__dirname, '../Excel/'); // For Excel files
-    } else {
-      destination = '../Default/'; // Default destination directory
-    }
-    cb(null, destination);
+    cb(null, path.join(__dirname, "../image/")); // Specify the directory where uploaded images will be stored
   },
   filename: (req, file, cb) => {
-    // Generate a unique filename for each uploaded file
-    cb(null, Date.now() + "-" + path.extname(file.originalname));
-    req.uploadTimestamp = new Date();
+    cb(null, Date.now() + "-" + path.extname(file.originalname)); // Generate a unique filename for each uploaded image
   },
 });
-
-// Create separate instances of multer for uploading profile photos and Excel files
 const uploadImage = multer({ storage: storage });
-const uploadExcel = multer({ storage: storage });
-
-app.use('/Excel', express.static(path.join(__dirname, '../Excel/')));
-// Custom error handling middleware for multer
-const handleMulterError = (err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    // A Multer error occurred when uploading.
-    console.error('Multer Error:', err);
-    return res.status(400).json({ error: 'File Upload Error' });
-  } else if (err) {
-    // An unknown error occurred when uploading.
-    console.error('Unknown Error:', err);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-  next();
-};
 
 
 
@@ -76,32 +46,32 @@ router.post("/TLProfilePhoto", uploadImage.single("image"), (req, res) => {
 
 // router.use('/image', express.static(path.join(__dirname, '../backend/image/')));
 
-router.get("/TLPhoto", (req, res) => {
-  const tlid = req.query.tlid;
+// router.get("/TLPhoto", (req, res) => {
+//   const tlid = req.query.tlid;
 
-  try {
-    pool.getConnection((err, connection) => {
-      if (err) {
-        return res.status(500).json({ error: "Internal Server Error" });
-      }
+//   try {
+//     pool.getConnection((err, connection) => {
+//       if (err) {
+//         return res.status(500).json({ error: "Internal Server Error" });
+//       }
 
-      let query = "SELECT Profile_image FROM TL WHERE TL_id=?";
-      connection.query(query, [tlid], (err, data) => {
-        connection.release();
+//       let query = "SELECT Profile_image FROM TL WHERE TL_id=?";
+//       connection.query(query, [tlid], (err, data) => {
+//         connection.release();
 
-        if (err) {
-          return res.status(500).json({ error: "Database Error" });
-        } else {
-          const imageUrl = data[0].Profile_image; // Assuming the image filename is stored in the 'Profile_image' field
-          return res.status(200).json({ imageUrl: imageUrl });
-        }
-      });
-    });
-  } catch (error) {
-    console.error("Error fetching TL data:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+//         if (err) {
+//           return res.status(500).json({ error: "Database Error" });
+//         } else {
+//           const imageUrl = data[0].Profile_image; // Assuming the image filename is stored in the 'Profile_image' field
+//           return res.status(200).json({ imageUrl: imageUrl });
+//         }
+//       });
+//     });
+//   } catch (error) {
+//     console.error("Error fetching TL data:", error);
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
 
 // Route to fetch TL data
 router.get("/TLData", (req, res) => {
