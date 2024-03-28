@@ -11,7 +11,7 @@ import axios from "axios"; //
 function Profile() {
   const [Data, setData] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
-  const tlid = sessionStorage.getItem("TLID");
+  const TeamID = sessionStorage.getItem("TeamID");
 
   const fetchImage = async () => {
     try {

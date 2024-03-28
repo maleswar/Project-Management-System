@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { BiHome } from "react-icons/bi";
 import { BiMessageDetail } from "react-icons/bi";
@@ -11,32 +11,37 @@ import Profile from "./Assest/img/Profile.jpg";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; //
 
-
 function Sidebar() {
-const Name=sessionStorage.getItem("TLName");
-const tlid = sessionStorage.getItem("TLID");
+  const [Name, setName] = useState("");
+  const [TLID, setTLID] = useState("");
+  
+  useEffect(() => {
+    const Name = sessionStorage.getItem("TLName");
+    const tlid = sessionStorage.getItem("TLID");
+    if (Name === null || tlid===null) {
+      navigate("/login");
+    }else{
+      setName(Name);
+      setTLID(tlid);
+    }
+    fetchImage();
+    // AllData();
+  }, []);
 
-const [imageUrl, setImageUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
 
-const fetchImage = async () => {
-  try {
-    const response = await axios.get(
-      `http://localhost:3001/TL/TLPhoto?tlid=${tlid}`
-    );
-    const imageUrl = response.data.imageUrl; // Retrieve imageUrl from the response
-    setImageUrl(imageUrl);
-    // alert(imageUrl); // Set the imageUrl state
-  } catch (error) {
-    console.log(error);
-  }
-};
-useEffect(() => {
-  fetchImage();
-  // AllData();
-}, []);
-
-
-
+  const fetchImage = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/TL/TLPhoto?tlid=${TLID}`
+      );
+      const imageUrl = response.data.imageUrl; // Retrieve imageUrl from the response
+      setImageUrl(imageUrl);
+      // alert(imageUrl); // Set the imageUrl state
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -50,18 +55,18 @@ useEffect(() => {
   };
   const navigate = useNavigate();
 
-  const SignOut=()=>{
-    var result=window.confirm("Are You Sure to Logout");
-    if(result){
-        sessionStorage.removeItem("TLID");
-        sessionStorage.removeItem("TLName");
-        sessionStorage.removeItem("TLUID");
-        sessionStorage.removeItem("Password");
-        // sessionStorage.removeItem("TeamID");
-        // sessionStorage.removeItem("TeamName");
-        navigate("/");
+  const SignOut = () => {
+    var result = window.confirm("Are You Sure to Logout");
+    if (result) {
+      sessionStorage.removeItem("TLID");
+      sessionStorage.removeItem("TLName");
+      sessionStorage.removeItem("TLUID");
+      sessionStorage.removeItem("Password");
+      // sessionStorage.removeItem("TeamID");
+      // sessionStorage.removeItem("TeamName");
+      navigate("/");
     }
-  }
+  };
   return (
     <div>
       {/* Navbar */}
@@ -110,12 +115,12 @@ useEffect(() => {
                     onClick={toggleProfile}
                   >
                     {imageUrl && (
-                    <img
-                      src={require(`../../image/${imageUrl}`)}
-                      alt="student profile"
-                      className="h-10 w-10 rounded-full cursor-pointer"
-                    />
-                  )}
+                      <img
+                        src={require(`../../image/${imageUrl}`)}
+                        alt="student profile"
+                        className="h-10 w-10 rounded-full cursor-pointer"
+                      />
+                    )}
                   </button>
                 </div>
                 <div
@@ -130,7 +135,10 @@ useEffect(() => {
                   }}
                 >
                   <div className="px-4 py-3" role="none">
-                    <p className="text-sm text-gray-900 w-44 font-bold" role="none">
+                    <p
+                      className="text-sm text-gray-900 w-44 font-bold"
+                      role="none"
+                    >
                       {Name}
                     </p>
                     <p
@@ -165,7 +173,10 @@ useEffect(() => {
                         Account Settings
                       </a>
                     </li> */}
-                    <li onClick={SignOut} className="block px-4 cursor-pointer py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white">
+                    <li
+                      onClick={SignOut}
+                      className="block px-4 cursor-pointer py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                    >
                       Sign out
                     </li>
                   </ul>
@@ -208,7 +219,7 @@ useEffect(() => {
               </div>
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link to="team" className="flex items-center">
-                <RiTeamLine className="w-8 h-8 text-white"/>
+                  <RiTeamLine className="w-8 h-8 text-white" />
                   <div className="text-xl font-semibold text-white ml-3">
                     <span className="hover:underline">Team</span>
                   </div>
@@ -227,17 +238,13 @@ useEffect(() => {
               </div>
 
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link
-                  to="project/task"
-                  className="flex items-center"
-                >
+                <Link to="project/task" className="flex items-center">
                   <GrTask className="w-8 h-8 text-white" />
                   <div className="text-xl font-semibold text-white ml-3">
                     <span className="hover:underline">Task</span>
                   </div>
                 </Link>
               </div>
-            
 
               {/* <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link

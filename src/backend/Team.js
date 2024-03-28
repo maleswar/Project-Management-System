@@ -32,23 +32,23 @@ const uploadExcel = multer({ storage: storage });
 
 app.use('/Excel', express.static(path.join(__dirname, '../Excel/')));
 // Custom error handling middleware for multer
-const handleMulterError = (err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    // A Multer error occurred when uploading.
-    console.error('Multer Error:', err);
-    return res.status(400).json({ error: 'File Upload Error' });
-  } else if (err) {
-    // An unknown error occurred when uploading.
-    console.error('Unknown Error:', err);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-  next();
-};
+// const handleMulterError = (err, req, res, next) => {
+//   if (err instanceof multer.MulterError) {
+//     // A Multer error occurred when uploading.
+//     console.error('Multer Error:', err);
+//     return res.status(400).json({ error: 'File Upload Error' });
+//   } else if (err) {
+//     // An unknown error occurred when uploading.
+//     console.error('Unknown Error:', err);
+//     return res.status(500).json({ error: 'Internal Server Error' });
+//   }
+//   next();
+// };
 
 router.post("/updateTLExcelFile", (req, res, next) => {
   req.uploadTimestamp = new Date();
   next(); // Call next middleware
-}, uploadExcel.single("file"), handleMulterError, (req, res) => {
+}, uploadExcel.single("file"), (req, res) => {
   const teamID = req.query.teamID;
   const { teamLeader, description,Active } = req.body;
   const excelFile = req.file.filename; // Use req.file.filename to get the filename

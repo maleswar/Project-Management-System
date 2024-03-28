@@ -59,12 +59,16 @@ function TeamReport() {
 
       const data = await response.json();
       alert("Excel file updated successfully:", data);
-      fetchReportData();
+      
       // You can perform additional actions after successful update, like showing a success message or redirecting the user.
     } catch (error) {
       console.error("Error updating Excel file:", error.message);
       // Handle error, such as displaying an error message to the user.
     }
+    setTimeout(() => {
+      fetchReportData();
+    }, 2000);
+    
   };
 
   const [reportData, setReportData] = useState([]);
@@ -194,7 +198,7 @@ function TeamReport() {
                   type="file"
                   name="file"
                   id="file"
-                  accept=".xlsx, .xls"
+                  accept=".xlsx, .xls,.pdf,.doc,.docx"
                   onChange={handleFileChange}
                   className="absolute inset-0 opacity-0 cursor-pointer"
                 />
