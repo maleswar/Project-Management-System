@@ -32,23 +32,24 @@ const uploadExcel = multer({ storage: storage });
 
 app.use('/Excel', express.static(path.join(__dirname, '../Excel/')));
 // Custom error handling middleware for multer
-// const handleMulterError = (err, req, res, next) => {
-//   if (err instanceof multer.MulterError) {
-//     // A Multer error occurred when uploading.
-//     console.error('Multer Error:', err);
-//     return res.status(400).json({ error: 'File Upload Error' });
-//   } else if (err) {
-//     // An unknown error occurred when uploading.
-//     console.error('Unknown Error:', err);
-//     return res.status(500).json({ error: 'Internal Server Error' });
-//   }
-//   next();
-// };
+const handleMulterError = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    // A Multer error occurred when uploading.
+    console.error('Multer Error:', err);
+    return res.status(400).json({ error: 'File Upload Error' });
+  } else if (err) {
+    // An unknown error occurred when uploading.
+    console.error('Unknown Error:', err);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+  next();
+};
 
 router.post("/updateTLExcelFile", (req, res, next) => {
   req.uploadTimestamp = new Date();
   next(); // Call next middleware
-}, uploadExcel.single("file"), (req, res) => {
+}, uploadExcel.single("file"),handleMulterError,
+ (req, res) => {
   const teamID = req.query.teamID;
   const { teamLeader, description,Active } = req.body;
   const excelFile = req.file.filename; // Use req.file.filename to get the filename
@@ -105,7 +106,31 @@ router.get("/FetchTheReportData", (req, res) => {
 
 
 
+router.post("/TeamProfilePhoto", uploadImage.single("image"), (req, res) => {
+  const image = req.file.filename;
+  const TeamID = req.query.TeamID;
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) {
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
 
+      let query = "Update  Team set Profile_image = ? where Team_id=?";
+      connection.query(query, [image, TeamID], (err, data) => {
+        connection.release();
+
+        if (err) {
+          return res.status(500).json({ error: "Database Error" });
+        } else {
+          return res.status(200).json({ data: data });
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Error fetching TL data:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 
 
@@ -127,13 +152,14 @@ router.get("/FetchTheReportData", (req, res) => {
 
 
 router.get("/TeamData", (req, res) => {
+  const teamid=req.query.teamid;
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "SELECT * FROM Team ";
-    connection.query(query, (err, data) => {
+    let query = "SELECT * FROM Team where Team_id=?";
+    connection.query(query,teamid, (err, data) => {
       connection.release();
 
       if (err) {

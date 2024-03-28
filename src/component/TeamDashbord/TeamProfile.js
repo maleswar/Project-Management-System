@@ -11,14 +11,15 @@ import axios from "axios"; //
 function Profile() {
   const [Data, setData] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
-  const TeamID = sessionStorage.getItem("TeamID");
+  
 
   const fetchImage = async () => {
+    const ID = sessionStorage.getItem("TeamID");
     try {
       const response = await axios.get(
-        `http://localhost:3001/TL/TLPhoto?tlid=${tlid}`
+        `http://localhost:3001/Team/TeamData?teamid=${ID}`
       );
-      const imageUrl = response.data.imageUrl; // Retrieve imageUrl from the response
+      const imageUrl = response.data.data[0].Profile_image; // Retrieve imageUrl from the response
       setImageUrl(imageUrl);
       // alert(imageUrl); // Set the imageUrl state
     } catch (error) {
@@ -38,17 +39,17 @@ function Profile() {
   const image = null; // Placeholder for image
 
   const fileInputRef = useRef(null);
-  const [imageSrc, setImageSrc] = useState(User);
+  
 
   const handleImageClick = () => {
     fileInputRef.current.click();
   };
 
   const AllData = async () => {
-    const tlid = sessionStorage.getItem("TLID");
+    const ID = sessionStorage.getItem("TeamID");
 
     await axios
-      .get(`http://localhost:3001/TL/TLData?tlid=${tlid}`)
+      .get(`http://localhost:3001/Team/TeamData?teamid=${ID}`)
       .then((res) => {
         let list = res.data;
         let Data = list.data;
@@ -76,15 +77,14 @@ function Profile() {
           {Data.map(
             (
               {
-                TL_fname,
-                TL_lname,
+                Team_name,
                 C_name,
                 Email,
                 Uniq_id,
-                Password,
-                role,
-                Phone_number,
-                Skill,
+                password,
+                Roles,
+                phone_number,
+                Skills,
                 Qualification,
                 Date_of_birth,
                 city,
@@ -107,7 +107,7 @@ function Profile() {
                   </button></Link>
                 </div>
 
-                <div className="flex flex-col items-center md:flex-row justify-center md:justify-start mb-11">
+                <div className="flex flex-col items-center md:flex-row justify-center md:justify-start mb-11" >
                   <input type="file" className="hidden" />
                   {imageUrl && (
                     <a href={require(`../../image/${imageUrl}`)} download>
@@ -121,9 +121,9 @@ function Profile() {
 
                   <div className="md:ml-4">
                     <h1 className="font-bold text-4xl text-customBlue">
-                      {TL_fname} {TL_lname}
+                    {Team_name}
                     </h1>
-                    <h4 className="text-lg">{role}</h4>
+                    <h4 className="text-lg">{Roles}</h4>
                     <ul className="flex gap-4">
                       <li>
                       <a href={`https://www.instagram.com/${Data && Data.instagram}`} target="_blank">
@@ -159,9 +159,9 @@ function Profile() {
                       <p>City: {city}</p>
                       <p>State: {state} </p>
                       <p>Country: {country}</p>
-                      <p>Skills: {Skill}</p>
+                      <p>Skills: {Skills}</p>
                       <p>Qualification: {Qualification}</p>
-                      <p>Password: {Password}</p>
+                      <p>Password: {password}</p>
                       <p>Uniq ID: {Uniq_id}</p>
                     </div>
                   </div>
@@ -171,7 +171,7 @@ function Profile() {
                     </h1>
                     <div className="text-gray-700 leading-7">
                       <p>Email Address: {Email}</p>
-                      <p>Phone Number: {Phone_number}</p>
+                      <p>Phone Number: {phone_number}</p>
                     </div>
                   </div>
                   <div>

@@ -3,16 +3,46 @@ const router = express.Router();
 const pool = require("./databaseConfig");
 const multer = require("multer");
 const path = require("path");
+const app = express();
 // Configure multer for handling file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../image/")); // Specify the directory where uploaded images will be stored
+    // Determine the destination directory based on the file type
+    let destination;
+    if (file.fieldname === 'image') {
+      destination = '../image/'; // For profile photos
+    } else if (file.fieldname === 'file') {
+      destination = path.join(__dirname, '../Excel/'); // For Excel files
+    } else {
+      destination = '../Default/'; // Default destination directory
+    }
+    cb(null, destination);
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + path.extname(file.originalname)); // Generate a unique filename for each uploaded image
+    // Generate a unique filename for each uploaded file
+    cb(null, Date.now() + "-" + path.extname(file.originalname));
+    req.uploadTimestamp = new Date();
   },
 });
+
+// Create separate instances of multer for uploading profile photos and Excel files
 const uploadImage = multer({ storage: storage });
+const uploadExcel = multer({ storage: storage });
+
+app.use('/Excel', express.static(path.join(__dirname, '../Excel/')));
+// Custom error handling middleware for multer
+const handleMulterError = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    // A Multer error occurred when uploading.
+    console.error('Multer Error:', err);
+    return res.status(400).json({ error: 'File Upload Error' });
+  } else if (err) {
+    // An unknown error occurred when uploading.
+    console.error('Unknown Error:', err);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+  next();
+};
 
 
 

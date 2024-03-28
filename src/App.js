@@ -23,6 +23,9 @@ import NotFound from "./pages/NotFound";
 import ProjectCalendarChart from "./component/TeamDashbord/ProjectCalendarChart";
 import TeamMessage from "./component/TeamDashbord/TeamMessage";
 import TeamReport from "./component/TeamDashbord/TeamReport";
+import TeamProfile from "./component/TeamDashbord/TeamProfile";
+import TeamUploadProfile from "./component/TeamDashbord/TeamUploadProfile";
+import TeamUploadProfileForm from "./component/TeamDashbord/TeamUpdateProfileForm";
 
 function App() {
   return (
@@ -58,6 +61,9 @@ function App() {
           <Route path="task" element={<TeamTask />} />
           <Route path="report" element={<TeamReport />} />
           <Route path="calendar" element={<ProjectCalendarChart />} />
+          <Route path="profile" element={<TeamProfile />} />
+          <Route path="profile/UploadImage" element={<TeamUploadProfile />} />
+          <Route path="profile/UploadImage/ProfileForm" element={<TeamUploadProfileForm />} />
 
         </Route>
         <Route path="*" element={<NotFound />} />

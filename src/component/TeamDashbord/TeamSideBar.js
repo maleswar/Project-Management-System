@@ -1,9 +1,49 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import Logo from "./Assest/img/Logo.svg";
 import Profile from "./Assest/img/Profile.jpg";
+import { useNavigate } from "react-router-dom";
+import axios from "axios"; 
 
 function TeamSidebar() {
+  const [Name, setName] = useState("");
+  const [ID, setID] = useState("");
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    const Name = sessionStorage.getItem("TeamName");
+    const ID = sessionStorage.getItem("TeamID");
+    if (Name === null || ID===null) {
+      navigate("/login");
+    }else{
+      setName(Name);
+      setID(ID);
+    }
+    
+  }, []);
+
+  const [imageUrl, setImageUrl] = useState(null);
+  const fetchImage = async () => {
+    const ID = sessionStorage.getItem("TeamID");
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/Team/TeamData?teamid=${ID}`
+      );
+      const imageUrl = response.data.data[0].Profile_image; // Retrieve imageUrl from the response
+      setImageUrl(imageUrl);
+      // alert(imageUrl); // Set the imageUrl state
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchImage();
+  }, []);
+
+
+
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -13,6 +53,15 @@ function TeamSidebar() {
 
   const toggleProfile = () => {
     setProfileOpen(!profileOpen);
+  };
+
+  const SignOut = () => {
+    var result = window.confirm("Are You Sure to Logout");
+    if (result) {
+      sessionStorage.removeItem("TeamID");
+      sessionStorage.removeItem("TeamName");
+      navigate("/");
+    }
   };
 
   return (
@@ -62,11 +111,14 @@ function TeamSidebar() {
                     data-dropdown-toggle="dropdown-user"
                     onClick={toggleProfile}
                   >
-                    <img
-                      className="w-10 h-10 rounded-full"
-                      src={Profile}
-                      alt="user photo"
-                    />
+                    {imageUrl && (
+                      <img
+                        src={require(`../../image/${imageUrl}`)}
+                        alt="student profile"
+                        className="h-10 w-10 rounded-full cursor-pointer"
+                      />
+                    )}
+                    
                   </button>
                 </div>
                 <div
@@ -81,34 +133,27 @@ function TeamSidebar() {
                   }}
                 >
                   <div className="px-4 py-3" role="none">
-                    <p className="text-sm text-gray-900 " role="none">
-                      John Deo
+                    <p className="text-sm text-gray-900 w-44" role="none">
+                    {Name}
                     </p>
-                    <p
-                      className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
-                      role="none"
-                    >
-                      johndeo@gmail.com
-                    </p>
+                    
                   </div>
                   <ul className="py-1" role="none">
                     <li>
+                      <Link to="profile">
                       <a
-                        href="#"
+                        
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                         role="menuitem"
                       >
                         My Profile
-                      </a>
+                      </a></Link>
                     </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Sign out
-                      </a>
+                    <li
+                      onClick={SignOut}
+                      className="block px-4 cursor-pointer py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                    >
+                      Sign out
                     </li>
                   </ul>
                 </div>
