@@ -7,7 +7,7 @@ import { RiTeamLine } from "react-icons/ri";
 import { GrTask } from "react-icons/gr";
 import { MdInsertChartOutlined } from "react-icons/md";
 import Logo from "./Assest/img/Logo.svg";
-import Profile from "./Assest/img/Profile.jpg";
+import { HiOutlineDocumentReport } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; //
 
@@ -234,9 +234,9 @@ function Sidebar() {
                   </div>
                 </Link>
               </div>
-              <hr className="mt-5" />
+              
 
-              <div className="flex items-center px-5 py-3 mt-12 space-x-3 cursor-pointer">
+              <div className="flex items-center px-5 py-3  space-x-3 cursor-pointer">
                 <Link to="project" className="flex items-center">
                   <GoProjectRoadmap className="w-8 h-8 text-white" />
 
@@ -247,10 +247,20 @@ function Sidebar() {
               </div>
 
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link to="project/task" className="flex items-center">
+                <Link to="task" className="flex items-center">
                   <GrTask className="w-8 h-8 text-white" />
                   <div className="text-xl font-semibold text-white ml-3">
                     <span className="hover:underline">Task</span>
+                  </div>
+                </Link>
+              </div>
+
+
+              <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
+                <Link to="report" className="flex items-center">
+                  <HiOutlineDocumentReport className="w-8 h-8 text-white" />
+                  <div className="text-xl font-semibold text-white ml-3">
+                    <span className="hover:underline">Report</span>
                   </div>
                 </Link>
               </div>

@@ -10,7 +10,8 @@ import Team from "./component/AdminDashboard/Team";
 import Project from "./component/AdminDashboard/Project";
 import EditProjectForm from "./component/AdminDashboard/EditProjectForm";
 import Message from "./component/AdminDashboard/Message";
-import Tracking from "./component/AdminDashboard/Tracking";
+import Report from "./component/AdminDashboard/Report";
+
 import Profile from "./component/AdminDashboard/Profile";
 import ProfileForm from "./component/AdminDashboard/ProfileForm";
 import UploadImage from "./component/AdminDashboard/UploadImage";
@@ -44,8 +45,9 @@ function App() {
             path="EditProjectForm/:projectId"
             element={<EditProjectForm />}
           />
-          <Route path="project/task" element={<Task />} />
-          <Route path="project/tracking" element={<Tracking />} />
+          <Route path="task" element={<Task />} />
+          <Route path="report" element={<Report />} />
+          
           <Route path="profile" element={<Profile />} />
           <Route path="profile/UploadImage" element={<UploadImage />} />
           <Route

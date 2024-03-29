@@ -46,9 +46,7 @@ const Project = () => {
     ProjectData();
   };
 
-  const handleEditClick = (Project_id) => {
-    // alert(Project_id);
-  };
+
   // Function to format the timestamp
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);

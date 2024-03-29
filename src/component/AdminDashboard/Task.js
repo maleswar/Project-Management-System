@@ -26,7 +26,104 @@ function Task() {
   const [taskAllData, setTaskAllData] = useState([]);
   const [ProjectName, setProjectName] = useState([]);
   const [teamFormMember, setTeamFormMember] = useState([]);
-  const [Taskid, setTaskid] = useState("");
+  const [EditProjectData, setEditProjectData] = useState([]);
+  const [taskid, settaskid] = useState([]);
+
+  const [editData, setEditData] = useState({
+    status: "",
+    task: "",
+    TeamId: "",
+    startDate: new Date(),
+    endDate: new Date(),
+    description: "",
+    priority: "",
+  });
+
+  console.log(editData);
+
+  const handleEditClick = async (taskId) => {
+    
+    openModal();
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/Task/TaskDataForUpdate?Taskid=${taskId}`
+      );
+      const EditProjectData = response.data.data;
+      setEditProjectData(EditProjectData);
+
+      if (EditProjectData.length > 0) {
+        setEditData({
+          status: EditProjectData[0].Progress,
+          task: EditProjectData[0].Task_name,
+          TeamId: EditProjectData[0].Team_id,
+          startDate: EditProjectData[0].Start_date,
+          endDate: EditProjectData[0].End_date,
+          description: EditProjectData[0].Description,
+          priority: EditProjectData[0].Priority,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching task data:", error);
+    }
+    settaskid(taskId);
+  };
+
+
+  const EditChange = (e) => {
+    const { name, value } = e.target;
+    setEditData({ ...editData, [name]: value });
+  };
+
+const UpdateTaskData=async(e)=>{
+  e.preventDefault();
+  // alert(taskid);
+    try {
+      // Format start date and end date before sending to backend
+      const formattedStartDate = formatDate(editData.startDate);
+      const formattedEndDate = formatDate(editData.endDate);
+
+      const response = await axios.post(
+        `http://localhost:3001/Task/UpdateTask?Taskid=${taskid}`,
+        {
+          ...editData,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+        }
+      );
+      var count = response.data.data.affectedRows;
+
+      if (count === 1) {
+        alert("Task Updated Successfully");
+        closeModal();
+        TaskAllData();
+      } else {
+        alert("Project Updated Unsuccessfully");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  
+}
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+
+
+
+
+
+
+
+
+
+
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -38,34 +135,7 @@ function Task() {
     setIsModalOpen(false);
   };
 
-  const handleEditClick = (Task_id) => {
-    setIsModalOpen(true);
-    setTaskid(Task_id);
-  };
-  const StatusUpdated = async (e) => {
-    e.preventDefault();
-    const Progress = document.getElementById("status").value;
-    const tlid = sessionStorage.getItem("TLID");
 
-    try {
-      const response = await axios.post(
-        `http://localhost:3001/Task/TaskStatusUpdate?tlid=${tlid}&TaskID=${Taskid}`,
-        { Progress: Progress }
-      );
-      const UpdatedStatus = response.data.data.affectedRows;
-      if (UpdatedStatus >= 1) {
-        alert("Task Updated Sucessfully");
-      } else {
-        alert("Task Updated Unsucessfully");
-      }
-    } catch (error) {
-      console.error("Error fetching Completed Task count:", error);
-    }
-    closeModal();
-    TaskAllData();
-    TaskData();
-    TaskTeam();
-  };
 
   const CompletedTask = async () => {
     const tlid = sessionStorage.getItem("TLID");
@@ -216,13 +286,13 @@ function Task() {
     task: "",
     TeamId: "",
     TlId: ID,
-    startDate: "",
-    endDate: "",
+    startDate: new Date(),
+    endDate: new Date(),
     description: "",
     priority: "",
     Progress: "Pending",
   });
-  console.log(formData);
+  // console.log(formData);
 
   const drawerRef = useRef(null);
   const buttonRef = useRef(null);
@@ -327,9 +397,9 @@ function Task() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Completed":
+      case "completed":
         return "text-green-500"; // Green color for completed projects
-      case "Cancled":
+      case "Cancel":
         return "text-red-500"; // Red color for canceled projects
       case "Pending":
         return "text-blue-500"; // Blue color for ongoing projects
@@ -337,6 +407,24 @@ function Task() {
         return ""; // Default color if status doesn't match any case
     }
   };
+
+  const isDateCloser = (endDate) => {
+    const today = new Date(); // Today's date
+    const end = new Date(endDate); // End date
+  
+    // Calculate the difference in months between the end date and today's date
+    const monthsDiff = (end.getFullYear() - today.getFullYear()) * 12 + (end.getMonth() - today.getMonth());
+  
+    // Check if the difference in months is less than or equal to 2
+    if (monthsDiff <= 2) {
+      return true;
+    }
+  
+    return false;
+  };
+
+
+
 
   return (
     <div className="w-full h-full mt-16">
@@ -725,6 +813,9 @@ function Task() {
                       Task
                     </th>
                     <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      Team Name
+                    </th>
+                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
                       Description
                     </th>
                     <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
@@ -759,22 +850,24 @@ function Task() {
                         Priority,
                         Progress,
                         Comments,
+                        team_name,
                       },
                       index
                     ) => (
                       <tr key={index}>
-                        <td className="  p-2">{Task_name}</td>
-                        <td className="  p-2">{Description}</td>
-                        <td className="  p-2">{formatTimestamp(start_date)}</td>
-                        <td className="  p-2">{formatTimestamp(End_date)}</td>
-                        <td className=" p-2">{Priority}</td>
-                        <td className={` p-2 ${getStatusColor(Progress)}`}>
+                        <td className="p-2">{Task_name}</td>
+                        <td className="p-2">{team_name}</td>
+                        <td className="p-2">{Description}</td>
+                        <td className="p-2">{formatTimestamp(start_date)}</td>
+                        <td className={`p-2  ${isDateCloser(End_date) ? 'text-red-500' : ''}`}>{formatTimestamp(End_date)}</td>
+                        <td className="p-2">{Priority}</td>
+                        <td className={`p-2 ${getStatusColor(Progress)}`}>
                           {Progress}
                         </td>
-                        <td className=" p-2">{Comments}</td>
-                        <td className=" p-2">
+                        <td className="p-2">{Comments}</td>
+                        <td className="p-2">
                           <button onClick={() => handleEditClick(Task_id)}>
-                            <MdEditSquare className="h-7 w-6 " />
+                            <MdEditSquare className="h-7 w-6" />
                           </button>
                         </td>
                       </tr>
@@ -786,39 +879,163 @@ function Task() {
           </div>
         </div>
         {isModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 overflow-scroll">
             <div className="bg-white rounded-lg overflow-hidden shadow-xl max-w-3xl w-full">
               <div className="p-8">
                 <h2 className="text-lg font-semibold mb-4">Edit Task</h2>
-                <form className="mb-4" onSubmit={StatusUpdated}>
-                  <label
-                    htmlFor="status"
-                    className="block mb-2 font-medium text-gray-700"
-                  >
-                    Select Status:
-                  </label>
-                  <select
-                    name="status"
-                    id="status"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="Cancel">Cancel</option>
-                    <option value="completed">Completed</option>
-                  </select>
+                <form className="space-y-4" onSubmit={UpdateTaskData}>
+                  <div>
+                    <label
+                      htmlFor="status"
+                      className="block mb-2 font-medium text-gray-700"
+                    >
+                      Select Status:
+                    </label>
+                    <select
+                      name="status"
+                      id="status"
+                      value={editData.status}
+                      onChange={EditChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Cancel">Cancel</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="task"
+                      className="block mb-2 font-medium text-gray-700"
+                    >
+                      Task Name:
+                    </label>
+                    <input
+                      type="text"
+                      name="task"
+                      id="task"
+                      value={editData.task}
+                      onChange={EditChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Task Name"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="TeamId"
+                      className="block mb-2 font-medium text-gray-700"
+                    >
+                      Team Names:
+                    </label>
+                    <select
+                      name="TeamId"
+                      id="TeamId"
+                      value={editData.TeamId}
+                      onChange={EditChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      <option value="" disabled>
+                        Select Team Member
+                      </option>
+                      {teamFormMember.map((member) => (
+                        <option key={member.Team_id} value={member.Team_id}>
+                          {member.Team_name}
+                        </option>
+                      ))}
+                      {/* Render Team Members as options */}
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        htmlFor="startDate"
+                        className="block mb-2 font-medium text-gray-700"
+                      >
+                        Start Date:
+                      </label>
+                      <input
+                        type="date"
+                        name="startDate"
+                        id="startDate"
+                        value={editData.startDate}
+                        onChange={EditChange}
+                        min={new Date().toISOString().split("T")[0]}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="endDate"
+                        className="block mb-2 font-medium text-gray-700"
+                      >
+                        End Date:
+                      </label>
+                      <input
+                        type="date"
+                        name="endDate"
+                        id="endDate"
+                        value={editData.endDate}
+                        onChange={EditChange}
+                        min={
+                          new Date(Date.now() + 86400000)
+                            .toISOString()
+                            .split("T")[0]
+                        }
+                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="description"
+                      className="block mb-2 font-medium text-gray-700"
+                    >
+                      Description:
+                    </label>
+                    <textarea
+                      name="description"
+                      id="description"
+                      value={editData.description}
+                      onChange={EditChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 h-32 resize-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Description"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="priority"
+                      className="block mb-2 font-medium text-gray-700"
+                    >
+                      Priority:
+                    </label>
+                    <select
+                      name="priority"
+                      id="priority"
+                      value={editData.priority}
+                      onChange={EditChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      <option value="" disabled>
+                        Select Priority
+                      </option>
+                      <option value="High">High</option>
+                      <option value="Moderate">Moderate</option>
+                      <option value="Low">Low</option>
+                    </select>
+                  </div>
                   <div className="flex justify-end">
                     <button
-                      type="button"
                       onClick={closeModal}
-                      className="text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900"
+                      type="reset"
+                      className="text-black font-bold mx-7 hover:text-customBlue px-5 py-2.5 text-center rounded-md  border-gray-300"
                     >
-                      Cancel
+                      Reset
                     </button>
                     <button
-                      type="submit" // Changed to type "submit"
-                      className="ml-2 inline-flex justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-customBlue hover:bg-primary-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500"
+                      type="submit"
+                      className="bg-customBlue text-white px-5 py-2.5 text-center rounded-md"
                     >
-                      Save
+                      Update Task
                     </button>
                   </div>
                 </form>

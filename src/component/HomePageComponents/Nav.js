@@ -136,12 +136,14 @@ const Nav = () => {
             Contact Us
           </ScrollLink>
           <div className="flex space-x-7 justify-center">
+            <Link to="login">
             <button className="group px-5 rounded-lg h-10 lg:gap-8 md:gap-2 text-customBlue text-lg bg-white hover:bg-customBlue hover:text-white font-semibold">
               Login
-            </button>
+            </button></Link>
+            <Link to="signup">
             <button className="group px-5 rounded-lg h-10 lg:gap-8 md:gap-2 text-customBlue text-lg bg-white hover:bg-customBlue hover:text-white font-semibold">
               Signup
-            </button>
+            </button></Link>
           </div>
         </div>
         <Outlet/>

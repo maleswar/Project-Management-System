@@ -10,8 +10,29 @@ router.get("/TaskData", (req, res) => {
     }
 
     let query =
-      "SELECT Task_id,Task_name,Description,start_date,End_date,Priority,Progress,Comments from task where TL_id=?";
+      "SELECT team.team_name,task.Task_id,task.Task_name,task.Description,task.start_date,task.End_date,task.Priority,task.Progress,task.Comments from task join Team on task.Team_id=team.Team_id where task.TL_id=?";
     connection.query(query, tlid, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+router.get("/TaskDataForUpdate", (req, res) => {
+  const Taskid = req.query.Taskid;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query =
+      "SELECT * from Task where Task_id=?";
+    connection.query(query, Taskid, (err, data) => {
       connection.release();
 
       if (err) {
@@ -28,8 +49,8 @@ router.post("/AddNewTask", (req, res) => {
     req.body.task,
     req.body.description,
     req.body.TeamId,
-    req.body.startdate,
-    req.body.enddate,
+    req.body.startDate,
+    req.body.endDate,
     req.body.priority,
     req.body.projectid,
     req.body.TlId,
@@ -48,11 +69,72 @@ router.post("/AddNewTask", (req, res) => {
       if (err) {
         return res.json({ error: err });
       } else {
+        console.log(query+value);
         return res.json({ data: data });
       }
     });
   });
 });
+
+
+router.post("/UpdateTask", (req, res) => {
+  const value = [
+    req.body.task,
+    req.body.description,
+    req.body.TeamId,
+     req.body.startDate,
+    req.body.endDate,
+    req.body.priority,
+    req.body.status, 
+    req.query.Taskid,
+  ];
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query =
+      "update task set Task_name=?,Description=?,Team_id=?,Start_date=?,End_date=?,Priority=?,Progress=? where Task_id=?";
+    connection.query(query,value, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        console.log(query+value);
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 router.get("/TaskCompleteCount", (req, res) => {
   const tlid = req.query.tlid;
