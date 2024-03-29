@@ -67,7 +67,7 @@ function SignUp() {
   };
   return (
     <section className=" min-h-screen flex items-center justify-center">
-      {/* Login Container */}
+      {/* Signup Container */}
       <div className="bg-gray-100 flex rounded-2xl shadow-2xl md:max-w-2xl lg:max-w-6xl p-5">
         {/* Form */}
         <div className="sm:w-1/2 rounded-2xl px-16 2 bg-white">

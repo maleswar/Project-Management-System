@@ -42,7 +42,6 @@ function Task() {
   console.log(editData);
 
   const handleEditClick = async (taskId) => {
-    
     openModal();
     try {
       const response = await axios.get(
@@ -68,15 +67,14 @@ function Task() {
     settaskid(taskId);
   };
 
-
   const EditChange = (e) => {
     const { name, value } = e.target;
     setEditData({ ...editData, [name]: value });
   };
 
-const UpdateTaskData=async(e)=>{
-  e.preventDefault();
-  // alert(taskid);
+  const UpdateTaskData = async (e) => {
+    e.preventDefault();
+    // alert(taskid);
     try {
       // Format start date and end date before sending to backend
       const formattedStartDate = formatDate(editData.startDate);
@@ -96,34 +94,22 @@ const UpdateTaskData=async(e)=>{
         alert("Task Updated Successfully");
         closeModal();
         TaskAllData();
+        CompletedTask();
       } else {
         alert("Project Updated Unsuccessfully");
       }
     } catch (err) {
       console.log(err);
     }
-  
-}
+  };
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
-  const day = date.getDate().toString().padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-
-
-
-
-
-
-
-
-
-
-
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -134,8 +120,6 @@ const formatDate = (dateString) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
-
 
   const CompletedTask = async () => {
     const tlid = sessionStorage.getItem("TLID");
@@ -411,20 +395,19 @@ const formatDate = (dateString) => {
   const isDateCloser = (endDate) => {
     const today = new Date(); // Today's date
     const end = new Date(endDate); // End date
-  
+
     // Calculate the difference in months between the end date and today's date
-    const monthsDiff = (end.getFullYear() - today.getFullYear()) * 12 + (end.getMonth() - today.getMonth());
-  
+    const monthsDiff =
+      (end.getFullYear() - today.getFullYear()) * 12 +
+      (end.getMonth() - today.getMonth());
+
     // Check if the difference in months is less than or equal to 2
     if (monthsDiff <= 2) {
       return true;
     }
-  
+
     return false;
   };
-
-
-
 
   return (
     <div className="w-full h-full mt-16">
@@ -859,7 +842,13 @@ const formatDate = (dateString) => {
                         <td className="p-2">{team_name}</td>
                         <td className="p-2">{Description}</td>
                         <td className="p-2">{formatTimestamp(start_date)}</td>
-                        <td className={`p-2  ${isDateCloser(End_date) ? 'text-red-500' : ''}`}>{formatTimestamp(End_date)}</td>
+                        <td
+                          className={`p-2  ${
+                            isDateCloser(End_date) ? "text-red-500" : ""
+                          }`}
+                        >
+                          {formatTimestamp(End_date)}
+                        </td>
                         <td className="p-2">{Priority}</td>
                         <td className={`p-2 ${getStatusColor(Progress)}`}>
                           {Progress}
@@ -884,43 +873,28 @@ const formatDate = (dateString) => {
               <div className="p-8">
                 <h2 className="text-lg font-semibold mb-4">Edit Task</h2>
                 <form className="space-y-4" onSubmit={UpdateTaskData}>
-                  <div>
-                    <label
-                      htmlFor="status"
-                      className="block mb-2 font-medium text-gray-700"
-                    >
-                      Select Status:
-                    </label>
-                    <select
-                      name="status"
-                      id="status"
-                      value={editData.status}
-                      onChange={EditChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="Cancel">Cancel</option>
-                      <option value="completed">Completed</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="task"
-                      className="block mb-2 font-medium text-gray-700"
-                    >
-                      Task Name:
-                    </label>
-                    <input
-                      type="text"
-                      name="task"
-                      id="task"
-                      value={editData.task}
-                      onChange={EditChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Task Name"
-                    />
-                  </div>
-                  <div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="">
+                      <label
+                        htmlFor="status"
+                        className="block mb-2 font-medium text-gray-700"
+                      >
+                        Select Status:
+                      </label>
+                      <select
+                        name="status"
+                        id="status"
+                        value={editData.status}
+                        onChange={EditChange}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Cancel">Cancel</option>
+                        <option value="completed">Completed</option>
+                      </select>
+                    </div>
+
+                    <div className="">
                     <label
                       htmlFor="TeamId"
                       className="block mb-2 font-medium text-gray-700"
@@ -945,6 +919,26 @@ const formatDate = (dateString) => {
                       {/* Render Team Members as options */}
                     </select>
                   </div>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="task"
+                      className="block mb-2 font-medium text-gray-700"
+                    >
+                      Task Name:
+                    </label>
+                    <input
+                      type="text"
+                      name="task"
+                      id="task"
+                      value={editData.task}
+                      onChange={EditChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Task Name"
+                    />
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label
@@ -993,11 +987,12 @@ const formatDate = (dateString) => {
                       Description:
                     </label>
                     <textarea
+
                       name="description"
                       id="description"
                       value={editData.description}
                       onChange={EditChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 h-32 resize-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      className="bg-gray-50 border h-14 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5  resize-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Description"
                     />
                   </div>

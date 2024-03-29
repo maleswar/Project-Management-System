@@ -124,7 +124,7 @@ const Nav = () => {
             duration={500}
             className="hover:text-customBlue transition-all cursor-pointer "
           >
-            Feactures
+            Features
           </ScrollLink>
           <ScrollLink
             to="contact"

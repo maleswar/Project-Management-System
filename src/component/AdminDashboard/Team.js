@@ -473,15 +473,15 @@ const Team = () => {
                       ) => (
                         <tr key={index} className="">
                           <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
-                          {Profile_image ? (
-  <img
-    src={require(`../../image/${Profile_image}`)}
-    alt="student profile"
-    className="h-10 w-10 rounded-full cursor-pointer"
-  />
-) : (
-  <span>No profile </span>
-)}
+                            {Profile_image ? (
+                              <img
+                                src={require(`../../image/${Profile_image}`)}
+                                alt="student profile"
+                                className="h-10 w-10 rounded-full cursor-pointer"
+                              />
+                            ) : (
+                              <span>No profile </span>
+                            )}
                           </td>
                           <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
                             {Team_name}

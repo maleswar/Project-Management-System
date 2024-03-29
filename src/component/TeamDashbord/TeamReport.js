@@ -198,7 +198,7 @@ function TeamReport() {
                   type="file"
                   name="file"
                   id="file"
-                  accept=".xlsx, .xls,.pdf,.doc,.docx"
+                  accept=".xlsx, .xls,.pdf,.doc,.docx,.ppt"
                   onChange={handleFileChange}
                   className="absolute inset-0 opacity-0 cursor-pointer"
                 />

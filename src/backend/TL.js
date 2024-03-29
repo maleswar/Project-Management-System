@@ -199,4 +199,53 @@ router.get("/TeamTLDetailDashbord", (req, res) => {
   }
 });
 
+router.get("/FetchTheReportData", (req, res) => {
+  const tlid = req.query.tlid;
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) {
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      let query = "SELECT  TL.TL_id,Team.Profile_image,Team.Team_name, Report.Upload_id, Report.File_name, Report.Description, Report.Uploaded_at, Report.Comment  FROM TL join  Report ON Report.TL_id=TL.TL_id  join Team on Team.Team_id=Report.Team_id WHERE Report.TL_id = ? AND Report.Active = 'Active'";
+      connection.query(query, tlid, (err, data) => {
+        connection.release();
+        if (err) {
+          console.error('Error Fetching Report data:', err);
+          return res.status(500).json({ error: "Database Error" });
+        } else {
+          return res.status(200).json({ data: data });
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Error updating Report data:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.post("/UpdateComment", (req, res) => {
+  const comment = req.query.comment;
+  const uploadid = req.query.uploadid;
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) {
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      let query = "update Report set Comment=? where Upload_id=?";
+      connection.query(query,[comment,uploadid], (err, data) => {
+        connection.release();
+        if (err) {
+          console.error('Error seting comment data:', err);
+          return res.status(500).json({ error: "Database Error" });
+        } else {
+          return res.status(200).json({ data: data });
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Error seting comment data", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = router;
