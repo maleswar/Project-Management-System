@@ -10,6 +10,7 @@ import { IoBriefcaseOutline } from "react-icons/io5";
 import { SlPeople } from "react-icons/sl";
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { Editor } from "@tinymce/tinymce-react";
+import { FaCommentDots } from "react-icons/fa";
 import {
   checkEmpty,
   validateDropdown,
@@ -171,6 +172,7 @@ const Dashboard = () => {
     ProjectCancled();
     fetchTeamMemberList();
     ProjectPending();
+    fetchIssue();
   }, []);
 
   const [formData, setFormData] = useState({
@@ -219,7 +221,7 @@ const Dashboard = () => {
       checkEmpty("name", "Project Name", "PNamespan") &&
       validateDropdown("teamid", "Team Member", "TeamNameSpan") &&
       validateDropdown("priority", "Priority", "PriorityNamespan") &&
-      validateDates("startDate", "endDate","datespan") &&
+      validateDates("startDate", "endDate", "datespan") &&
       checkEmpty("budget", "Budget", "BudgetSpan") &&
       validateNumber("budget", "BudgetSpan");
 
@@ -288,23 +290,67 @@ const Dashboard = () => {
       projectCompleted !== null &&
       projectPending !== null
     ) {
-      const series = [projectCompleted,projectCancled,  projectPending];
+      const series = [projectCompleted, projectCancled, projectPending];
       setChartSeries(series);
     }
-  }, [ projectCompleted,projectCancled, projectPending]);
+  }, [projectCompleted, projectCancled, projectPending]);
 
-  const TABLE_HEAD1 = ["Issues", "Team Member Name"];
+  const [issuelist, setIssuelist] = useState([]);
+  const fetchIssue = async () => {
+    try {
+      const tlid = sessionStorage.getItem("TLID");
+      const response = await axios.get(
+        `http://localhost:3001/Utilities/fetchIssue?tlid=${tlid}`
+      );
+      const issuelist = response.data.data;
+      setIssuelist(issuelist);
+    } catch (error) {
+      console.error("Error fetching issue members:", error);
+    }
+  };
 
-  const TABLE_ROWS1 = [
-    {
-      issues: "John Michael",
-      teammember: "Manager",
-    },
-    {
-      issues: "John Deo",
-      teammember: "Manager",
-    },
-  ];
+  const [showModal, setShowModal] = useState(false);
+  const [Reply, setReply] = useState("");
+  const [selectedIssueId, setselectedIssueId] = useState(null);
+
+  // Function to handle opening the modal
+  const handleComment = (issue_id) => {
+    setselectedIssueId(issue_id); // Set the selected Upload_id
+    setShowModal(true); // Open the modal
+  };
+  // Function to handle closing the modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  // Function to handle saving the comment
+  // Function to handle saving the comment
+  const handleSaveComment = async (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    try {
+      // Perform the comment saving logic here
+      // For example, you can make an API call to save the comment
+      const response = await axios.post(
+        `http://localhost:3001/Utilities/UpdateIssue?comment=${Reply}&issueid=${selectedIssueId}`
+      );
+      var count = response.data.data.affectedRows;
+
+      if (count >= 1) {
+       fetchIssue();
+      } else {
+        alert("There was an error updating the comment");
+      }
+    } catch (err) {
+      console.log(err);
+      alert("There was an error updating the comment");
+    }
+
+    setReply(""); // Reset comment to empty string
+    setselectedIssueId(null);
+    
+    handleCloseModal();
+    // Close the modal after saving the comment
+  };
 
   return (
     <div className="w-full h-full mt-16">
@@ -455,7 +501,6 @@ const Dashboard = () => {
                   />
                 </div>
                 <span id="datespan" className="text-red-700"></span>
-
               </div>
               <div>
                 <label
@@ -783,21 +828,19 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {BudgetList.map(
-                      ({ Project_name, Budget }, index) => (
-                        <tr key={index}>
-                          <td className="border border-blue-gray-300 p-2">
-                            {Project_name}
-                          </td>
-                          {/* <td className="border border-blue-gray-300 p-2">
+                    {BudgetList.map(({ Project_name, Budget }, index) => (
+                      <tr key={index}>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Project_name}
+                        </td>
+                        {/* <td className="border border-blue-gray-300 p-2">
                             {Team_name}
                           </td> */}
-                          <td className="border border-blue-gray-300 p-2">
-                            {Budget}
-                          </td>
-                        </tr>
-                      )
-                    )}
+                        <td className="border border-blue-gray-300 p-2">
+                          {Budget}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -815,31 +858,100 @@ const Dashboard = () => {
                   >
                     <tr>
                       <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
+                        Profile
+                      </th>
+
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
+                        Team Member
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
                         Issues
                       </th>
                       <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
-                        Team Member
+                        Comment
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
+                        Reply
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {TABLE_ROWS1.map(({ issues, teammember }, index) => (
-                      <tr key={issues}>
-                        <td className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
-                          {issues}
-                        </td>
-                        <td className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
-                          {teammember}
-                        </td>
-                      </tr>
-                    ))}
+                    {issuelist.map(
+                      ({
+                        Profile_image,
+                        Team_name,
+                        issue_id,
+                        issue_name,
+                        comment,
+                      }) => (
+                        <tr key={issue_id}>
+                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            {Profile_image ? (
+                              <img
+                                src={require(`../../image/${Profile_image}`)}
+                                alt="student profile"
+                                className="h-10 w-10 rounded-full cursor-pointer"
+                              />
+                            ) : (
+                              <span>No profile </span>
+                            )}
+                          </td>
+                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            {Team_name}
+                          </td>
+                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            {issue_name}
+                          </td>
+                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            {comment}
+                          </td>
+
+                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            <FaCommentDots
+                              className="w-6 h-6 ml-3"
+                              onClick={() => handleComment(issue_id)} // Pass a function reference
+                            />
+                          </td>
+                        </tr>
+                      )
+                    )}
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
         </div>
-        {/* Team Leader List */}
+        {/* Modal */}
+        {showModal && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 overflow-scroll">
+            <div className="bg-white rounded-lg overflow-hidden shadow-xl max-w-md w-full">
+              <form className="p-8" onSubmit={handleSaveComment}>
+                <h2 className="text-lg font-semibold mb-4">Reply on Issue</h2>
+                {/* Comment input */}
+                <textarea
+                  value={Reply}
+                  onChange={(e) => setReply(e.target.value)}
+                  className="w-full h-32 bg-gray-100 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:border-blue-500"
+                  placeholder="Enter your comment here..."
+                ></textarea>
+                {/* Save button */}
+                <button
+                  type="submit"
+                  className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+                >
+                  Save
+                </button>
+                {/* Cancel button */}
+                <button
+                  onClick={handleCloseModal}
+                  className="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-2 px-4 rounded"
+                >
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

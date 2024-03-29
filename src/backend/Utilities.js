@@ -204,5 +204,68 @@ router.get("/roles", (req, res) => {
   });
 });
 
+router.post("/CreateIssue", (req, res) => {
+  const value=[
+    req.body.description,
+    req.body.selectedTeamLeader,
+    req.query.TeamID,
+  ];
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "insert into issue(`issue_name`,`TL_Id`,`Team_id`) values (?)";
+    connection.query(query,[value], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+router.get("/fetchIssue", (req, res) => {
+  const tlid=req.query.tlid;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "select team.Profile_image,team.Team_name,issue.issue_id,issue.issue_name,issue.comment from team join issue on issue.Team_id=team.Team_id where issue.TL_id=?";
+    connection.query(query,tlid, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+router.post("/UpdateIssue", (req, res) => {
+  const comment=req.query.comment;
+  const issueid=req.query.issueid;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "Update issue set Comment=? where issue_id=?";
+    connection.query(query,[comment,issueid], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
 
 module.exports = router;

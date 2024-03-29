@@ -12,10 +12,6 @@ function HomeDashbord() {
   const [TeamLeader, setTeamLeader] = useState([]);
   const [completedTask, setCompletedTask] = useState([]);
 
-
-
-  
-
   const ProjectCompletedCount = async () => {
     const teamID = sessionStorage.getItem("TeamID");
 
@@ -51,7 +47,7 @@ function HomeDashbord() {
       .then((res) => {
         let list = res.data;
         let TeamLeader = list.data;
-        
+
         setTeamLeader(TeamLeader);
         // (project);
       });
@@ -90,7 +86,7 @@ function HomeDashbord() {
     ProjectCompletedCount();
     ProjectPendingCount();
     TeamLeaderListWithData();
-     TeamLederList();
+    TeamLederList();
   }, []);
 
   const projectData = [
@@ -214,21 +210,48 @@ function HomeDashbord() {
     }
   };
 
-  // State variables to store TL name and description
-  const [tlName, setTLName] = useState("");
-  const [description, setDescription] = useState("");
+  const [formData, setFormData] = useState({
+    selectedTeamLeader: "",
+    description: "",
+  });
+
+  // Function to handle changes in form inputs
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   // Function to handle form submission
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle form submission logic (e.g., send data to backend)
-    // For now, let's just log the data
-    console.log("TL Name:", tlName);
-    console.log("Description:", description);
-    // Reset form fields
-    setTLName("");
-    setDescription("");
+
+    try {
+      const response = await axios.post(
+        `http://localhost:3001/Utilities/CreateIssue?TeamID=${teamid}`,
+        formData
+      );
+      var count = response.data.data.affectedRows;
+
+      if (count === 1) {
+        alert("Issue Submited");
+        ClearFileds();
+      } else {
+        alert("there is error");
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  const ClearFileds=()=>{
+    setFormData({
+      selectedTeamLeader: "",
+    description: "",
+    });
+  }
   // useEffect(() => {
 
   //   // Fetch completed tasks for each project
@@ -399,23 +422,26 @@ function HomeDashbord() {
                   <table className="w-full text-left overflow-x -scroll">
                     <thead className="border-t border-b text-black border-gray-100 bg-gray-200">
                       <tr>
-                        <th className="p-4  text-slate-700">
-                          Profile Image
-                        </th>
+                        <th className="p-4  text-slate-700">Profile Image</th>
                         <th className="p-4  text-slate-700">
                           Team Leader Name
                         </th>
-                        <th className="p-4  text-slate-700">
-                          Project Name
-                        </th>
-                        <th className="p-4  text-slate-700">
-                           Budget
-                        </th>
+                        <th className="p-4  text-slate-700">Project Name</th>
+                        <th className="p-4  text-slate-700">Budget</th>
                       </tr>
                     </thead>
                     <tbody>
                       {TeamLeader.map(
-                        ({ TL_fname, TL_lname, profile_image,Project_name,Budget }, index) => (
+                        (
+                          {
+                            TL_fname,
+                            TL_lname,
+                            profile_image,
+                            Project_name,
+                            Budget,
+                          },
+                          index
+                        ) => (
                           <tr key={index}>
                             <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
                               <img
@@ -453,29 +479,32 @@ function HomeDashbord() {
                   </h2>
                   <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                    <label
-                  htmlFor="teamLeader"
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  Team Leader
-                </label>
-                <select
-                  name="teamLeader"
-                  id="teamLeader"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
-                  
-                 
-                >
-                  <option value="" disabled>
-                    Select Project
-                  </option>
-                  {TeamLeaderList.map((TeamMember) => (
-                    <option key={TeamMember.TL_ID} value={TeamMember.TL_ID}>
-                      {TeamMember.TL_fname} {TeamMember.TL_lname}
-                    </option>
-                  ))}
-                </select>
+                      <label
+                        htmlFor="teamLeader"
+                        className="block mb-2 text-sm font-medium text-gray-900"
+                      >
+                        Team Leader
+                      </label>
+                      <select
+                        name="selectedTeamLeader"
+                        id="teamLeader"
+                        value={formData.selectedTeamLeader}
+                        onChange={handleChange}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        required
+                      >
+                        <option value="" disabled>
+                          Select Team Leader
+                        </option>
+                        {TeamLeaderList.map((TeamMember) => (
+                          <option
+                            key={TeamMember.TL_ID}
+                            value={TeamMember.TL_ID}
+                          >
+                            {TeamMember.TL_fname} {TeamMember.TL_lname}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div className="form-group mt-3">
                       <label
@@ -486,8 +515,9 @@ function HomeDashbord() {
                       </label>
                       <textarea
                         id="description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
                         className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       />
                     </div>
