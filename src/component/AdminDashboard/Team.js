@@ -112,10 +112,32 @@ const Team = () => {
       console.error("Error fetching team members:", error);
     }
   };
+
+
+
+
+  const [AllTeamMember, setAllTeamMember] = useState([]);
+  const AllTeamMemberList = async () => {
+    try {
+      const tlid = sessionStorage.getItem("TLID");
+      const response = await axios.get(
+        `http://localhost:3001/Team/TeamDataForTL?tlid=${tlid}`
+      );
+      const AllTeamMember = response.data.data;
+      setAllTeamMember(AllTeamMember);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
+  };
+
+
+
+
   useEffect(() => {
     TeamMemberList();
     Roles();
     fetchProjectData();
+    AllTeamMemberList();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -140,6 +162,7 @@ const Team = () => {
 
         if (count >= 1) {
           alert("Team Member Added Successfully");
+          AllTeamMemberList();
         } else {
           alert("there are some error");
         }
@@ -150,7 +173,7 @@ const Team = () => {
       return false;
     }
     closeDrawer();
-    TeamMemberList();
+    
   };
 
   const clearFields = () => {
@@ -198,6 +221,7 @@ const Team = () => {
       }
     }
     TeamMemberList();
+    AllTeamMemberList();
   };
 
   useEffect(() => {
@@ -248,6 +272,7 @@ const Team = () => {
 
       if (count >= 1) {
         alert("Updation Successfully");
+        TeamMemberList();
       } else {
         alert("there are some error");
       }
@@ -256,10 +281,38 @@ const Team = () => {
     }
     TeamMemberList();
     handleModalClose();
+    AllTeamMemberList();
+  };
+
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "text-green-500"; // Green color for completed projects
+      case "Cancled":
+        return "text-red-500"; // Red color for canceled projects
+      case "Pending":
+        return "text-blue-500"; // Blue color for ongoing projects
+      default:
+        return ""; // Default color if status doesn't match any case
+    }
+  };
+
+  const getProjectColor = (projectName) => {
+    switch (projectName) {
+      case "ProjectA":
+        return "text-red-500"; // Red color for ProjectA
+      case "ProjectB":
+        return "text-blue-500"; // Blue color for ProjectB
+      case "ProjectC":
+        return "text-green-500"; // Green color for ProjectC
+      default:
+        return ""; // Default color if project name doesn't match any case
+    }
   };
   return (
     <div className="w-full h-screen pt-10">
-      <div className="p-5 bg-bgSky h-full grid grid-cols-1 gap-y-4">
+      <div className="p-5 bg-bgSky h-screen grid grid-cols-1 gap-y-4">
         <div className="w-full p-5 h-full">
           <div className="justify-end -mt-5">
             <button
@@ -435,23 +488,22 @@ const Team = () => {
           <div className="w-full">
             <div className="mx-auto bg-white rounded-xl shadow-lg px-5 py-5 mt-7">
               <h2 className="text-2xl font-bold mb-4 text-customBlue">
-                Team Members
+                Project Assigned Team Members
               </h2>
-              <div className="overflow-auto">
+              <div className="">
                 <table className="w-full  overflow-x -scroll ">
                   <thead className="border-t border-b text-black text-left border-gray-100 bg-gray-200">
                     <tr>
                       <th className="p-4  text-slate-700 ">Profile</th>
                       <th className="p-4  text-slate-700 ">Name</th>
                       <th className="p-4  text-slate-700">Project Name</th>
+                      <th className="p-4  text-slate-700">Status</th>
                       <th className="p-4  text-slate-700">Email</th>
                       <th className="p-4  text-slate-700">Designation</th>
                       <th className="p-4  text-slate-700">Phone Number</th>
                       <th className="p-4  text-slate-700">Qualification</th>
                       <th className="p-4  text-slate-700">Skills</th>
-                      <th className="p-4  text-slate-700" colSpan={2}>
-                        Action
-                      </th>
+                      
                     </tr>
                   </thead>
                   <tbody>
@@ -463,6 +515,7 @@ const Team = () => {
                           Team_id,
                           Team_name,
                           Project_name,
+                          Status,
                           Email,
                           Roles,
                           Phone_number,
@@ -489,6 +542,13 @@ const Team = () => {
                           <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
                             {Project_name}
                           </td>
+                          <td
+                          className={`border-t border-b  left-0 border-blue-gray-300 p-4 ${getStatusColor(
+                            Status
+                          )}`}
+                        >
+                          {Status}
+                        </td>
                           <td className="border-t border-b font-semibold  border-blue-gray-300 px-9">
                             {Email}
                           </td>
@@ -497,6 +557,86 @@ const Team = () => {
                           </td>
                           <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
                             {Phone_number}
+                          </td>
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                            {Qualification}
+                          </td>
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                            {Skills}
+                          </td>
+                          
+                          
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+          <div className="w-full">
+            <div className="mx-auto bg-white rounded-xl shadow-lg px-5 py-5 mt-7">
+              <h2 className="text-2xl font-bold mb-4 text-customBlue">
+               ALL Team Members
+              </h2>
+              <div className="overflow-auto">
+                <table className="w-full  overflow-x -scroll ">
+                  <thead className="border-t border-b text-black text-left border-gray-100 bg-gray-200">
+                    <tr>
+                      <th className="p-4  text-slate-700 ">Profile</th>
+                      <th className="p-4  text-slate-700 ">Name</th>
+                      <th className="p-4  text-slate-700">Email</th>
+                      <th className="p-4  text-slate-700">Designation</th>
+                      <th className="p-4  text-slate-700">Phone Number</th>
+                      <th className="p-4  text-slate-700">Qualification</th>
+                      <th className="p-4  text-slate-700">Skills</th>
+                      <th className="p-4  text-slate-700" colSpan={2}>
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* {BudgetList.map(({ TL_fname, TL_lname, Budget, Project_name }, index) => ( */}
+                    {AllTeamMember.map(
+                      (
+                        {
+                          Profile_image,
+                          Team_id,
+                          Team_name,
+                          Email,
+                          Roles,
+                          phone_number,
+                          Qualification,
+                          Skills,
+                        },
+                        index
+                      ) => (
+                        <tr key={index} className="">
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
+                            {Profile_image ? (
+                              <img
+                                src={require(`../../image/${Profile_image}`)}
+                                alt="student profile"
+                                className="h-10 w-10 rounded-full cursor-pointer"
+                              />
+                            ) : (
+                              <span>No profile </span>
+                            )}
+                          </td>
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
+                            {Team_name}
+                          </td>
+                      
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-9">
+                            {Email}
+                          </td>
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                            {Roles}
+                          </td>
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                            {phone_number}
                           </td>
                           <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
                             {Qualification}
@@ -529,6 +669,9 @@ const Team = () => {
               </div>
             </div>
           </div>
+
+
+
           {showModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white rounded-lg overflow-hidden shadow-xl h-fit w-1/2">

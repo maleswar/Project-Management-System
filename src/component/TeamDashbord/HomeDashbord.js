@@ -426,8 +426,9 @@ function HomeDashbord() {
                         <th className="p-4  text-slate-700">
                           Team Leader Name
                         </th>
-                        <th className="p-4  text-slate-700">Project Name</th>
-                        <th className="p-4  text-slate-700">Budget</th>
+                        <th className="p-4  text-slate-700">Company Name</th>
+                        <th className="p-4  text-slate-700">Email</th>
+                        <th className="p-4  text-slate-700">Uniq ID</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -436,9 +437,10 @@ function HomeDashbord() {
                           {
                             TL_fname,
                             TL_lname,
+                            C_name,
+                            Uniq_id,
+                            email,
                             profile_image,
-                            Project_name,
-                            Budget,
                           },
                           index
                         ) => (
@@ -454,10 +456,13 @@ function HomeDashbord() {
                               {TL_fname} {TL_lname}
                             </td>
                             <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
-                              {Project_name}
+                              {C_name}
                             </td>
                             <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
-                              {Budget}
+                              {email}
+                            </td>
+                            <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                              {Uniq_id}
                             </td>
                           </tr>
                         )

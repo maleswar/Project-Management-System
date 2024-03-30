@@ -324,15 +324,15 @@ router.get("/TeamIDPendingProject", (req, res) => {
   });
 });
 
-router.get("/TeamProjectTeamName", (req, res) => {
-  const TeamID=req.query.TeamID;
+router.get("/TeamProjectData", (req, res) => {
+  const TeamID=req.query.teamid;
 
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "select Project.PRoject_id,Project.Project_name,Project.Budget,TL.TL_id,TL.fname,TL.lname where Project_id=";
+    let query = "select project.Project_id,project.Project_name,project.Start_date,project.End_date,project.Status,project.Description,project.Budget,project.Priority,team.Team_id from project join team on project.Team_id=team.Team_id where team.Team_id = ?  ";
     connection.query(query,TeamID, (err, data) => {
       connection.release();
 

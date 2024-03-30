@@ -9,6 +9,7 @@ import { IoTrashOutline } from "react-icons/io5";
 import { Editor } from "@tinymce/tinymce-react";
 import { MdEditSquare } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import {
   checkEmpty,
@@ -17,6 +18,8 @@ import {
 } from "../../JS/FormValidation";
 
 function Task() {
+  const { projectId } = useParams();
+  // console.log(projectId);
   const ID = sessionStorage.getItem("TLID");
   const [totalCompletedTask, setTotalCompletedTask] = useState(null);
   const [totalPendingTask, setTotalPendingTask] = useState(null);
@@ -125,7 +128,7 @@ function Task() {
     const tlid = sessionStorage.getItem("TLID");
     try {
       const response = await axios.get(
-        `http://localhost:3001/Task/TaskCompleteCount?tlid=${tlid}`
+        `http://localhost:3001/Task/TaskCompleteCount?tlid=${tlid}&ProjectId=${projectId}`
       );
       const TaskCompleted = response.data.data[0]["count(*)"];
       setTotalCompletedTask(TaskCompleted);
@@ -139,7 +142,7 @@ function Task() {
 
     try {
       const response = await axios.get(
-        `http://localhost:3001/Task/TaskPendingCount?tlid=${tlid}`
+        `http://localhost:3001/Task/TaskPendingCount?tlid=${tlid}&ProjectId=${projectId}`
       );
       const totalPendingTask = response.data.data[0]["count(*)"];
       setTotalPendingTask(totalPendingTask);
@@ -153,7 +156,7 @@ function Task() {
 
     try {
       const response = await axios.get(
-        `http://localhost:3001/Task/TaskCancelCount?tlid=${tlid}`
+        `http://localhost:3001/Task/TaskCancelCount?tlid=${tlid}&ProjectId=${projectId}`
       );
       const totalCancelTask = response.data.data[0]["count(*)"];
       setTotalCancelTask(totalCancelTask);
@@ -166,7 +169,7 @@ function Task() {
     const tlid = sessionStorage.getItem("TLID");
 
     await axios
-      .get(`http://localhost:3001/Task/TaskDashbordData?tlid=${tlid}`)
+      .get(`http://localhost:3001/Task/TaskDashbordData?tlid=${tlid}&ProjectId=${projectId}`)
       .then((res) => {
         let list = res.data;
         let taskList = list.data;
@@ -178,7 +181,7 @@ function Task() {
   const TaskAllData = async () => {
     const tlid = sessionStorage.getItem("TLID");
     await axios
-      .get(`http://localhost:3001/Task/TaskData?tlid=${tlid}`)
+      .get(`http://localhost:3001/Task/TaskData?tlid=${tlid}&ProjectId=${projectId}`)
       .then((res) => {
         let list = res.data;
         let taskAllData = list.data;
@@ -191,7 +194,7 @@ function Task() {
     const tlid = sessionStorage.getItem("TLID");
 
     await axios
-      .get(`http://localhost:3001/Task/TaskTeamData?tlid=${tlid}`)
+      .get(`http://localhost:3001/Task/TaskTeamData?tlid=${tlid}&ProjectId=${projectId}`)
       .then((res) => {
         let list = res.data;
         let taskTeam = list.data;
@@ -216,7 +219,7 @@ function Task() {
     try {
       const tlid = sessionStorage.getItem("TLID");
       const response = await axios.get(
-        `http://localhost:3001/Team/TeamNames?tlid=${tlid}`
+        `http://localhost:3001/Team/TeamNames?tlid=${tlid}&ProjectId=${projectId}`
       );
       const teamFormMember = response.data.data;
       setTeamFormMember(teamFormMember);
@@ -266,7 +269,7 @@ function Task() {
 
   // alert(ID);
   const [formData, setFormData] = useState({
-    projectid: "",
+    projectid:projectId,
     task: "",
     TeamId: "",
     TlId: ID,
@@ -284,7 +287,7 @@ function Task() {
 
   const openDrawer = () => {
     setFormData({
-      projectid: "",
+      projectid:projectId,
       task: "",
       TeamId: "",
       TlId: ID,
@@ -296,7 +299,7 @@ function Task() {
     });
     setDrawerOpen(true);
   };
-
+console.log(formData);
   const closeDrawer = () => {
     setDrawerOpen(false);
   };
@@ -340,7 +343,10 @@ function Task() {
       return false;
     }
     closeDrawer();
-    // TaskAllData();
+    PendingTask();
+    TaskData();
+    TaskAllData();
+    // TaskAllD/ata();
   };
 
   useEffect(() => {
@@ -444,7 +450,7 @@ function Task() {
               </button>
             </div>
             <form className="space-y-4" onSubmit={handleSubmit}>
-              <div>
+              {/* <div>
                 <label
                   htmlFor="projectid"
                   className="block mb-2 text-sm font-medium text-gray-900 "
@@ -467,7 +473,7 @@ function Task() {
                     </option>
                   ))}
                 </select>
-              </div>
+              </div> */}
               <span id="projectidspan" className="text-red-700"></span>
               <div>
                 <label

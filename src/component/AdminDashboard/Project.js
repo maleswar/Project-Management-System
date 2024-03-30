@@ -174,6 +174,20 @@ const Project = () => {
                             />
                           </button>
                         </td>
+                        <td className="border-t border-b border-blue-gray-300 text-center">
+                        <a
+                          href={`/AdminDashbord/task/${Project_id}`}
+                          className="bg-customBlue text-white font-bold py-1.5 px-4 mx-2 rounded"
+                        >
+                          Task
+                        </a>
+                        <a
+                          href={`/AdminDashbord/report/${Project_id}`}
+                          className="bg-customBlue text-white font-bold py-1.5 px-4 mx-2 rounded"
+                        >
+                          Reports
+                        </a>
+                        </td>
                       </tr>
                     )
                   )}

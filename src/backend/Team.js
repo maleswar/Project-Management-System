@@ -171,6 +171,34 @@ router.get("/TeamData", (req, res) => {
   });
 });
 
+
+
+router.get("/TeamDataForTL", (req, res) => {
+  const TLID=req.query.tlid;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "SELECT * FROM Team where Tl_id=? and Active='Active'";
+    connection.query(query,TLID, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+
+
+
+
+
+
 router.get("/TeamCount", (req, res) => {
   const tlid = req.query.tlid;
 
@@ -194,15 +222,15 @@ router.get("/TeamCount", (req, res) => {
 
 router.get("/TeamNames", (req, res) => {
   const tlid = req.query.tlid;
-
+  const Project_id = req.query.ProjectId;
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
 
     let query =
-      "SELECT Team_id, Team_name FROM Team WHERE Tl_id=? and Active='Active'";
-    connection.query(query, [tlid], (err, data) => {
+      "SELECT Team_id, Team_name FROM Team WHERE Tl_id=? and Active='Active' and Project_id=?";
+    connection.query(query,[tlid,Project_id], (err, data) => {
       connection.release();
 
       if (err) {
@@ -222,7 +250,7 @@ router.get("/TeamInformationForDashbord", (req, res) => {
     }
 
     let query =
-      "SELECT team.Team_id,team.Team_name,team.Email, team.Roles, team.Phone_number, team.Qualification, team.Skills,team.Profile_image,Project.Project_name FROM Team join Project on Project.Project_id=Team.Project_id or Team.Team_id=Project.Team_id WHERE team.Tl_id = ? and Team.Active='Active'";
+      "SELECT team.Team_id,team.Team_name,team.Email, team.Roles, team.Phone_number, team.Qualification, team.Skills,team.Profile_image,Project.Project_name,Project.Status FROM Team join Project on Project.Project_id=Team.Project_id or Team.Team_id=Project.Team_id WHERE team.Tl_id = ? and Team.Active='Active'and Project.Status='Pending'";
     connection.query(query, tlid, (err, data) => {
       connection.release();
 

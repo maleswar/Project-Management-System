@@ -182,7 +182,7 @@ router.get("/TeamTLDetailDashbord", (req, res) => {
         return res.status(500).json({ error: "Internal Server Error" });
       }
 
-      let query = "select tl.TL_id, tl.TL_fname, tl.TL_lname,tl.profile_image,Project.Project_name,Project.Budget,team.team_id from TL join Project on  tl.TL_id=Project.TL_id join  team  on tl.TL_id=team.TL_id and Team.Project_id=Project.Project_id where Team.team_id=?  ";
+      let query = "select tl.TL_id, tl.TL_fname, tl.TL_lname,tl.C_name,tl.Uniq_id,tl.email,tl.profile_image,team.team_id from TL join team  on  tl.TL_id=team.TL_id  where Team.team_id=?  ";
       connection.query(query,teamid, (err, data) => {
         connection.release();
 

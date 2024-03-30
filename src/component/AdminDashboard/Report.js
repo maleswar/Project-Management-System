@@ -6,14 +6,15 @@ function Report() {
   const fetchReportData = async () => {
     const tlid = sessionStorage.getItem("TLID");
 
-    await axios
-      .get(`http://localhost:3001/TL/FetchTheReportData?tlid=${tlid}`)
-      .then((res) => {
-        let list = res.data;
-        let reportData = list.data;
-        setReportData(reportData);
-        // (project);
-      });
+    try {
+      const response = await axios.get(`http://localhost:3001/TL/FetchTheReportData?tlid=${tlid}`);
+      const data = response.data.data; // Assuming your response structure has data property holding the report data
+      // Sort the report data based on timestamps
+      const sortedData = data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+      setReportData(sortedData);
+    } catch (error) {
+      console.error('Error fetching report data:', error);
+    }
   };
 
   useEffect(() => {

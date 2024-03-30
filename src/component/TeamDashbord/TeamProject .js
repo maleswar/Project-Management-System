@@ -1,28 +1,58 @@
-import React, { useState } from "react";
-
+import React, { useState,useEffect } from "react";
+import axios from "axios";
 const TeamProject = () => {
-  const [projects, setProjects] = useState([
-    {
-      id: 1,
-      projectName: "Project A",
-      startDate: "2024-01-01",
-      endDate: "2024-02-01",
-      status: "Completed",
-      description: "abc",
-      budget: "10,000",
-      priority: "High",
-    },
-    {
-      id: 2,
-      projectName: "Project B",
-      startDate: "2024-01-01",
-      endDate: "2024-02-01",
-      status: "Pending",
-      description: "xyz",
-      budget: "100,00",
-      priority: "Low",
-    },
-  ]);
+
+  
+  const [projects, setProjects] = useState([]);
+  const ProjectData = async () => {
+    try {
+      const TeamID = sessionStorage.getItem("TeamID");
+      const response = await axios.get(
+        `http://localhost:3001/Project/TeamProjectData?teamid=${TeamID}`
+      );
+      const projects = response.data.data;
+      setProjects(projects);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
+  };
+
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" }; // Customize date format
+    return date.toLocaleDateString(undefined, options); // Customize based on options
+  };
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "text-green-500"; // Green color for completed projects
+      case "Cancled":
+        return "text-red-500"; // Red color for canceled projects
+      case "Pending":
+        return "text-blue-500"; // Blue color for ongoing projects
+      default:
+        return ""; // Default color if status doesn't match any case
+    }
+  };
+  const isDateCloser = (endDate) => {
+    const today = new Date(); // Today's date
+    const end = new Date(endDate); // End date
+  
+    // Calculate the difference in months between the end date and today's date
+    const monthsDiff = (end.getFullYear() - today.getFullYear()) * 12 + (end.getMonth() - today.getMonth());
+  
+    // Check if the difference in months is less than or equal to 2
+    if (monthsDiff <= 2) {
+      return true;
+    }
+  
+    return false;
+  };
+
+  useEffect(() => {
+    ProjectData();
+  }, []);
+
 
   return (
     <div className="w-full h-full mt-10">
@@ -48,25 +78,58 @@ const TeamProject = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {projects.map((project, index) => (
-                    <tr key={index}>
-                      <td className="p-2">{project.id}</td>
-                      <td className="p-2">{project.projectName}</td>
-                      <td className="p-2">{project.startDate}</td>
-                      <td className="p-2">{project.endDate}</td>
-                      <td className="p-2">{project.status}</td>
-                      <td className="p-2">{project.description}</td>
-                      <td className="p-2">{project.budget}</td>
-                      <td className="p-2">{project.priority}</td>
+                {projects.map(
+                    (
+                      {
+                        Project_id,
+                        Project_name,
+                        Start_date,
+                        End_date,
+                        Status,
+                        Description,
+                        Budget,
+                        Priority,
+                      },
+                      index
+                    ) => (
+                      <tr key={index}>
+                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                          {Project_id}
+                        </td>{" "}
+                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                          {Project_name}
+                        </td>{" "}
+                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
+                          {formatTimestamp(Start_date)}
+                        </td>{" "}
+                        <td className={`border-t border-b  left-0 border-blue-gray-300 p-4 ${isDateCloser(End_date) ? 'text-red-500' : ''}`}>
+                          {formatTimestamp(End_date)}
+                        </td>
+                        <td
+                          className={`border-t border-b  left-0 border-blue-gray-300 p-4 ${getStatusColor(
+                            Status
+                          )}`}
+                        >
+                          {Status}
+                        </td>
+                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4 ">
+                          {Description}
+                        </td>
+                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
+                          {Budget}
+                        </td>
+                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
+                          {Priority}
+                        </td>
                       <td className="p-2">
                         <a
-                          href={`/task/${project.id}`}
+                          href={`/task/${Project_id}`}
                           className="bg-customBlue text-white font-bold py-1.5 px-4 mx-2 rounded"
                         >
                           Task
                         </a>
                         <a
-                          href={`/team/${project.id}`}
+                          href={`/team/${Project_id}`}
                           className="bg-customBlue text-white font-bold py-1.5 px-4 mx-2 rounded"
                         >
                           Team

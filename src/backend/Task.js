@@ -4,14 +4,15 @@ const pool = require("./databaseConfig");
 
 router.get("/TaskData", (req, res) => {
   const tlid = req.query.tlid;
+  const Project_id = req.query.ProjectId;
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
 
     let query =
-      "SELECT team.team_name,task.Task_id,task.Task_name,task.Description,task.start_date,task.End_date,task.Priority,task.Progress,task.Comments from task join Team on task.Team_id=team.Team_id where task.TL_id=?";
-    connection.query(query, tlid, (err, data) => {
+      "SELECT team.team_name,task.Task_id,task.Task_name,task.Description,task.start_date,task.End_date,task.Priority,task.Progress,task.Comments from task join Team on task.Team_id=team.Team_id where task.TL_id=?  and task.Project_id=?";
+    connection.query(query,[tlid,Project_id], (err, data) => {
       connection.release();
 
       if (err) {
@@ -109,43 +110,17 @@ router.post("/UpdateTask", (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 router.get("/TaskCompleteCount", (req, res) => {
   const tlid = req.query.tlid;
+  const Project_id = req.query.ProjectId;
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
 
     let query =
-      "SELECT count(*) from Task where Progress='completed' and tl_id=?";
-    connection.query(query, tlid, (err, data) => {
+      "SELECT count(*) from Task where Progress='completed' and tl_id=? and Project_id=?";
+    connection.query(query, [tlid,Project_id], (err, data) => {
       connection.release();
 
       if (err) {
@@ -159,14 +134,15 @@ router.get("/TaskCompleteCount", (req, res) => {
 
 router.get("/TaskPendingCount", (req, res) => {
   const tlid = req.query.tlid;
+  const Project_id = req.query.ProjectId;
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
 
     let query =
-      "SELECT count(*) from Task where Progress='Pending' and Tl_id=?";
-    connection.query(query, tlid, (err, data) => {
+      "SELECT count(*) from Task where Progress='Pending' and Tl_id=? and Project_id=?";
+    connection.query(query, [tlid,Project_id], (err, data) => {
       connection.release();
 
       if (err) {
@@ -180,14 +156,14 @@ router.get("/TaskPendingCount", (req, res) => {
 
 router.get("/TaskCancelCount", (req, res) => {
   const tlid = req.query.tlid;
-
+  const Project_id = req.query.ProjectId;
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "SELECT count(*) from Task where Progress='Cancel' and Tl_id=?";
-    connection.query(query, tlid, (err, data) => {
+    let query = "SELECT count(*) from Task where Progress='Cancel' and Tl_id=? and Project_id=?";
+    connection.query(query, [tlid,Project_id], (err, data) => {
       connection.release();
 
       if (err) {
@@ -201,14 +177,14 @@ router.get("/TaskCancelCount", (req, res) => {
 
 router.get("/TaskDashbordData", (req, res) => {
   const tlid = req.query.tlid;
-
+  const Project_id = req.query.ProjectId;
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
     let query =
-      "SELECT Task_id,Task_name,Description,start_date,End_date,Priority,Comments from task where Progress='Pending' and Tl_id=?";
-    connection.query(query, tlid, (err, data) => {
+      "SELECT Task_id,Task_name,Description,start_date,End_date,Priority,Comments from task where Progress='Pending' and Tl_id=? and Project_id=? ";
+    connection.query(query,[tlid,Project_id], (err, data) => {
       connection.release();
 
       if (err) {
@@ -222,14 +198,14 @@ router.get("/TaskDashbordData", (req, res) => {
 
 router.get("/TaskTeamData", (req, res) => {
   const tlid = req.query.tlid;
-
+  const Project_id = req.query.ProjectId;
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
     let query =
-      "SELECT Task.Task_id,Task.Task_name,Task.Progress,team.Team_name from task join team on task.Team_id=team.Team_id where Task.Progress='Completed' and Task.Tl_id=?";
-    connection.query(query, tlid, (err, data) => {
+      "SELECT Task.Task_id,Task.Task_name,Task.Progress,team.Team_name from task join team on task.Team_id=team.Team_id where Task.Progress='Completed' and Task.Tl_id=?  and Task.Project_id=?";
+    connection.query(query,[tlid,Project_id], (err, data) => {
       connection.release();
 
       if (err) {

@@ -246,6 +246,9 @@ const Dashboard = () => {
       return false;
     }
     closeDrawer();
+    ProjectBudgetList();
+    TotalProject();
+    ProjectPending();
   };
 
   // Close the drawer

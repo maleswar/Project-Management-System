@@ -45,9 +45,9 @@ function App() {
             path="EditProjectForm/:projectId"
             element={<EditProjectForm />}
           />
-          <Route path="task" element={<Task />} />
-          <Route path="report" element={<Report />} />
-          
+          <Route path="task/:projectId" element={<Task />} />
+          <Route path="report/:projectId" element={<Report />} />
+
           <Route path="profile" element={<Profile />} />
           <Route path="profile/UploadImage" element={<UploadImage />} />
           <Route
@@ -65,8 +65,10 @@ function App() {
           <Route path="calendar" element={<ProjectCalendarChart />} />
           <Route path="profile" element={<TeamProfile />} />
           <Route path="profile/UploadImage" element={<TeamUploadProfile />} />
-          <Route path="profile/UploadImage/ProfileForm" element={<TeamUploadProfileForm />} />
-
+          <Route
+            path="profile/UploadImage/ProfileForm"
+            element={<TeamUploadProfileForm />}
+          />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
