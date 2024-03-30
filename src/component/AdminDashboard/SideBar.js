@@ -14,21 +14,19 @@ import axios from "axios"; //
 function Sidebar() {
   const [Name, setName] = useState("");
   const [TLID, setTLID] = useState("");
-  
+
   useEffect(() => {
     const Name = sessionStorage.getItem("TLName");
     const tlid = sessionStorage.getItem("TLID");
-    if (Name === null || tlid===null) {
+    if (Name === null || tlid === null) {
       navigate("/login");
-    }else{
+    } else {
       setName(Name);
       setTLID(tlid);
     }
-   
+
     // AllData();
   }, []);
-
-  
 
   const [imageUrl, setImageUrl] = useState(null);
   const fetchImage = async () => {
@@ -48,8 +46,6 @@ function Sidebar() {
   useEffect(() => {
     fetchImage();
   }, []);
-
-
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -122,14 +118,20 @@ function Sidebar() {
                     data-dropdown-toggle="dropdown-user"
                     onClick={toggleProfile}
                   >
-                    {imageUrl && (
-                      <img
-                        src={require(`../../image/${imageUrl}`)}
-                        alt="student profile"
-                        className="h-10 w-10 rounded-full cursor-pointer"
-                      />
+                    {imageUrl ? (
+                      
+                        <img
+                          src={require(`../../image/${imageUrl}`)}
+                          alt="student profile"
+                          className="h-10 w-10 rounded-full cursor-pointer"
+                          
+                        />
+                      
+                    ) : (
+                      <div className="h-10 w-10 rounded-full border border-gray-300 flex items-center bg-gray-500 justify-center">
+                        {/* Show this content if imageUrl is not provided */}
+                      </div>
                     )}
-                    
                   </button>
                 </div>
                 <div
@@ -234,7 +236,6 @@ function Sidebar() {
                   </div>
                 </Link>
               </div>
-              
 
               <div className="flex items-center px-5 py-3  space-x-3 cursor-pointer">
                 <Link to="project" className="flex items-center">
@@ -254,7 +255,6 @@ function Sidebar() {
                   </div>
                 </Link>
               </div>
-
 
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link to="report" className="flex items-center">

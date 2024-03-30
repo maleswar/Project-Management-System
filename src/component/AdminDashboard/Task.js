@@ -626,7 +626,7 @@ function Task() {
 
         {/* Project Card  */}
         <div className="w-full">
-          <div className="bg-white  shadow-lg flex items-center py-10">
+          <div className="bg-white rounded-lg shadow-lg flex items-center py-10">
             <div className="text-left ml-10">
               <h1 className="text-4xl font-bold mb-2 text-customBlue">Task</h1>
               <p className="text-gray-600">
@@ -655,7 +655,7 @@ function Task() {
         <div className="w-full">
           <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-x-10 mx-auto mt-7 space-y-7 sm:space-y-7 md:space-y-7 lg:space-y-0">
             {/* Task Graph */}
-            <div className="bg-white shadow-lg  px-5 py-5 flex-1">
+            <div className="bg-white rounded-lg shadow-lg  px-5 py-5 flex-1">
               <h2 className="text-2xl font-bold mb-4 text-customBlue">
                 Task Graph
               </h2>
@@ -670,7 +670,7 @@ function Task() {
             </div>
 
             {/* Task Graph */}
-            <div className="bg-white shadow-lg  px-5 py-5 flex-1">
+            <div className="bg-white rounded-lg shadow-lg  px-5 py-5 flex-1">
               <h2 className="text-2xl font-bold mb-4 text-customBlue">
                 Completed Task
               </h2>
@@ -708,7 +708,7 @@ function Task() {
           </div>
         </div>
         <div className="w-full">
-          <div className="mx-auto bg-white shadow-lg px-5 py-5 mt-7">
+          <div className="mx-auto bg-white rounded-lg shadow-lg px-5 py-5 mt-7">
             <h2 className="text-2xl font-bold mb-4 text-customBlue">
               Pending Task Details
             </h2>
@@ -784,7 +784,7 @@ function Task() {
           </div>
         </div>
         <div className="w-full">
-          <div className="mx-auto bg-white shadow-lg px-5 py-5 mt-7">
+          <div className="mx-auto bg-white rounded-lg  shadow-lg px-5 py-5 mt-7">
             <h2 className="text-2xl font-bold mb-4 text-customBlue">
               All Tasks
             </h2>

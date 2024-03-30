@@ -41,7 +41,7 @@ function Report() {
       case "xls":
         return "green"; // Return blue color for Excel files
       case "pdf":
-        return "brown"; // Return green color for PDF files
+        return "red"; // Return green color for PDF files
       case "docx":
         return "blue";
       case "ppt":

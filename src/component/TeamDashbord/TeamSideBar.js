@@ -111,13 +111,20 @@ function TeamSidebar() {
                     data-dropdown-toggle="dropdown-user"
                     onClick={toggleProfile}
                   >
-                    {imageUrl && (
+                     {imageUrl ? (
+                      
                       <img
                         src={require(`../../image/${imageUrl}`)}
                         alt="student profile"
                         className="h-10 w-10 rounded-full cursor-pointer"
+                        
                       />
-                    )}
+                    
+                  ) : (
+                    <div className="h-10 w-10 rounded-full border border-gray-300 flex items-center bg-gray-500 justify-center">
+                      {/* Show this content if imageUrl is not provided */}
+                    </div>
+                  )}
                     
                   </button>
                 </div>

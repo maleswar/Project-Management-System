@@ -95,6 +95,7 @@ const ProfileForm = () => {
       // Update form data with the first project data
       if (Data.length > 0) {
         setFormData({
+          TL_ID: ID,
           fname: Data[0].TL_fname,
           lname: Data[0].TL_lname,
           role: Data[0].role,
@@ -152,9 +153,9 @@ const ProfileForm = () => {
         );
         var count = response.data.data.affectedRows;
 
-        if (count === 1) {
+        if (count >=1) {
           alert("Profile Updated Successfully");
-          navigate("profile");
+          navigate(-2);
         } else {
           alert("Profile Updated Unsuccessfully");
         }
