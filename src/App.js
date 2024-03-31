@@ -7,6 +7,7 @@ import SideBar from "./component/AdminDashboard/SideBar";
 import Dashbord from "./component/AdminDashboard/Dashboard";
 import Task from "./component/AdminDashboard/Task";
 import Team from "./component/AdminDashboard/Team";
+import GaantChart from "./component/AdminDashboard/GaantChart";
 import Project from "./component/AdminDashboard/Project";
 import EditProjectForm from "./component/AdminDashboard/EditProjectForm";
 import Message from "./component/AdminDashboard/Message";
@@ -41,6 +42,7 @@ function App() {
           <Route path="Message" element={<Message />} />
           <Route path="project" element={<Project />} />
           <Route path="team" element={<Team />} />
+          <Route path="chart" element={<GaantChart />} />
           <Route
             path="EditProjectForm/:projectId"
             element={<EditProjectForm />}
@@ -59,9 +61,9 @@ function App() {
           <Route index element={<HomeDashboard />} />
           <Route path="project" element={<TeamProject />} />
           <Route path="message" element={<TeamMessage />} />
-          <Route path="team" element={<TeamTable />} />
-          <Route path="task" element={<TeamTask />} />
-          <Route path="report" element={<TeamReport />} />
+          <Route path="team/:projectId" element={<TeamTable />} />
+          <Route path="task/:projectId" element={<TeamTask />} />
+          <Route path="report/:projectId" element={<TeamReport />} />
           <Route path="calendar" element={<ProjectCalendarChart />} />
           <Route path="profile" element={<TeamProfile />} />
           <Route path="profile/UploadImage" element={<TeamUploadProfile />} />

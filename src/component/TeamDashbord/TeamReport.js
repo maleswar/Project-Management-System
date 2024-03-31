@@ -1,10 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { HiOutlineCloudDownload } from "react-icons/hi";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 
 
+
 function TeamReport() {
+  const { projectId } = useParams();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const drawerRef = useRef(null);
   const buttonRef = useRef(null);
@@ -15,6 +18,7 @@ function TeamReport() {
     file: null,
     fileName: "",
     Active:"Active",
+    projectId:projectId,
   });
   
 
@@ -58,7 +62,7 @@ function TeamReport() {
       }
 
       const data = await response.json();
-      alert("Excel file updated successfully:", data);
+      alert("File updated successfully:", data);
       
       // You can perform additional actions after successful update, like showing a success message or redirecting the user.
     } catch (error) {
@@ -67,7 +71,7 @@ function TeamReport() {
     }
     setTimeout(() => {
       fetchReportData();
-    }, 2000);
+    }, 1000);
     
   };
 
@@ -76,7 +80,7 @@ function TeamReport() {
     const teamID = sessionStorage.getItem("TeamID");
 
     await axios
-      .get(`http://localhost:3001/Team/FetchTheReportData?TeamId=${teamID}`)
+      .get(`http://localhost:3001/Team/FetchTheReportData?TeamId=${teamID}&projectId=${projectId}`)
       .then((res) => {
         let list = res.data;
         let reportData = list.data;

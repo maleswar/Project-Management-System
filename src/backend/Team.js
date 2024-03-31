@@ -51,7 +51,7 @@ router.post("/updateTLExcelFile", (req, res, next) => {
 }, uploadExcel.single("file"),handleMulterError,
  (req, res) => {
   const teamID = req.query.teamID;
-  const { teamLeader, description,Active } = req.body;
+  const { teamLeader, description,Active ,projectId} = req.body;
   const excelFile = req.file.filename; // Use req.file.filename to get the filename
   const uploadTimestamp = req.uploadTimestamp;
   console.log(uploadTimestamp);
@@ -60,9 +60,9 @@ router.post("/updateTLExcelFile", (req, res, next) => {
       if (err) {
         return res.status(500).json({ error: "Internal Server Error" });
       }
-      let query="INSERT INTO Report (TL_id, Team_id, File_name, Description, Uploaded_at,Active) VALUES (?, ?, ?, ?, ?,?) ON DUPLICATE KEY UPDATE TL_id = VALUES(TL_id), Team_id = VALUES(Team_id), File_name = VALUES(File_name), Description = VALUES(Description), Uploaded_at = VALUES(Uploaded_at),Active = VALUES(Active)";
+      let query="INSERT INTO Report (TL_id, Team_id, File_name, Description, Uploaded_at,Active,Project_id) VALUES (?, ?, ?, ?, ?,?,?) ON DUPLICATE KEY UPDATE TL_id = VALUES(TL_id), Team_id = VALUES(Team_id), File_name = VALUES(File_name), Description = VALUES(Description), Uploaded_at = VALUES(Uploaded_at),Active = VALUES(Active),Project_id = VALUES(Active)";
       // let query = "UPDATE TL JOIN Team ON Team.Tl_id = TL.TL_id SET TL.Report =?, TL.Description =? WHERE  TL.TL_id = ? AND Team.Team_id = ?";
-      connection.query(query, [teamLeader,teamID,excelFile,description,uploadTimestamp,Active], (err, data) => {
+      connection.query(query, [teamLeader,teamID,excelFile,description,uploadTimestamp,Active,projectId], (err, data) => {
        
         connection.release();
         
@@ -82,13 +82,14 @@ router.post("/updateTLExcelFile", (req, res, next) => {
 
 router.get("/FetchTheReportData", (req, res) => {
   const TeamId = req.query.TeamId;
+  const projectId=req.query.projectId;
   try {
     pool.getConnection((err, connection) => {
       if (err) {
         return res.status(500).json({ error: "Internal Server Error" });
       }
-      let query = "SELECT TL.TL_fname, TL.TL_lname, Team.Team_name, Report.Upload_id, Report.File_name, Report.Description, Report.Uploaded_at, Report.Comment  FROM TL JOIN Team ON TL.TL_id = Team.TL_id JOIN Report ON (Team.Team_id = Report.Team_id OR TL.TL_id = Report.TL_id) WHERE Team.Team_id = ? AND Report.Active = 'Active'";
-      connection.query(query, TeamId, (err, data) => {
+      let query = "SELECT TL.TL_fname, TL.TL_lname, Team.Team_name, Report.Upload_id, Report.File_name, Report.Description, Report.Uploaded_at, Report.Comment  FROM TL JOIN Team ON TL.TL_id = Team.TL_id JOIN Report ON (Team.Team_id = Report.Team_id OR TL.TL_id = Report.TL_id) WHERE Team.Team_id = ? AND Report.Active = 'Active' And Team.Project_id=?";
+      connection.query(query, [TeamId,projectId], (err, data) => {
         connection.release();
         if (err) {
           console.error('Error Fetching Report data:', err);
@@ -360,5 +361,25 @@ router.get("/TeamLeaderList", (req, res) => {
   });
 });
 
+router.get("/TeamDataProjectAccording", (req, res) => {
+  const Projectid = req.query.Projectid;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query =
+      "select * from Team where Project_id=?";
+    connection.query(query, Projectid, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
 
 module.exports = router;

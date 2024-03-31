@@ -263,4 +263,108 @@ router.get("/TeamTaskCompleted", (req, res) => {
   });
 });
 
+router.get("/TeamTaskPending", (req, res) => {
+  const teamid = req.query.teamid;
+  const projectId = req.query.projectId;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+    let query =
+      "SELECT count(*) from Task where Progress='Pending' and Team_id=? and Project_id=?";
+    connection.query(query, [teamid, projectId], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+
+router.get("/TeamTaskCancel", (req, res) => {
+  const teamid = req.query.teamid;
+  const projectId = req.query.projectId;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+    let query =
+      "SELECT count(*) from Task where Progress='Cancel' and Team_id=? and Project_id=?";
+    connection.query(query, [teamid, projectId], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+router.get("/TeamAlertTableTask", (req, res) => {
+  const teamid = req.query.teamid;
+  const projectId = req.query.projectId;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+    let query =
+      "SELECT * from Task where Progress='Pending' and Team_id=? and Project_id=?";
+    connection.query(query, [teamid, projectId], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+router.get("/TeamTaskData", (req, res) => {
+  const teamid = req.query.teamid;
+  const projectId = req.query.projectId;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+    let query =
+      "SELECT * from Task where Team_id=? and Project_id=?";
+    connection.query(query, [teamid, projectId], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+router.post("/CommentTaskData", (req, res) => {
+  const Comment = req.query.Comment;
+  const TaskID = req.query.TaskID;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+    let query =
+      "Update Task set Comments= ? where Task_id=?";
+    connection.query(query, [Comment, TaskID], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
 module.exports = router;

@@ -315,9 +315,7 @@ console.log(formData);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let result =
-      validateDropdown("projectid", "Project Name", "projectidspan") &&
-      checkEmpty("task", "Task Name", "taskspan") &&
+    let result =checkEmpty("task", "Task Name", "taskspan") &&
       validateDropdown("TeamId", "Team Member", "TeamIdspan") &&
       validateDates("startDate", "endDate", "datespan") &&
       validateDropdown("priority", "Priority", "priorityspan");
@@ -418,6 +416,7 @@ console.log(formData);
   return (
     <div className="w-full h-full mt-16">
       <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4">
+        
         <div className="justify-end -mt-5">
           <button
             ref={buttonRef}

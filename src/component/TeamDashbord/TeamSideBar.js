@@ -240,7 +240,7 @@ function TeamSidebar() {
                 </Link>
               </div>
 
-              <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
+              {/* <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link to="task" className="flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -285,9 +285,9 @@ function TeamSidebar() {
                     <span>Task</span>
                   </div>
                 </Link>
-              </div>
+              </div> */}
 
-              <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
+              {/* <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link to="team" className="flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -359,7 +359,7 @@ function TeamSidebar() {
                     <span>Team</span>
                   </div>
                 </Link>
-              </div>
+              </div> */}
 
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link to="message" className="flex items-center">
@@ -384,7 +384,7 @@ function TeamSidebar() {
                   </div>
                 </Link>
               </div>
-              <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
+              {/* <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link to="report" className="flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -456,7 +456,7 @@ function TeamSidebar() {
                     <span>Report</span>
                   </div>
                 </Link>
-              </div>
+              </div> */}
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link to="calendar" className="flex items-center">
                   <svg

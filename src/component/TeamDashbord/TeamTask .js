@@ -1,306 +1,313 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaPlus } from "react-icons/fa";
-import { FaTimes } from "react-icons/fa";
+
 import Task from "./Assest/Vector/Task.png";
 import Cards from "./Layouts/Cards";
-import { useTable, useSortBy } from "react-table";
-
+import { FaCommentDots } from "react-icons/fa";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 const TeamTask = () => {
-  const [formData, setFormData] = useState({
-    pname: "",
-    startDate: "",
-    endDate: "",
-    tlName: "",
-    priority: "",
-    budget: "",
-    description: "",
-  });
+  const { projectId } = useParams();
+  // const [formData, setFormData] = useState({
+  //   pname: "",
+  //   startDate: "",
+  //   endDate: "",
+  //   tlName: "",
+  //   priority: "",
+  //   budget: "",
+  //   description: "",
+  // });
 
-  const drawerRef = useRef(null);
-  const buttonRef = useRef(null);
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  // const drawerRef = useRef(null);
+  // const buttonRef = useRef(null);
+  // const [isDrawerOpen, setDrawerOpen] = useState(false);
 
-  const openDrawer = () => {
-    setFormData({
-      taskId: "",
-      name: "",
-      startDate: "",
-      endDate: "",
-      priority: "",
-      progress: "",
-      comments: "",
-    });
-    setDrawerOpen(true);
+  // const openDrawer = () => {
+  //   setFormData({
+  //     taskId: "",
+  //     name: "",
+  //     startDate: "",
+  //     endDate: "",
+  //     priority: "",
+  //     progress: "",
+  //     comments: "",
+  //   });
+  //   setDrawerOpen(true);
+  // };
+
+  // const closeDrawer = () => {
+  //   setDrawerOpen(false);
+  // };
+
+  // //handle
+
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData({ ...formData, [name]: value });
+  // };
+
+  // const handleCloseForm = () => {
+  //   closeDrawer();
+  // };
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   // Handle form submission
+  //   // ...
+
+  //   // Reset form after submission
+  //   setFormData({
+  //     taskId: "",
+  //     name: "",
+  //     startDate: "",
+  //     endDate: "",
+  //     priority: "",
+  //     progress: "",
+  //     comments: "",
+  //   });
+
+  //   // Close the drawer
+  //   closeDrawer();
+  // };
+
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (
+  //       drawerRef.current &&
+  //       !drawerRef.current.contains(event.target) &&
+  //       buttonRef.current !== event.target
+  //     ) {
+  //       closeDrawer();
+  //     }
+  //   };
+
+  //   document.addEventListener("click", handleClickOutside);
+
+  //   return () => {
+  //     document.removeEventListener("click", handleClickOutside);
+  //   };
+  // }, []);
+
+  // const data = React.useMemo(
+  //   () => [
+  //     {
+  //       taskId: "1",
+  //       taskName: "Task A",
+  //       endDate: "2024-03-25",
+  //       priority: "Low",
+  //     },
+  //     {
+  //       taskId: "2",
+  //       taskName: "Task B",
+  //       endDate: "2024-03-28",
+  //       priority: "High",
+  //     },
+  //     {
+  //       taskId: "3",
+  //       taskName: "Task C",
+  //       endDate: "2024-03-30",
+  //       priority: "Low",
+  //     },
+  //   ],
+  //   []
+  // );
+
+  // const columns = React.useMemo(
+  //   () => [
+  //     {
+  //       Header: "Task Id",
+  //       accessor: "taskId",
+  //     },
+  //     {
+  //       Header: "Task Name",
+  //       accessor: "taskName",
+  //     },
+  //     {
+  //       Header: "End Date",
+  //       accessor: "endDate",
+  //     },
+  //     {
+  //       Header: "Priority",
+  //       accessor: "priority",
+  //     },
+  //   ],
+  //   []
+  // );
+
+  // const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+  //   useTable({ columns, data }, useSortBy);
+  const [totalCompletedTask, setTotalCompletedTask] = useState(null);
+  const [totalPendingTask, setTotalPendingTask] = useState(null);
+  const [totalCancelTask, setTotalCancelTask] = useState(null);
+  const [AlertTask, setAlertTask] = useState([]);
+  const [AllTask, setAllTask] = useState([]);
+  const CompletedTask = async () => {
+    const teamid = sessionStorage.getItem("TeamID");
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/Task/TeamTaskCompleted?teamid=${teamid}&projectId=${projectId}`
+      );
+      const TaskCompleted = response.data.data[0]["count(*)"];
+      setTotalCompletedTask(TaskCompleted);
+    } catch (error) {
+      console.error("Error fetching Completed Task count:", error);
+    }
   };
 
-  const closeDrawer = () => {
-    setDrawerOpen(false);
+  const PendingTask = async () => {
+    const teamid = sessionStorage.getItem("TeamID");
+
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/Task/TeamTaskPending?teamid=${teamid}&projectId=${projectId}`
+      );
+      const totalPendingTask = response.data.data[0]["count(*)"];
+      setTotalPendingTask(totalPendingTask);
+    } catch (error) {
+      console.error("Error fetching Pending Task count:", error);
+    }
   };
 
-  //handle
+  const CancledTask = async () => {
+    const teamid = sessionStorage.getItem("TeamID");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/Task/TeamTaskCancel?teamid=${teamid}&projectId=${projectId}`
+      );
+      const totalCancelTask = response.data.data[0]["count(*)"];
+      setTotalCancelTask(totalCancelTask);
+    } catch (error) {
+      console.error("Error fetching CompleteProject count:", error);
+    }
   };
 
-  const handleCloseForm = () => {
-    closeDrawer();
+  const AlertTableTask = async () => {
+    try {
+      const teamid = sessionStorage.getItem("TeamID");
+      const response = await axios.get(
+        `http://localhost:3001/Task/TeamAlertTableTask?teamid=${teamid}&projectId=${projectId}`
+      );
+      const AlertTask = response.data.data;
+      setAlertTask(AlertTask);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission
-    // ...
-
-    // Reset form after submission
-    setFormData({
-      taskId: "",
-      name: "",
-      startDate: "",
-      endDate: "",
-      priority: "",
-      progress: "",
-      comments: "",
-    });
-
-    // Close the drawer
-    closeDrawer();
+  const AllTaskList = async () => {
+    try {
+      const teamid = sessionStorage.getItem("TeamID");
+      const response = await axios.get(
+        `http://localhost:3001/Task/TeamTaskData?teamid=${teamid}&projectId=${projectId}`
+      );
+      const AllTask = response.data.data;
+      setAllTask(AllTask);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
   };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        drawerRef.current &&
-        !drawerRef.current.contains(event.target) &&
-        buttonRef.current !== event.target
-      ) {
-        closeDrawer();
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
+    CompletedTask();
+    PendingTask();
+    CancledTask();
+    AlertTableTask();
+    AllTaskList();
   }, []);
 
-  const data = React.useMemo(
-    () => [
-      {
-        taskId: "1",
-        taskName: "Task A",
-        endDate: "2024-03-25",
-        priority: "Low",
-      },
-      {
-        taskId: "2",
-        taskName: "Task B",
-        endDate: "2024-03-28",
-        priority: "High",
-      },
-      {
-        taskId: "3",
-        taskName: "Task C",
-        endDate: "2024-03-30",
-        priority: "Low",
-      },
-    ],
-    []
-  );
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" }; // Customize date format
+    return date.toLocaleDateString(undefined, options); // Customize based on options
+  };
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Task Id",
-        accessor: "taskId",
-      },
-      {
-        Header: "Task Name",
-        accessor: "taskName",
-      },
-      {
-        Header: "End Date",
-        accessor: "endDate",
-      },
-      {
-        Header: "Priority",
-        accessor: "priority",
-      },
-    ],
-    []
-  );
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "completed":
+        return "text-green-500"; // Green color for completed projects
+      case "Cancel":
+        return "text-red-500"; // Red color for canceled projects
+      case "Pending":
+        return "text-blue-500"; // Blue color for ongoing projects
+      default:
+        return ""; // Default color if status doesn't match any case
+    }
+  };
+  const isDateCloser = (endDate) => {
+    const today = new Date(); // Today's date
+    const end = new Date(endDate); // End date
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data }, useSortBy);
+    // Calculate the difference in months between the end date and today's date
+    const monthsDiff =
+      (end.getFullYear() - today.getFullYear()) * 12 +
+      (end.getMonth() - today.getMonth());
+
+    // Check if the difference in months is less than or equal to 2
+    if (monthsDiff <= 2) {
+      return true;
+    }
+
+    return false;
+  };
+
+
+
+  const [showModal, setShowModal] = useState(false);
+  const [comment, setComment] = useState("");
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
+
+  // Function to handle opening the modal
+  const handleComment = (Task_id) => {
+    setSelectedTaskId(Task_id); // Set the selected Upload_id
+    setShowModal(true); // Open the modal
+  };
+  // Function to handle closing the modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+  
+
+  // Function to handle saving the comment
+  // Function to handle saving the comment
+  const handleSaveComment = async (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    try {
+      // Perform the comment saving logic here
+      // For example, you can make an API call to save the comment
+      const response = await axios.post(
+        `http://localhost:3001/Task/CommentTaskData?Comment=${comment}&TaskID=${selectedTaskId}`
+      );
+      var count = response.data.data.affectedRows;
+
+      if (count >= 1) {
+        alert("Updation Successfully");
+        handleCloseModal();
+      } else {
+        alert("There was an error updating the comment");
+      }
+    } catch (err) {
+      console.log(err);
+      alert("There was an error updating the comment");
+    }
+
+    setComment(""); // Reset comment to empty string
+    setSelectedTaskId(null);
+    CompletedTask();
+    PendingTask();
+    CancledTask();
+    AlertTableTask();
+    AllTaskList();
+  };
+
+
+
+
+
 
   return (
     <div className="w-full h-full mt-16">
       <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4">
-        <div
-          ref={drawerRef}
-          id="drawer-right-example"
-          className={`fixed top-0 right-0 z-50 h-screen p-4 overflow-y-auto transition-transform ${
-            isDrawerOpen ? "translate-x-0" : "translate-x-full"
-          } bg-white w-full sm:w-[90%] md:w-[80%] lg:w-[40%] xl:w-[40%] dark:bg-gray-800 border-l border-gray-300`}
-        >
-          <section className="bg-white w-full max-w-2xl p-7">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-2xl font-bold text-center text-gray-900 -mt-3">
-                Task
-              </h1>
-              <button
-                className="text-gray-600 hover:text-gray-800"
-                onClick={handleCloseForm}
-              >
-                <FaTimes />
-              </button>
-            </div>
-            <form className="space-y-4" onSubmit={handleSubmit}>
-              <div>
-                <label
-                  htmlFor="taskId"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
-                  Task Id
-                </label>
-                <input
-                  type="text"
-                  name="taskId"
-                  id="taskId"
-                  value={formData.taskId}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Enter Task Id"
-                  disabled
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
-                  Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Enter Employee Name"
-                  disabled
-                />
-              </div>
-
-              <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 sm:space-x-0 md:space-x-5 lg:space-x-5">
-                <div>
-                  <label
-                    htmlFor="startDate"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    name="startDate"
-                    id="startDate"
-                    value={formData.startDate}
-                    onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    disabled
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="endDate"
-                    className="block mb-2 text-sm font-medium text-gray-900 "
-                  >
-                    End Date
-                  </label>
-                  <input
-                    type="date"
-                    name="endDate"
-                    id="endDate"
-                    value={formData.endDate}
-                    onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    disabled
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="progress"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
-                  Progress
-                </label>
-                <input
-                  type="text"
-                  name="progress"
-                  id="progress"
-                  value={formData.progress}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark"
-                  disabled
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="priority"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
-                  Priority
-                </label>
-                <select
-                  name="priority"
-                  id="priority"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
-                  value={formData.priority}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Priority</option>
-                  <option value="High">High</option>
-                  <option value="Moderate">Moderate</option>
-                  <option value="Low">Low</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="comments"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
-                  Comments
-                </label>
-                <textarea
-                  type="text"
-                  name="comments"
-                  id="comments"
-                  value={formData.comments}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Enter Comments"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-bgButton text-white px-5 py-2.5 text-center rounded-md"
-              >
-                Submit
-              </button>
-            </form>
-          </section>
-        </div>
+        
 
         <h1 className="text-xl font-bold text-customBlue mb-2">
           Project Names Task
@@ -327,7 +334,7 @@ const TeamTask = () => {
         {/* Cards */}
         <div className="w-full">
           <div class="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-x-10 mx-auto">
-            <Cards title="Completed Task" value="10">
+            <Cards title="Completed Task" value={totalCompletedTask}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="36"
@@ -345,7 +352,7 @@ const TeamTask = () => {
                 </g>
               </svg>
             </Cards>
-            <Cards title="Pending Task" value="25">
+            <Cards title="Pending Task" value={totalPendingTask}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="36"
@@ -375,7 +382,7 @@ const TeamTask = () => {
                 </g>
               </svg>
             </Cards>
-            <Cards title="Cancel Task" value="5">
+            <Cards title="Cancel Task" value={totalCancelTask}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="36"
@@ -417,50 +424,70 @@ const TeamTask = () => {
             </h2>
             <div className="overflow-auto">
               <table
-                {...getTableProps()}
+                
                 className="w-full text-left border border-black"
               >
                 <thead>
-                  {headerGroups.map((headerGroup) => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((column) => (
-                        <th
-                          {...column.getHeaderProps(
-                            column.getSortByToggleProps()
-                          )}
-                          className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100 cursor-pointer"
-                        >
-                          {column.render("Header")}
-                          <span>
-                            {column.isSorted
-                              ? column.isSortedDesc
-                                ? " 🔽"
-                                : " 🔼"
-                              : ""}
-                          </span>
-                        </th>
-                      ))}
+                <tr className="bg-gray-100">
+                      <th className="p-2 text-gray-700 border border-blue-gray-300">
+                        Task ID
+                      </th>
+
+                      <th className="p-2 text-gray-700 border border-blue-gray-300">
+                        Task Name
+                      </th>
+                      <th className="p-2 text-gray-700 border border-blue-gray-300">
+                        Description
+                      </th>
+                      <th className="p-2 text-gray-700 border border-blue-gray-300">
+                        Start Date
+                      </th>
+
+                      <th className="p-2 text-gray-700 border border-blue-gray-300">
+                        End Date
+                      </th>
+
+                      <th className="p-2 text-gray-700 border border-blue-gray-300">
+                        Priority
+                      </th>
                     </tr>
-                  ))}
                 </thead>
-                <tbody {...getTableBodyProps()}>
-                  {rows.map((row) => {
-                    prepareRow(row);
-                    return (
-                      <tr {...row.getRowProps()}>
-                        {row.cells.map((cell) => {
-                          return (
-                            <td
-                              {...cell.getCellProps()}
-                              className="p-2 border border-blue-gray-300"
-                            >
-                              {cell.render("Cell")}
-                            </td>
-                          );
-                        })}
+                <tbody >
+                {AlertTask.map(
+                    (
+                      {
+                        Task_id,
+                        Task_name,
+                        Description,
+                        Start_date,
+                        End_date,
+                        Priority,
+                      },
+                    
+                    ) => (
+                      <tr key={Task_id}>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Task_id}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Task_name}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Description}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {formatTimestamp(Start_date)}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {formatTimestamp(End_date)}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Priority}
+                        </td>
+                        
                       </tr>
-                    );
-                  })}
+                    )
+                  )}
                 </tbody>
               </table>
             </div>
@@ -484,6 +511,9 @@ const TeamTask = () => {
                       Employee Name
                     </th>
                     <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
+                      Description
+                    </th>
+                    <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
                       Start Date
                     </th>
                     <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
@@ -492,94 +522,102 @@ const TeamTask = () => {
                     <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
                       Priority
                     </th>
-                    {/* <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
+                    <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
                       Progress
                     </th>
                     <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
                       Comments
-                    </th> */}
+                    </th>
+                    <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {[
-                    {
-                      taskId: "1",
-                      employeeName: "John Doe",
-                      startDate: "2024-03-10",
-                      endDate: "2024-03-25",
-                      priority: "High",
-                      // progress: "50%",
-                      // comments: "On track",
-                    },
-                    {
-                      taskId: "2",
-                      employeeName: "Mary Johnson",
-                      startDate: "2024-03-15",
-                      endDate: "2024-03-28",
-                      priority: "Medium",
-                      // progress: "30%",
-                      // comments: "Needs attention",
-                    },
-                    {
-                      taskId: "3",
-                      employeeName: "James Smith",
-                      startDate: "2024-03-20",
-                      endDate: "2024-03-30",
-                      priority: "Low",
-                      // progress: "80%",
-                      // comments: "Ahead of schedule",
-                    },
-                  ].map(
+                {AlertTask.map(
                     (
                       {
-                        taskId,
-                        employeeName,
-                        startDate,
-                        endDate,
-                        priority,
-                        // progress,
-                        // comments,
+                        Task_id,
+                        Task_name,
+                        Description,
+                        Progress,
+                        Start_date,
+                        End_date,
+                        Priority,
+                        Comments,
                       },
-                      index
+                    
                     ) => (
-                      <tr key={index}>
-                        <td className="p-2 border border-blue-gray-300">
-                          {taskId}
+                      <tr key={Task_id}>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Task_id}
                         </td>
-                        <td className="p-2 border border-blue-gray-300">
-                          {employeeName}
+                        <td className="border border-blue-gray-300 p-2">
+                          {Task_name}
                         </td>
-                        <td className="p-2 border border-blue-gray-300">
-                          {startDate}
+                        <td className="border border-blue-gray-300 p-2">
+                          {Description}
                         </td>
-                        <td className="p-2 border border-blue-gray-300">
-                          {endDate}
+                        <td className="border border-blue-gray-300 p-2">
+                          {formatTimestamp(Start_date)}
                         </td>
-                        <td className="p-2 border border-blue-gray-300">
-                          {priority}
+                        <td className="border border-blue-gray-300 p-2">
+                          {formatTimestamp(End_date)}
                         </td>
-                        {/* <td className="p-2 border border-blue-gray-300">
-                          {progress}
+                        <td className="border border-blue-gray-300 p-2">
+                          {Priority}
                         </td>
-                        <td className="p-2 border border-blue-gray-300">
-                          {comments}
-                        </td> */}
+                        <td className="border border-blue-gray-300 p-2">
+                          {Progress}
+                        </td>
+                        <td className="border border-blue-gray-300 p-2">
+                          {Comments}
+                        </td>
+                        <td className="border-t border-b text-center border-blue-gray-300 p-4">
+                          <FaCommentDots
+                            className="w-6 h-6 ml-3"
+                            onClick={() => handleComment(Task_id)} // Pass a function reference
+                          />
+                        </td>
+                        
                       </tr>
                     )
                   )}
+                 
                 </tbody>
               </table>
             </div>
-            <button
-              ref={buttonRef}
-              className="absolute top-3 right-5 bg-customBlue text-white font-semibold p-2 rounded-md flex items-center"
-              onClick={openDrawer}
-            >
-              <span>
-                <FaPlus className="h-4 w-4 text-white mr-1.5" />
-              </span>
-              Task
-            </button>
+           {/* Modal */}
+           {showModal && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 overflow-scroll">
+                <div className="bg-white rounded-lg overflow-hidden shadow-xl max-w-md w-full">
+                  <form className="p-8" onSubmit={handleSaveComment}>
+                    <h2 className="text-lg font-semibold mb-4">Add Comment</h2>
+                    {/* Comment input */}
+                    <textarea
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      className="w-full h-32 bg-gray-100 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:border-blue-500"
+                      placeholder="Enter your comment here..."
+                    ></textarea>
+                    {/* Save button */}
+                    <button
+                      type="submit"
+                      className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+                    >
+                      Save
+                    </button>
+                    {/* Cancel button */}
+                    <button
+                      onClick={handleCloseModal}
+                      className="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-2 px-4 rounded"
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

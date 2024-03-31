@@ -7,13 +7,17 @@ function Report() {
     const tlid = sessionStorage.getItem("TLID");
 
     try {
-      const response = await axios.get(`http://localhost:3001/TL/FetchTheReportData?tlid=${tlid}`);
+      const response = await axios.get(
+        `http://localhost:3001/TL/FetchTheReportData?tlid=${tlid}`
+      );
       const data = response.data.data; // Assuming your response structure has data property holding the report data
       // Sort the report data based on timestamps
-      const sortedData = data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+      const sortedData = data.sort(
+        (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+      );
       setReportData(sortedData);
     } catch (error) {
-      console.error('Error fetching report data:', error);
+      console.error("Error fetching report data:", error);
     }
   };
 
@@ -87,12 +91,12 @@ function Report() {
       console.log(err);
       alert("There was an error updating the comment");
     }
-   
+
     setComment(""); // Reset comment to empty string
-  setSelectedUploadId(null);
+    setSelectedUploadId(null);
     fetchReportData();
     handleCloseModal();
-     // Close the modal after saving the comment
+    // Close the modal after saving the comment
   };
 
   return (

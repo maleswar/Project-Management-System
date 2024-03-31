@@ -1,48 +1,39 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+
+
 
 const TeamTable = () => {
-  const teamMembers = [
-    {
-      name: "John Doe",
-      email: "john@example.com",
-      designation: "Software Engineer",
-      phoneNumber: "9878677768",
-      qualification: "Bachelor's in Computer Science",
-      skills: "JavaScript, React, Node.js",
-    },
-    {
-      name: "Jane Smith",
-      email: "jane@example.com",
-      designation: "UI/UX Designer",
-      phoneNumber: "9876543210",
-      qualification: "Bachelor's in Graphic Design",
-      skills: "Adobe XD, Figma, Sketch",
-    },
-    {
-      name: "Alice Johnson",
-      email: "alice@example.com",
-      designation: "Project Manager",
-      phoneNumber: "7898673743",
-      qualification: "Master's in Business Administration",
-      skills: "Leadership, Communication, Planning",
-    },
-    {
-      name: "Bob Williams",
-      email: "bob@example.com",
-      designation: "Marketing Specialist",
-      phoneNumber: "9755887950",
-      qualification: "Bachelor's in Marketing",
-      skills: "Social Media Marketing, SEO, Content Creation",
-    },
-    {
-      name: "Emily Brown",
-      email: "emily@example.com",
-      designation: "Data Analyst",
-      phoneNumber: "9655567994",
-      qualification: "Bachelor's in Statistics",
-      skills: "Data Analysis, SQL, Python",
-    },
-  ];
+  const { projectId } = useParams();
+  const [TeamMember, setTeamMember] = useState([]);
+  const TeamMemberList = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/Team/TeamDataProjectAccording?Projectid=${projectId}`
+      );
+      const TeamMember = response.data.data;
+      setTeamMember(TeamMember);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    }
+  };
+  useEffect(() => {
+    TeamMemberList();
+  }, []);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "text-green-500"; // Green color for completed projects
+      case "Cancled":
+        return "text-red-500"; // Red color for canceled projects
+      case "Pending":
+        return "text-blue-500"; // Blue color for ongoing projects
+      default:
+        return ""; // Default color if status doesn't match any case
+    }
+  };
 
   return (
     <div className="w-full mt-16">
@@ -54,50 +45,68 @@ const TeamTable = () => {
           <div className="overflow-auto">
             <table className="w-full text-left border border-black">
               <thead>
-                <tr>
-                  <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
-                    Name
-                  </th>
-                  <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
-                    Email
-                  </th>
-                  <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
-                    Designation
-                  </th>
-                  <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
-                    Phone Number
-                  </th>
-                  <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
-                    Qualification
-                  </th>
-                  <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
-                    Skills
-                  </th>
-                </tr>
+              <tr>
+                      <th className="p-4  text-slate-700 ">Profile</th>
+                      <th className="p-4  text-slate-700 ">Name</th>
+                   
+                      <th className="p-4  text-slate-700">Email</th>
+                      <th className="p-4  text-slate-700">Designation</th>
+                      <th className="p-4  text-slate-700">Phone Number</th>
+                      <th className="p-4  text-slate-700">Qualification</th>
+                      <th className="p-4  text-slate-700">Skills</th>
+                      
+                    </tr>
               </thead>
               <tbody>
-                {teamMembers.map((member) => (
-                  <tr>
-                    <td className="p-2 border border-blue-gray-300">
-                      {member.name}
-                    </td>
-                    <td className="p-2 border border-blue-gray-300">
-                      {member.email}
-                    </td>
-                    <td className="p-2 border border-blue-gray-300">
-                      {member.designation}
-                    </td>
-                    <td className="p-2 border border-blue-gray-300">
-                      {member.phoneNumber}
-                    </td>
-                    <td className="p-2 border border-blue-gray-300">
-                      {member.qualification}
-                    </td>
-                    <td className="p-2 border border-blue-gray-300">
-                      {member.skills}
-                    </td>
-                  </tr>
-                ))}
+              {TeamMember.map(
+                      (
+                        {
+                          Profile_image,
+                          Team_name,
+                          Email,
+                          Roles,
+                          phone_number,
+                          Qualification,
+                          Skills,
+                        },
+                        index
+                      ) => (
+                        <tr key={index} className="">
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
+                            {Profile_image ? (
+                              <img
+                                src={require(`../../image/${Profile_image}`)}
+                                alt="student profile"
+                                className="h-10 w-10 rounded-full cursor-pointer"
+                              />
+                            ) : (
+                              <span>No profile </span>
+                            )}
+                          </td>
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
+                            {Team_name}
+                          </td>
+                          
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-9">
+                            {Email}
+                          </td>
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                            {Roles}
+                          </td>
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                            {phone_number}
+                          </td>
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                            {Qualification}
+                          </td>
+                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                            {Skills}
+                          </td>
+                          
+                          
+                        </tr>
+                      )
+                    )}
               </tbody>
             </table>
           </div>

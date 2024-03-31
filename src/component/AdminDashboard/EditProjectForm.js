@@ -81,7 +81,7 @@ const EditProjectForm = () => {
     try {
       const tlid = sessionStorage.getItem("TLID");
       const response = await axios.get(
-        `http://localhost:3001/Team/TeamNames?tlid=${tlid}`
+        `http://localhost:3001/Team/TeamNames?tlid=${tlid}&ProjectId=${projectId}`
       );
       const teamFormMember = response.data.data;
       setTeamFormMember(teamFormMember);

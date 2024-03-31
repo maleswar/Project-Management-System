@@ -246,7 +246,15 @@ function Sidebar() {
                   </div>
                 </Link>
               </div>
+              <div className="flex items-center px-5 py-3  space-x-3 cursor-pointer">
+                <Link to="chart" className="flex items-center">
+                  <GoProjectRoadmap className="w-8 h-8 text-white" />
 
+                  <div className="text-xl font-semibold text-white ml-3">
+                    <span className="hover:underline">Chart</span>
+                  </div>
+                </Link>
+              </div>
               {/* <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link to="task" className="flex items-center">
                   <GrTask className="w-8 h-8 text-white" />

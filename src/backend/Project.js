@@ -290,7 +290,7 @@ router.get("/TeamIDCompletedProject", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "SELECT count(*) from Project where status='completed' And Team_id = ? and Active='Active'";
+    let query = "SELECT count(*) from Project join team on Project.project_id=team.Project_id where project.status='Completed' And team.Team_id = ? And project.Active='Active'";
     connection.query(query,TeamID, (err, data) => {
       connection.release();
 
@@ -332,7 +332,7 @@ router.get("/TeamProjectData", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "select project.Project_id,project.Project_name,project.Start_date,project.End_date,project.Status,project.Description,project.Budget,project.Priority,team.Team_id from project join team on project.Team_id=team.Team_id where team.Team_id = ?  ";
+    let query = "select project.Project_id,project.Project_name,project.Start_date,project.End_date,project.Status,project.Description,project.Budget,project.Priority,team.Team_id from project join team on project.Project_id=team.Project_id where team.Team_id = ?  ";
     connection.query(query,TeamID, (err, data) => {
       connection.release();
 

@@ -123,16 +123,22 @@ const TeamProject = () => {
                         </td>
                       <td className="p-2">
                         <a
-                          href={`/task/${Project_id}`}
+                          href={`/TeamDashbord/task/${Project_id}`}
                           className="bg-customBlue text-white font-bold py-1.5 px-4 mx-2 rounded"
                         >
                           Task
                         </a>
                         <a
-                          href={`/team/${Project_id}`}
+                          href={`/TeamDashbord/team/${Project_id}`}
                           className="bg-customBlue text-white font-bold py-1.5 px-4 mx-2 rounded"
                         >
                           Team
+                        </a>
+                        <a
+                          href={`/TeamDashbord/report/${Project_id}`}
+                          className="bg-customBlue text-white font-bold py-1.5 px-4 mx-2 rounded"
+                        >
+                          Report
                         </a>
                       </td>
                     </tr>
