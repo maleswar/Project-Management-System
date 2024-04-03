@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-
+import ReactApexChart from "react-apexcharts";
 import Task from "./Assest/Vector/Task.png";
 import Cards from "./Layouts/Cards";
 import { FaCommentDots } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 const TeamTask = () => {
-  const { projectId } = useParams();
+  const { projectId, Project_name } = useParams();
   // const [formData, setFormData] = useState({
   //   pname: "",
   //   startDate: "",
@@ -250,8 +250,6 @@ const TeamTask = () => {
     return false;
   };
 
-
-
   const [showModal, setShowModal] = useState(false);
   const [comment, setComment] = useState("");
   const [selectedTaskId, setSelectedTaskId] = useState(null);
@@ -265,7 +263,6 @@ const TeamTask = () => {
   const handleCloseModal = () => {
     setShowModal(false);
   };
-  
 
   // Function to handle saving the comment
   // Function to handle saving the comment
@@ -299,19 +296,32 @@ const TeamTask = () => {
     AllTaskList();
   };
 
+  const [chartOptions, setChartOptions] = useState({
+    labels: ["Completed Tasks", "Pending Task", "Canceled Task"],
+    colors: ["#008FFB", "#00E396", "#FEB019"],
+    legend: {
+      position: "bottom",
+    },
+  });
 
+  const [chartSeries, setChartSeries] = useState([]);
 
-
-
+  useEffect(() => {
+    // When values change, update the chart series
+    if (
+      totalCompletedTask !== null &&
+      totalPendingTask !== null &&
+      totalCancelTask !== null
+    ) {
+      const series = [totalCompletedTask, totalPendingTask, totalCancelTask];
+      setChartSeries(series);
+    }
+  }, [totalCompletedTask, totalPendingTask, totalCancelTask]);
 
   return (
     <div className="w-full h-full mt-16">
       <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4">
-        
-
-        <h1 className="text-xl font-bold text-customBlue mb-2">
-          Project Names Task
-        </h1>
+        <h1 className="text-xl font-bold text-customBlue mb-2"></h1>
         {/* Welcome Card */}
         <div className="w-full">
           <div className="mx-auto grid grid-cols-1 md:grid-cols-2 bg-white shadow-lg items-center">
@@ -320,7 +330,7 @@ const TeamTask = () => {
             </div>
             <div className="sm:p-3 md:text-left sm:ml-0 lg:-ml-80 text-wrap">
               <h1 className="text-4xl font-bold text-customBlue mb-2">
-                Hello, Task
+                {Project_name} 's Task
               </h1>
               <p className="text-gray-600">
                 Welcome to the Project Management Dashboard! Your hub for
@@ -415,7 +425,19 @@ const TeamTask = () => {
             </Cards>
           </div>
         </div>
-
+        <div className="bg-white rounded-lg shadow-lg  px-5 py-5 flex-1">
+          <h2 className="text-2xl font-bold mb-4 text-customBlue">
+            Task Graph
+          </h2>
+          <div className="donut-chart">
+      <ReactApexChart
+        options={chartOptions}
+        series={chartSeries}
+        type="donut"
+        height="350"
+      />
+    </div>
+        </div>
         {/* Task Alert Table */}
         <div className="w-full">
           <div className="mx-auto bg-white rounded-lg shadow-lg px-5 py-5 mt-7">
@@ -423,48 +445,42 @@ const TeamTask = () => {
               Task Alert Table
             </h2>
             <div className="overflow-auto">
-              <table
-                
-                className="w-full text-left border border-black"
-              >
+              <table className="w-full text-left border border-black">
                 <thead>
-                <tr className="bg-gray-100">
-                      <th className="p-2 text-gray-700 border border-blue-gray-300">
-                        Task ID
-                      </th>
+                  <tr className="bg-gray-100">
+                    <th className="p-2 text-gray-700 border border-blue-gray-300">
+                      Task ID
+                    </th>
 
-                      <th className="p-2 text-gray-700 border border-blue-gray-300">
-                        Task Name
-                      </th>
-                      <th className="p-2 text-gray-700 border border-blue-gray-300">
-                        Description
-                      </th>
-                      <th className="p-2 text-gray-700 border border-blue-gray-300">
-                        Start Date
-                      </th>
+                    <th className="p-2 text-gray-700 border border-blue-gray-300">
+                      Task Name
+                    </th>
+                    <th className="p-2 text-gray-700 border border-blue-gray-300">
+                      Description
+                    </th>
+                    <th className="p-2 text-gray-700 border border-blue-gray-300">
+                      Start Date
+                    </th>
 
-                      <th className="p-2 text-gray-700 border border-blue-gray-300">
-                        End Date
-                      </th>
+                    <th className="p-2 text-gray-700 border border-blue-gray-300">
+                      End Date
+                    </th>
 
-                      <th className="p-2 text-gray-700 border border-blue-gray-300">
-                        Priority
-                      </th>
-                    </tr>
+                    <th className="p-2 text-gray-700 border border-blue-gray-300">
+                      Priority
+                    </th>
+                  </tr>
                 </thead>
-                <tbody >
-                {AlertTask.map(
-                    (
-                      {
-                        Task_id,
-                        Task_name,
-                        Description,
-                        Start_date,
-                        End_date,
-                        Priority,
-                      },
-                    
-                    ) => (
+                <tbody>
+                  {AlertTask.map(
+                    ({
+                      Task_id,
+                      Task_name,
+                      Description,
+                      Start_date,
+                      End_date,
+                      Priority,
+                    }) => (
                       <tr key={Task_id}>
                         <td className="border border-blue-gray-300 p-2">
                           {Task_id}
@@ -484,7 +500,6 @@ const TeamTask = () => {
                         <td className="border border-blue-gray-300 p-2">
                           {Priority}
                         </td>
-                        
                       </tr>
                     )
                   )}
@@ -534,20 +549,17 @@ const TeamTask = () => {
                   </tr>
                 </thead>
                 <tbody>
-                {AlertTask.map(
-                    (
-                      {
-                        Task_id,
-                        Task_name,
-                        Description,
-                        Progress,
-                        Start_date,
-                        End_date,
-                        Priority,
-                        Comments,
-                      },
-                    
-                    ) => (
+                  {AllTask.map(
+                    ({
+                      Task_id,
+                      Task_name,
+                      Description,
+                      Progress,
+                      Start_date,
+                      End_date,
+                      Priority,
+                      Comments,
+                    }) => (
                       <tr key={Task_id}>
                         <td className="border border-blue-gray-300 p-2">
                           {Task_id}
@@ -567,7 +579,11 @@ const TeamTask = () => {
                         <td className="border border-blue-gray-300 p-2">
                           {Priority}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td
+                          className={`p-2 border border-blue-gray-300  ${getStatusColor(
+                            Progress
+                          )}`}
+                        >
                           {Progress}
                         </td>
                         <td className="border border-blue-gray-300 p-2">
@@ -579,16 +595,14 @@ const TeamTask = () => {
                             onClick={() => handleComment(Task_id)} // Pass a function reference
                           />
                         </td>
-                        
                       </tr>
                     )
                   )}
-                 
                 </tbody>
               </table>
             </div>
-           {/* Modal */}
-           {showModal && (
+            {/* Modal */}
+            {showModal && (
               <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 overflow-scroll">
                 <div className="bg-white rounded-lg overflow-hidden shadow-xl max-w-md w-full">
                   <form className="p-8" onSubmit={handleSaveComment}>

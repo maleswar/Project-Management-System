@@ -44,34 +44,7 @@ router.post("/TLProfilePhoto", uploadImage.single("image"), (req, res) => {
   }
 });
 
-// router.use('/image', express.static(path.join(__dirname, '../backend/image/')));
 
-// router.get("/TLPhoto", (req, res) => {
-//   const tlid = req.query.tlid;
-
-//   try {
-//     pool.getConnection((err, connection) => {
-//       if (err) {
-//         return res.status(500).json({ error: "Internal Server Error" });
-//       }
-
-//       let query = "SELECT Profile_image FROM TL WHERE TL_id=?";
-//       connection.query(query, [tlid], (err, data) => {
-//         connection.release();
-
-//         if (err) {
-//           return res.status(500).json({ error: "Database Error" });
-//         } else {
-//           const imageUrl = data[0].Profile_image; // Assuming the image filename is stored in the 'Profile_image' field
-//           return res.status(200).json({ imageUrl: imageUrl });
-//         }
-//       });
-//     });
-//   } catch (error) {
-//     console.error("Error fetching TL data:", error);
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
 
 // Route to fetch TL data
 router.get("/TLData", (req, res) => {
@@ -201,13 +174,14 @@ router.get("/TeamTLDetailDashbord", (req, res) => {
 
 router.get("/FetchTheReportData", (req, res) => {
   const tlid = req.query.tlid;
+  const Projectid = req.query.projectid;
   try {
     pool.getConnection((err, connection) => {
       if (err) {
         return res.status(500).json({ error: "Internal Server Error" });
       }
-      let query = "SELECT  TL.TL_id,Team.Profile_image,Team.Team_name, Report.Upload_id, Report.File_name, Report.Description, Report.Uploaded_at, Report.Comment  FROM TL join  Report ON Report.TL_id=TL.TL_id  join Team on Team.Team_id=Report.Team_id WHERE Report.TL_id = ? AND Report.Active = 'Active'";
-      connection.query(query, tlid, (err, data) => {
+      let query = "SELECT  TL.TL_id,Team.Profile_image,Team.Team_name, Report.Upload_id, Report.File_name, Report.Description, Report.Uploaded_at, Report.Comment  FROM TL join  Report ON Report.TL_id=TL.TL_id  join Team on Team.Team_id=Report.Team_id WHERE Report.TL_id = ? AND Report.Project_id=? AND Report.Active = 'Active'";
+      connection.query(query, [tlid,Projectid], (err, data) => {
         connection.release();
         if (err) {
           console.error('Error Fetching Report data:', err);

@@ -10,7 +10,7 @@ router.get("/ProjectData", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "SELECT Project.Project_id,Project.Project_name,Project.Start_date,Project.End_date,Project.Status,Project.Description,Project.Budget,Project.Priority,Team.Team_id,Team.Team_name FROM Project JOIN Team ON Project.Team_id=Team.Team_id OR Project.Project_id=Team.Project_id where Project.TL_id=? And Project.Active='Active' And team.Active='Active'";
+    let query = "SELECT Project_id,Project_name,Start_date,End_date,Status,Description,Budget,Priority FROM Project  where TL_id=? And Active='Active' ";
     connection.query(query,tlid, (err, data) => {
       connection.release();
 
@@ -290,7 +290,7 @@ router.get("/TeamIDCompletedProject", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "SELECT count(*) from Project join team on Project.project_id=team.Project_id where project.status='Completed' And team.Team_id = ? And project.Active='Active'";
+    let query = "SELECT count(*) from Project join team on project.project_id=team.project_id where project.status='Completed' And team.Team_id = ? and project.Active='Active' and team.Active='Active'";
     connection.query(query,TeamID, (err, data) => {
       connection.release();
 
@@ -311,7 +311,7 @@ router.get("/TeamIDPendingProject", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "SELECT count(*) from Project where status='Pending' And Team_id = ? and Active='Active'";
+    let query = "SELECT count(*) from Project join team on project.project_id=team.project_id where project.status='Pending' And team.Team_id = ? and project.Active='Active' and team.Active='Active'";
     connection.query(query,TeamID, (err, data) => {
       connection.release();
 
@@ -334,6 +334,48 @@ router.get("/TeamProjectData", (req, res) => {
 
     let query = "select project.Project_id,project.Project_name,project.Start_date,project.End_date,project.Status,project.Description,project.Budget,project.Priority,team.Team_id from project join team on project.Project_id=team.Project_id where team.Team_id = ?  ";
     connection.query(query,TeamID, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+router.get("/ProjectDataForTeam", (req, res) => {
+  const tlid = req.query.tlid;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "SELECT count(*) from Project where TL_id=? And Active='Active'";
+    connection.query(query,tlid, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+router.get("/ProjectwiseTaskDataChart", (req, res) => {
+  const tlid = req.query.tlid;
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "SELECT p.project_id,p.project_name,COUNT(t.task_id) AS total_tasks,SUM(CASE WHEN t.Progress = 'Completed' THEN 1 ELSE 0 END) AS completed_tasks,SUM(CASE WHEN t.Progress = 'Pending' THEN 1 ELSE 0 END) AS pending_tasks,SUM(CASE WHEN t.Progress = 'Cancel' THEN 1 ELSE 0 END) AS canceled_tasks FROM project p LEFT JOIN task t ON p.project_id = t.project_id LEFT JOIN tl ON p.tl_id = tl.tl_id WHERE tl.tl_id =1 OR tl.tl_id IS NULL GROUP BY p.project_id, p.project_name;";
+    connection.query(query,tlid, (err, data) => {
       connection.release();
 
       if (err) {

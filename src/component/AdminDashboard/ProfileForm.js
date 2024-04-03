@@ -61,26 +61,6 @@ const ProfileForm = () => {
     }));
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const config = {
-  //         method: "get",
-  //         url: "https://api.countrystatecity.in/v1/countries",
-  //         headers: {
-  //           "X-CSCAPI-KEY": "f796cd27f4ef27194bcb4af75e6c2062",
-  //         },
-  //       };
-  //       const response = await axios(config);
-  //       alert(JSON.stringify(response.data));
-  //       console.log(JSON.stringify(response.data));
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
 
   const [Data, setData] = useState([]);
 

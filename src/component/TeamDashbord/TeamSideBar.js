@@ -457,7 +457,7 @@ function TeamSidebar() {
                   </div>
                 </Link>
               </div> */}
-              <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
+              {/* <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link to="calendar" className="flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -529,7 +529,7 @@ function TeamSidebar() {
                     <span>Calendar</span>
                   </div>
                 </Link>
-              </div>
+              </div> */}
             </div>
           </ul>
         </div>

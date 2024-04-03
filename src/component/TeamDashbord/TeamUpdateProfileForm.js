@@ -14,12 +14,11 @@ import {
 } from "../../JS/FormValidation";
 
 const ProfileForm = () => {
-  const ID = sessionStorage.getItem("TLID");
+  const ID = sessionStorage.getItem("TeamID");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
-    TL_ID: ID,
-    fname: "",
-    lname: "",
+    Team_ID: ID,
+    name:"",
     role: "",
     dob: new Date(),
     Age: "",
@@ -61,54 +60,34 @@ const ProfileForm = () => {
     }));
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const config = {
-  //         method: "get",
-  //         url: "https://api.countrystatecity.in/v1/countries",
-  //         headers: {
-  //           "X-CSCAPI-KEY": "f796cd27f4ef27194bcb4af75e6c2062",
-  //         },
-  //       };
-  //       const response = await axios(config);
-  //       alert(JSON.stringify(response.data));
-  //       console.log(JSON.stringify(response.data));
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
 
   const [Data, setData] = useState([]);
 
   const fetchData = async () => {
     try {
-      const tlid = sessionStorage.getItem("TLID");
+      const TeamID = sessionStorage.getItem("TeamID");
       const response = await axios.get(
-        `http://localhost:3001/TL/TLData?tlid=${tlid}`
+        `http://localhost:3001/Team/TeamData?teamid=${TeamID}`
       );
       const Data = response.data.data;
       setData(Data);
       // Update form data with the first project data
       if (Data.length > 0) {
         setFormData({
-          fname: Data[0].TL_fname,
-          lname: Data[0].TL_lname,
-          role: Data[0].role,
+          Team_ID: ID,
+          name: Data[0].Team_name,
+          role: Data[0].Roles,
           dob: Data[0].Date_of_birth,
           Age: Data[0].Age,
-          state: Data[0].null,
+          state: Data[0].state,
           country: Data[0].country,
           city: Data[0].city,
-          skills: Data[0].Skill,
+          skills: Data[0].Skills,
           qualification: Data[0].Qualification,
-          password: Data[0].Password,
+          password: Data[0].password,
           uid: Data[0].Uniq_id,
           email: Data[0].Email,
-          phoneNumber: Data[0].Phone_number,
+          phoneNumber: Data[0].phone_number,
           companyName: Data[0].C_name,
           companyAddress: Data[0].company_address,
           instagram: Data[0].instagram,
@@ -125,8 +104,7 @@ const ProfileForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const result =
-      checkEmpty("fname", "First Name", "fnamespan") &&
-      checkEmpty("lname", "Last Name", "lnamespan") &&
+      checkEmpty("name", "Name", "namespan") &&
       checkEmpty("role", "Designation", "rolespan") &&
       checkEmpty("password", "Password", "pasawordspan") &&
       validateNumber("password", "pasawordspan") &&
@@ -144,7 +122,7 @@ const ProfileForm = () => {
         const formatteddob = formatDate(formData.dob);
         // alert(formatteddob);
         const response = await axios.post(
-          "http://localhost:3001/TL/TLProfileUpdate",
+          "http://localhost:3001/Team/TeamProfileUpdate",
           {
             ...formData,
             dob: formatteddob,
@@ -152,11 +130,12 @@ const ProfileForm = () => {
         );
         var count = response.data.data.affectedRows;
 
-        if (count === 1) {
+        if (count >=1) {
           alert("Profile Updated Successfully");
-          navigate("profile");
+          navigate(-2);
         } else {
           alert("Profile Updated Unsuccessfully");
+          console.log(error);
         }
       } catch (err) {
         console.log(err);
@@ -195,46 +174,27 @@ const ProfileForm = () => {
                   Personal Information
                 </h6>
                 <div className="flex flex-wrap">
-                  <div className="w-full lg:w-6/12 px-4">
-                    <div className="relative w-full mb-3">
-                      <label
-                        className="block text-blueGray-600 text-xs font-bold mb-2"
-                        htmlFor="fname"
-                      >
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        name="fname"
-                        id="fname"
-                        value={formData.fname}
-                        onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="John Deo"
-                      />
-                      <span id="fnamespan" className="text-red-700"></span>
-                    </div>
-                  </div>
-                  <div className="w-full lg:w-6/12 px-4">
+                  <div className="w-full px-4">
                     <div className="relative w-full mb-3">
                       <label
                         className="block text-blueGray-600 text-xs font-bold mb-2"
                         htmlFor="name"
                       >
-                        Last Name
+                       Name
                       </label>
                       <input
                         type="text"
-                        name="lname"
-                        id="lname"
-                        value={formData.lname}
+                        name="name"
+                        id="name"
+                        value={formData.name}
                         onChange={handleChange}
                         className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         placeholder="John Deo"
                       />
-                      <span id="lnamespan" className="text-red-700"></span>
+                      <span id="namespan" className="text-red-700"></span>
                     </div>
                   </div>
+                  
 
                   <div className="w-full  px-4">
                     <div className="relative w-full mb-3">
@@ -482,6 +442,7 @@ const ProfileForm = () => {
                         onChange={handleChange}
                         className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         placeholder="222"
+                        disabled
                       />
                       <span id="uidspan" className="text-red-700"></span>
                     </div>

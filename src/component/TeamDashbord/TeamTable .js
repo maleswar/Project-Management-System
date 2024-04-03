@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 
 
 const TeamTable = () => {
-  const { projectId } = useParams();
+  const { projectId,Project_name } = useParams();
   const [TeamMember, setTeamMember] = useState([]);
   const TeamMemberList = async () => {
     try {
@@ -40,7 +40,7 @@ const TeamTable = () => {
       <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4 h-screen">
         <div className="bg-white rounded-lg shadow-lg px-5 py-5 mt-5 mx-5">
           <h2 className="text-2xl font-bold mb-4 text-customBlue">
-            Team Member List
+           {Project_name} Team Member
           </h2>
           <div className="overflow-auto">
             <table className="w-full text-left border border-black">

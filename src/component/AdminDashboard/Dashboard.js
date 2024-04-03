@@ -154,7 +154,7 @@ const Dashboard = () => {
     try {
       const tlid = sessionStorage.getItem("TLID");
       const response = await axios.get(
-        `http://localhost:3001/Team/TeamNames?tlid=${tlid}`
+        `http://localhost:3001/Team/AllTeamMemberNames?tlid=${tlid}`
       );
       const teamFormMember = response.data.data;
       setTeamFormMember(teamFormMember);
@@ -339,7 +339,7 @@ const Dashboard = () => {
       var count = response.data.data.affectedRows;
 
       if (count >= 1) {
-       fetchIssue();
+        fetchIssue();
       } else {
         alert("There was an error updating the comment");
       }
@@ -350,7 +350,7 @@ const Dashboard = () => {
 
     setReply(""); // Reset comment to empty string
     setselectedIssueId(null);
-    
+
     handleCloseModal();
     // Close the modal after saving the comment
   };
@@ -557,6 +557,7 @@ const Dashboard = () => {
               </div>
 
               <button
+                onClick={closeDrawer}
                 type="reset"
                 className="w-1/2 text-black font-bold hover:text-customBlue px-5 py-2.5 text-center rounded-md"
               >

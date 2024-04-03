@@ -7,7 +7,7 @@ import axios from "axios";
 
 
 function TeamReport() {
-  const { projectId } = useParams();
+  const { projectId ,Project_name} = useParams();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const drawerRef = useRef(null);
   const buttonRef = useRef(null);
@@ -48,6 +48,7 @@ function TeamReport() {
       form.append("teamLeader", formData.teamLeader); 
       form.append("description", formData.description);
       form.append("Active",formData.Active);
+      form.append("projectId",formData.projectId);
 
       const response = await fetch(
         `http://localhost:3001/Team/updateTLExcelFile?teamID=${teamID}`,
@@ -63,7 +64,7 @@ function TeamReport() {
 
       const data = await response.json();
       alert("File updated successfully:", data);
-      
+      handleCloseForm();
       // You can perform additional actions after successful update, like showing a success message or redirecting the user.
     } catch (error) {
       console.error("Error updating Excel file:", error.message);
@@ -71,7 +72,7 @@ function TeamReport() {
     }
     setTimeout(() => {
       fetchReportData();
-    }, 1000);
+    }, 1500);
     
   };
 
@@ -233,7 +234,7 @@ function TeamReport() {
           <div className="mx-auto bg-white shadow-lg px-5 py-5 mt-7 rounded-lg">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold text-customBlue">
-                Project Reports
+                {Project_name} 's Project Reports
               </h2>
               <button
                 ref={buttonRef}

@@ -7,6 +7,7 @@ import axios from "axios";
 function HomeDashbord() {
   const teamid = sessionStorage.getItem("TeamID");
   const TeamName = sessionStorage.getItem("TeamName");
+  
   const [completedProject, setCompletedProject] = useState([]);
   const [PendingProject, setPendingProject] = useState([]);
   const [TeamLeader, setTeamLeader] = useState([]);
@@ -38,7 +39,7 @@ function HomeDashbord() {
         // (project);
       });
   };
-
+console.log(PendingProject);
   const TeamLeaderListWithData = async () => {
     const teamid = sessionStorage.getItem("TeamID");
 
@@ -87,6 +88,7 @@ function HomeDashbord() {
     ProjectPendingCount();
     TeamLeaderListWithData();
     TeamLederList();
+    fetchIssue();
   }, []);
 
   const projectData = [
@@ -238,6 +240,7 @@ function HomeDashbord() {
       if (count === 1) {
         alert("Issue Submited");
         ClearFileds();
+        fetchIssue();
       } else {
         alert("there is error");
       }
@@ -252,13 +255,19 @@ function HomeDashbord() {
     description: "",
     });
   }
-  // useEffect(() => {
-
-  //   // Fetch completed tasks for each project
-  //   projectData.forEach((project) => {
-  //     fetchCompletedTasks(project.Project_id);
-  //   });
-  // }, [projectData]);
+  const [issuelist, setIssuelist] = useState([]);
+  const fetchIssue = async () => {
+    try {
+      const teamid = sessionStorage.getItem("TeamID");
+      const response = await axios.get(
+        `http://localhost:3001/Utilities/fetchIssueForTeam?teamid=${teamid}`
+      );
+      const issuelist = response.data.data;
+      setIssuelist(issuelist);
+    } catch (error) {
+      console.error("Error fetching issue members:", error);
+    }
+  };
 
   const sm = window.innerWidth < 640; // Define 'sm' for small screens
 
@@ -351,21 +360,6 @@ function HomeDashbord() {
             </div>
           </div>
 
-          <div className="w-full">
-            <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:w-full gap-x-10 mx-auto mt-7 space-y-7 sm:space-y-7 md:space-y-7 lg:space-y-0">
-              <div className="bg-white rounded-lg shadow-lg px-3 py-5">
-                <h1>Task Completion Status</h1>
-                <div className="w-full h-full">
-                  <ReactApexChart
-                    options={chartData.options}
-                    series={chartData.series}
-                    type="bar"
-                    height={400}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
 
           <div className="w-full">
             <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-x-10 mx-auto mt-7 space-y-7 sm:space-y-7 md:space-y-7 lg:space-y-0">
@@ -537,6 +531,73 @@ function HomeDashbord() {
               </div>
             </div>
           </div>
+
+          <div className="bg-white shadow-lg rounded-xl px-5 py-5 text-left">
+              <h2 className="text-2xl font-bold mb-4 text-customBlue">
+                Issues
+              </h2>
+              <div className="overflow-auto">
+                <table className="w-full">
+                  <thead
+                    className="bg-gray-2
+                  00"
+                  >
+                    <tr>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
+                        Profile
+                      </th>
+
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
+                        Team Member
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
+                        Issues
+                      </th>
+                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
+                        Comment
+                      </th>
+                      
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {issuelist.map(
+                      ({
+                        Profile_image,
+                        Team_name,
+                        issue_id,
+                        issue_name,
+                        comment,
+                      }) => (
+                        <tr key={issue_id}>
+                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            {Profile_image ? (
+                              <img
+                                src={require(`../../image/${Profile_image}`)}
+                                alt="student profile"
+                                className="h-10 w-10 rounded-full cursor-pointer"
+                              />
+                            ) : (
+                              <span>No profile </span>
+                            )}
+                          </td>
+                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            {Team_name}
+                          </td>
+                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            {issue_name}
+                          </td>
+                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            {comment}
+                          </td>
+
+                        
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
         </div>
       </div>
     </div>

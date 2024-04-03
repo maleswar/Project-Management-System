@@ -18,8 +18,8 @@ import {
 } from "../../JS/FormValidation";
 
 function Task() {
-  const { projectId } = useParams();
-  // console.log(projectId);
+  const { projectId, Project_name } = useParams();
+  console.log(Project_name);
   const ID = sessionStorage.getItem("TLID");
   const [totalCompletedTask, setTotalCompletedTask] = useState(null);
   const [totalPendingTask, setTotalPendingTask] = useState(null);
@@ -31,6 +31,93 @@ function Task() {
   const [teamFormMember, setTeamFormMember] = useState([]);
   const [EditProjectData, setEditProjectData] = useState([]);
   const [taskid, settaskid] = useState([]);
+  
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    const tlid = sessionStorage.getItem("TLID");
+    axios
+      .get(
+        `http://localhost:3001/Task/TaskDate?teamid=${tlid}&projectId=${projectId}`
+      )
+      .then((response) => {
+        console.log("Response data:", response.data);
+
+        // Access the array of tasks from response.data.data
+        const tasksData = response.data.data;
+
+        // Define an array of colors
+        const colors = [
+          "#1f77b4",
+          "#ff7f0e",
+          "#2ca02c",
+          "#d62728",
+          "#9467bd",
+          "#8c564b",
+          "#e377c2",
+          "#7f7f7f",
+          "#bcbd22",
+          "#17becf",
+        ];
+
+        // Format tasks data for the timeline chart
+        const formattedTasks = tasksData.map((task, index) => ({
+          x: task.Task_name,
+          y: [
+            new Date(task.Start_Date).getTime(),
+            new Date(task.End_date).getTime(),
+          ],
+          color: colors[index % colors.length], // Assign a color from the array based on index
+        }));
+
+        setTasks(formattedTasks);
+      })
+      .catch((error) => {
+        console.error("Error fetching tasks:", error);
+      });
+  }, []); // Empty dependency array to only run the effect once on component mount
+
+  const options = {
+    chart: {
+      height: 350,
+      type: "rangeBar",
+      toolbar: {
+        show: true,
+        tools: {
+          download: true,
+          selection: true,
+          zoom: true,
+          zoomin: true,
+          zoomout: true,
+          pan: true,
+        },
+      },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        barHeight: "80%",
+      },
+    },
+    xaxis: {
+      type: "datetime",
+      title: {
+        text: "Tasks",
+      },
+    },
+    yaxis: {
+      title: {
+        text: "Timeline",
+      },
+    },
+    fill: {
+      opacity: 1,
+    },
+    legend: {
+      position: "top",
+      horizontalAlign: "left",
+    },
+  };
 
   const [editData, setEditData] = useState({
     status: "",
@@ -98,6 +185,13 @@ function Task() {
         closeModal();
         TaskAllData();
         CompletedTask();
+        PendingTask();
+        CancledTask();
+        TaskData();
+        TaskTeam();
+
+        fetchProjectData();
+        fetchTeamMemberList();
       } else {
         alert("Project Updated Unsuccessfully");
       }
@@ -169,7 +263,9 @@ function Task() {
     const tlid = sessionStorage.getItem("TLID");
 
     await axios
-      .get(`http://localhost:3001/Task/TaskDashbordData?tlid=${tlid}&ProjectId=${projectId}`)
+      .get(
+        `http://localhost:3001/Task/TaskDashbordData?tlid=${tlid}&ProjectId=${projectId}`
+      )
       .then((res) => {
         let list = res.data;
         let taskList = list.data;
@@ -181,7 +277,9 @@ function Task() {
   const TaskAllData = async () => {
     const tlid = sessionStorage.getItem("TLID");
     await axios
-      .get(`http://localhost:3001/Task/TaskData?tlid=${tlid}&ProjectId=${projectId}`)
+      .get(
+        `http://localhost:3001/Task/TaskData?tlid=${tlid}&ProjectId=${projectId}`
+      )
       .then((res) => {
         let list = res.data;
         let taskAllData = list.data;
@@ -194,7 +292,9 @@ function Task() {
     const tlid = sessionStorage.getItem("TLID");
 
     await axios
-      .get(`http://localhost:3001/Task/TaskTeamData?tlid=${tlid}&ProjectId=${projectId}`)
+      .get(
+        `http://localhost:3001/Task/TaskTeamData?tlid=${tlid}&ProjectId=${projectId}`
+      )
       .then((res) => {
         let list = res.data;
         let taskTeam = list.data;
@@ -237,6 +337,7 @@ function Task() {
     TaskAllData();
     fetchProjectData();
     fetchTeamMemberList();
+    // ChartData();
   }, []);
 
   const [chartOptions, setChartOptions] = useState({
@@ -269,7 +370,7 @@ function Task() {
 
   // alert(ID);
   const [formData, setFormData] = useState({
-    projectid:projectId,
+    projectid: projectId,
     task: "",
     TeamId: "",
     TlId: ID,
@@ -287,7 +388,7 @@ function Task() {
 
   const openDrawer = () => {
     setFormData({
-      projectid:projectId,
+      projectid: projectId,
       task: "",
       TeamId: "",
       TlId: ID,
@@ -299,7 +400,7 @@ function Task() {
     });
     setDrawerOpen(true);
   };
-console.log(formData);
+  console.log(formData);
   const closeDrawer = () => {
     setDrawerOpen(false);
   };
@@ -315,7 +416,8 @@ console.log(formData);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let result =checkEmpty("task", "Task Name", "taskspan") &&
+    let result =
+      checkEmpty("task", "Task Name", "taskspan") &&
       validateDropdown("TeamId", "Team Member", "TeamIdspan") &&
       validateDates("startDate", "endDate", "datespan") &&
       validateDropdown("priority", "Priority", "priorityspan");
@@ -416,7 +518,6 @@ console.log(formData);
   return (
     <div className="w-full h-full mt-16">
       <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4">
-        
         <div className="justify-end -mt-5">
           <button
             ref={buttonRef}
@@ -633,7 +734,7 @@ console.log(formData);
         <div className="w-full">
           <div className="bg-white rounded-lg shadow-lg flex items-center py-10">
             <div className="text-left ml-10">
-              <h1 className="text-4xl font-bold mb-2 text-customBlue">Task</h1>
+              <h1 className="text-4xl font-bold mb-2 text-customBlue">{Project_name } 's Task</h1>
               <p className="text-gray-600">
                 Welcome to the Project Management Dashboard! Your hub for
                 project progress, collaboration, and success. Let's get started!
@@ -788,6 +889,24 @@ console.log(formData);
             </div>
           </div>
         </div>
+
+        <div className="w-full ">
+          
+            <div className="bg-white p-5 rounded-lg shadow-lg px-5 py-5 mt-7">
+              {tasks.length > 0 ? (
+                <ReactApexChart
+                  options={options}
+                  series={[{ data: tasks }]}
+                  type="rangeBar"
+                  height={350}
+                />
+              ) : (
+                <div>Loading...</div>
+              )}
+            </div>
+       
+        </div>
+
         <div className="w-full">
           <div className="mx-auto bg-white rounded-lg  shadow-lg px-5 py-5 mt-7">
             <h2 className="text-2xl font-bold mb-4 text-customBlue">
@@ -900,30 +1019,30 @@ console.log(formData);
                     </div>
 
                     <div className="">
-                    <label
-                      htmlFor="TeamId"
-                      className="block mb-2 font-medium text-gray-700"
-                    >
-                      Team Names:
-                    </label>
-                    <select
-                      name="TeamId"
-                      id="TeamId"
-                      value={editData.TeamId}
-                      onChange={EditChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    >
-                      <option value="" disabled>
-                        Select Team Member
-                      </option>
-                      {teamFormMember.map((member) => (
-                        <option key={member.Team_id} value={member.Team_id}>
-                          {member.Team_name}
+                      <label
+                        htmlFor="TeamId"
+                        className="block mb-2 font-medium text-gray-700"
+                      >
+                        Team Names:
+                      </label>
+                      <select
+                        name="TeamId"
+                        id="TeamId"
+                        value={editData.TeamId}
+                        onChange={EditChange}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      >
+                        <option value="" disabled>
+                          Select Team Member
                         </option>
-                      ))}
-                      {/* Render Team Members as options */}
-                    </select>
-                  </div>
+                        {teamFormMember.map((member) => (
+                          <option key={member.Team_id} value={member.Team_id}>
+                            {member.Team_name}
+                          </option>
+                        ))}
+                        {/* Render Team Members as options */}
+                      </select>
+                    </div>
                   </div>
 
                   <div>
@@ -992,7 +1111,6 @@ console.log(formData);
                       Description:
                     </label>
                     <textarea
-
                       name="description"
                       id="description"
                       value={editData.description}

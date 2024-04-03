@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
 import { useParams } from "react-router-dom";
 import {
   checkEmpty,
@@ -11,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const EditProjectForm = () => {
-  const navigate = useNavigate();
+ 
 
   const ID = sessionStorage.getItem("TLID");
   const { projectId } = useParams();
@@ -23,7 +24,7 @@ const EditProjectForm = () => {
     Status: "",
     startDate: new Date(), // JavaScript Date object
     endDate: new Date(), // JavaScript Date object
-    team_id: "",
+   
     description: "",
     priority: "",
     budget: "",
@@ -39,7 +40,7 @@ const EditProjectForm = () => {
       checkEmpty("project-name", "Project Name", "projectnamespan") &&
       validateDropdown("Status", "Status", "statuspan") &&
       validateDates("start-date", "end-date", "datespan") &&
-      validateDropdown("team_id", "Team Member", "teamspan") &&
+      
       checkEmpty("description", "Description", "descriptionspan") &&
       validateDropdown("priority", "Priority", "priorityspan") &&
       checkEmpty("budget", "Budget", "budgetspan") &&
@@ -108,7 +109,7 @@ const EditProjectForm = () => {
           Status: projectData[0].Status,
           startDate: projectData[0].Start_date,
           endDate: projectData[0].End_date,
-          team_id: projectData[0].Team_id,
+          
           description: projectData[0].Description,
           priority: projectData[0].Priority,
           budget: projectData[0].Budget,
@@ -132,8 +133,10 @@ const EditProjectForm = () => {
       [name]: value,
     }));
   };
-  
-  
+  const navigate = useNavigate();
+  const handleclose=()=>{
+    navigate(-1);
+  }
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -235,33 +238,7 @@ const EditProjectForm = () => {
                 <span id="datespan" className="text-red-700"></span>
               </div>
 
-              <div className="col-span-full">
-                <label
-                  htmlFor="team_id"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Team Member
-                </label>
-                <div className="mt-2">
-                  <select
-                    id="team_id"
-                    name="team_id"
-                    value={formData.team_id}
-                    onChange={handleChange}
-                    className="block w-full h-10 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  >
-                    <option value="" disabled>
-                      Select Team Member
-                    </option>
-                    {teamFormMember.map((member) => (
-                      <option key={member.Team_id} value={member.Team_id}>
-                        {member.Team_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <span id="teamspan" className="text-red-700"></span>
-              </div>
+             
               <div className="col-span-full">
                 <label
                   htmlFor="description"
@@ -331,12 +308,17 @@ const EditProjectForm = () => {
             </div>
           </div>
           <div className="flex items-center justify-end gap-x-6">
+            
+            
+            
             <button
+            onClick={handleclose}
               type="button"
               className="text-sm w-1/2 font-semibold leading-6 text-gray-900"
             >
               Cancel
             </button>
+           
             <button
               type="submit"
               className="rounded-md w-1/2 bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

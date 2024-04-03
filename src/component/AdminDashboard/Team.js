@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
+import { saveAs } from "file-saver";
 import axios from "axios";
 import { MdEditSquare } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
@@ -113,9 +113,6 @@ const Team = () => {
     }
   };
 
-
-
-
   const [AllTeamMember, setAllTeamMember] = useState([]);
   const AllTeamMemberList = async () => {
     try {
@@ -129,9 +126,6 @@ const Team = () => {
       console.error("Error fetching team members:", error);
     }
   };
-
-
-
 
   useEffect(() => {
     TeamMemberList();
@@ -173,7 +167,6 @@ const Team = () => {
       return false;
     }
     closeDrawer();
-    
   };
 
   const clearFields = () => {
@@ -284,7 +277,6 @@ const Team = () => {
     AllTeamMemberList();
   };
 
-
   const getStatusColor = (status) => {
     switch (status) {
       case "Completed":
@@ -310,11 +302,66 @@ const Team = () => {
         return ""; // Default color if project name doesn't match any case
     }
   };
+
+  const exportToCSV = () => {
+    // Define headings
+    const headings = ["Team_id", "Name", "Email", "Role", "Phone Number", "Qualification", "Skills","Profile Image","Project Name", "Status"];
+
+    // Transpose the data
+    let csvContent = headings.join(",") + "\n";
+    TeamMember.forEach((project) => {
+        Object.values(project).forEach((value, index) => {
+            csvContent += index === 0 ? "" : ",";
+            csvContent += value;
+        });
+        csvContent += "\n";
+    });
+
+    // Encode URI
+    const encodedUri = encodeURI(csvContent);
+
+    // Create Blob
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+
+    // Trigger file download
+    saveAs(blob, "Project_Team.csv");
+};
+
+
+const exportToCSV2 = () => {
+  // Define headings
+  const headings = ["Team id", "Uniq ID", "Email", "Team Name", "Phone Number", "Role", "Skills","Qualification","Task ID", "Password","TL ID","Project ID","Profile Image","Active","Date Of Birth","Age","City","State","Country","Instagram","LinkedIn","Github","Twitter","Company Address","Company Name"];
+
+  // Transpose the data
+  let csvContent = headings.join(",") + "\n";
+  AllTeamMember.forEach((project) => {
+      Object.values(project).forEach((value, index) => {
+          csvContent += index === 0 ? "" : ",";
+          csvContent += value;
+      });
+      csvContent += "\n";
+  });
+
+  // Encode URI
+  const encodedUri = encodeURI(csvContent);
+
+  // Create Blob
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+
+  // Trigger file download
+  saveAs(blob, "Team.csv");
+};
   return (
     <div className="w-full h-screen pt-10">
       <div className="p-5 bg-bgSky h-screen grid grid-cols-1 gap-y-4">
         <div className="w-full p-5 h-full">
           <div className="justify-end -mt-5">
+            <button
+              onClick={exportToCSV}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Export Data as CSV
+            </button>
             <button
               ref={buttonRef}
               className="float-end mx-4 bg-customBlue text-white font-semibold p-2 mt-5 rounded-md flex w-72 items-center"
@@ -339,6 +386,7 @@ const Team = () => {
                 <h1 className="text-2xl font-bold text-center text-gray-900 -mt-3">
                   Team Member Form
                 </h1>
+
                 <button
                   className="text-gray-600 hover:text-gray-800"
                   onClick={handleCloseForm}
@@ -503,7 +551,6 @@ const Team = () => {
                       <th className="p-4  text-slate-700">Phone Number</th>
                       <th className="p-4  text-slate-700">Qualification</th>
                       <th className="p-4  text-slate-700">Skills</th>
-                      
                     </tr>
                   </thead>
                   <tbody>
@@ -543,12 +590,12 @@ const Team = () => {
                             {Project_name}
                           </td>
                           <td
-                          className={`border-t border-b  left-0 border-blue-gray-300 p-4 ${getStatusColor(
-                            Status
-                          )}`}
-                        >
-                          {Status}
-                        </td>
+                            className={`border-t border-b  left-0 border-blue-gray-300 p-4 ${getStatusColor(
+                              Status
+                            )}`}
+                          >
+                            {Status}
+                          </td>
                           <td className="border-t border-b font-semibold  border-blue-gray-300 px-9">
                             {Email}
                           </td>
@@ -564,8 +611,6 @@ const Team = () => {
                           <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
                             {Skills}
                           </td>
-                          
-                          
                         </tr>
                       )
                     )}
@@ -575,14 +620,19 @@ const Team = () => {
             </div>
           </div>
 
-
           <div className="w-full">
             <div className="mx-auto bg-white rounded-xl shadow-lg px-5 py-5 mt-7">
               <h2 className="text-2xl font-bold mb-4 text-customBlue">
-               ALL Team Members
+                All Team Members
               </h2>
               <div className="overflow-auto">
                 <table className="w-full  overflow-x -scroll ">
+                <button
+              onClick={exportToCSV2}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Export Data as CSV
+            </button>
                   <thead className="border-t border-b text-black text-left border-gray-100 bg-gray-200">
                     <tr>
                       <th className="p-4  text-slate-700 ">Profile</th>
@@ -628,7 +678,7 @@ const Team = () => {
                           <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
                             {Team_name}
                           </td>
-                      
+
                           <td className="border-t border-b font-semibold  border-blue-gray-300 px-9">
                             {Email}
                           </td>
@@ -669,8 +719,6 @@ const Team = () => {
               </div>
             </div>
           </div>
-
-
 
           {showModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

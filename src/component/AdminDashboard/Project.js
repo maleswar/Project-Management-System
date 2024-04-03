@@ -46,7 +46,6 @@ const Project = () => {
     ProjectData();
   };
 
-
   // Function to format the timestamp
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
@@ -68,15 +67,17 @@ const Project = () => {
   const isDateCloser = (endDate) => {
     const today = new Date(); // Today's date
     const end = new Date(endDate); // End date
-  
+
     // Calculate the difference in months between the end date and today's date
-    const monthsDiff = (end.getFullYear() - today.getFullYear()) * 12 + (end.getMonth() - today.getMonth());
-  
+    const monthsDiff =
+      (end.getFullYear() - today.getFullYear()) * 12 +
+      (end.getMonth() - today.getMonth());
+
     // Check if the difference in months is less than or equal to 2
     if (monthsDiff <= 2) {
       return true;
     }
-  
+
     return false;
   };
 
@@ -84,11 +85,50 @@ const Project = () => {
     ProjectData();
   }, []);
 
+  const exportToCSV = () => {
+    // Define headings
+    const headings = [
+      "Project ID",
+      "Project Name",
+      "Start Date",
+      "End Date",
+      "Status",
+      "Description",
+      "Budget",
+      "Priority",
+    ];
+
+    // Transpose the data
+    let csvContent = headings.join(",") + "\n";
+    project.forEach((project) => {
+      Object.values(project).forEach((value, index) => {
+        csvContent += index === 0 ? "" : ",";
+        csvContent += value;
+      });
+      csvContent += "\n";
+    });
+
+    // Encode URI
+    const encodedUri = encodeURI(csvContent);
+
+    // Create Blob
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+
+    // Trigger file download
+    saveAs(blob, "Project.csv");
+  };
+
   return (
     <div className="w-full h-screen pt-10">
       <div className="p-5 bg-bgSky h-full grid grid-cols-1 gap-y-4 w-full">
         <div className="w-full p-7 h-full  bg-bgSky">
           <div className=" bg-white  shadow-lg px-7 py-5 mt-7 rounded-lg">
+            <button
+              onClick={exportToCSV}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Export Data as CSV
+            </button>
             <h2 className="text-2xl font-bold mb-4 text-customBlue">
               Project Details
             </h2>
@@ -98,7 +138,7 @@ const Project = () => {
                   <tr>
                     <th className="p-4  text-slate-700">Project Id</th>
                     <th className="p-4 text-slate-700">Project Name</th>
-                    <th className="p-4 text-slate-700">Team Name</th>
+                    {/* <th className="p-4 text-slate-700">Team Name</th> */}
                     <th className="p-4 text-slate-700">Start Date</th>
                     <th className="p-4 text-slate-700">End Date</th>
                     <th className="p-4 text-slate-700">Status</th>
@@ -115,7 +155,7 @@ const Project = () => {
                       {
                         Project_id,
                         Project_name,
-                        Team_name,
+                        // Team_name,
                         Start_date,
                         End_date,
                         Status,
@@ -132,13 +172,17 @@ const Project = () => {
                         <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
                           {Project_name}
                         </td>{" "}
-                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                        {/* <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
                           {Team_name}
-                        </td>{" "}
+                        </td>{" "} */}
                         <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
                           {formatTimestamp(Start_date)}
                         </td>{" "}
-                        <td className={`border-t border-b  left-0 border-blue-gray-300 p-4 ${isDateCloser(End_date) ? 'text-red-500' : ''}`}>
+                        <td
+                          className={`border-t border-b  left-0 border-blue-gray-300 p-4 ${
+                            isDateCloser(End_date) ? "text-red-500" : ""
+                          }`}
+                        >
                           {formatTimestamp(End_date)}
                         </td>
                         <td
@@ -175,18 +219,24 @@ const Project = () => {
                           </button>
                         </td>
                         <td className="border-t border-b border-blue-gray-300 text-center">
-                        <a
-                          href={`/AdminDashbord/task/${Project_id}`}
-                          className="bg-customBlue text-white font-bold py-1.5 px-4 mx-2 rounded"
-                        >
-                          Task
-                        </a>
-                        <a
-                          href={`/AdminDashbord/report/${Project_id}`}
-                          className="bg-customBlue text-white font-bold py-1.5 px-4 mx-2 rounded"
-                        >
-                          Reports
-                        </a>
+                          <a
+                            href={`/AdminDashbord/task/${Project_id}/${Project_name}`}
+                            className="bg-customBlue text-white font-bold py-1.5 px-4 mx-2 rounded"
+                          >
+                            Task
+                          </a>
+                          <a
+                            href={`/AdminDashbord/projectwiseteam/${Project_id}/${Project_name}`}
+                            className="bg-customBlue text-white font-bold py-1.5 px-4 mx-2 rounded"
+                          >
+                            Team
+                          </a>
+                          <a
+                            href={`/AdminDashbord/report/${Project_id}/${Project_name}`}
+                            className="bg-customBlue text-white font-bold py-1.5 px-4 mx-2 rounded"
+                          >
+                            Reports
+                          </a>
                         </td>
                       </tr>
                     )

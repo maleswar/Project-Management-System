@@ -27,7 +27,6 @@ router.post("/loginForTL", (req, res) => {
   });
 });
 
-
 router.post("/loginForTeam", (req, res) => {
   let email = req.body.email;
   let uid = req.body.uid;
@@ -52,7 +51,6 @@ router.post("/loginForTeam", (req, res) => {
     });
   });
 });
-
 
 router.post("/signup", (req, res) => {
   const value = [
@@ -80,7 +78,6 @@ router.post("/signup", (req, res) => {
   });
 });
 
-
 router.post("/EmailCheckTL", (req, res) => {
   const email = req.body.email;
   pool.getConnection((err, connection) => {
@@ -88,7 +85,7 @@ router.post("/EmailCheckTL", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
     let query = "SELECT COUNT(*) AS count FROM TL WHERE Email = ?";
-    connection.query(query,[email], (err, data) => {
+    connection.query(query, [email], (err, data) => {
       connection.release();
 
       if (err) {
@@ -106,7 +103,7 @@ router.post("/EmailCheckTeam", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
     let query = "SELECT COUNT(*) AS count FROM Team WHERE Email = ?";
-    connection.query(query,[email], (err, data) => {
+    connection.query(query, [email], (err, data) => {
       connection.release();
 
       if (err) {
@@ -118,7 +115,6 @@ router.post("/EmailCheckTeam", (req, res) => {
   });
 });
 
-
 router.put("/TLFogotPassword", (req, res) => {
   const password = req.body.password;
   const email = req.body.email;
@@ -127,7 +123,7 @@ router.put("/TLFogotPassword", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
     let query = "UPDATE TL SET password = ? WHERE email = ?";
-    connection.query(query,[password,email], (err, data) => {
+    connection.query(query, [password, email], (err, data) => {
       connection.release();
 
       if (err) {
@@ -147,7 +143,7 @@ router.put("/TeamFogotPassword", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
     let query = "UPDATE Team SET password = ? WHERE email = ?";
-    connection.query(query,[password,email], (err, data) => {
+    connection.query(query, [password, email], (err, data) => {
       connection.release();
 
       if (err) {
@@ -160,19 +156,19 @@ router.put("/TeamFogotPassword", (req, res) => {
 });
 
 router.post("/AddNewContact", (req, res) => {
-  const value=[
-       Name = req.body.name,
-   Comment = req.body.message,
+  const value = [
+    (Name = req.body.name),
+    (Comment = req.body.message),
 
-     email = req.body.email,
+    (email = req.body.email),
   ];
-  
+
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
     let query = "insert into Contact (`Name`,`Comment`,`email`) values(?)";
-    connection.query(query,[value], (err, data) => {
+    connection.query(query, [value], (err, data) => {
       connection.release();
 
       if (err) {
@@ -185,7 +181,6 @@ router.post("/AddNewContact", (req, res) => {
 });
 
 router.get("/roles", (req, res) => {
-  
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
@@ -205,7 +200,7 @@ router.get("/roles", (req, res) => {
 });
 
 router.post("/CreateIssue", (req, res) => {
-  const value=[
+  const value = [
     req.body.description,
     req.body.selectedTeamLeader,
     req.query.TeamID,
@@ -216,7 +211,7 @@ router.post("/CreateIssue", (req, res) => {
     }
 
     let query = "insert into issue(`issue_name`,`TL_Id`,`Team_id`) values (?)";
-    connection.query(query,[value], (err, data) => {
+    connection.query(query, [value], (err, data) => {
       connection.release();
 
       if (err) {
@@ -229,14 +224,15 @@ router.post("/CreateIssue", (req, res) => {
 });
 
 router.get("/fetchIssue", (req, res) => {
-  const tlid=req.query.tlid;
+  const tlid = req.query.tlid;
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "select team.Profile_image,team.Team_name,issue.issue_id,issue.issue_name,issue.comment from team join issue on issue.Team_id=team.Team_id where issue.TL_id=?";
-    connection.query(query,tlid, (err, data) => {
+    let query =
+      "select team.Profile_image,team.Team_name,issue.issue_id,issue.issue_name,issue.comment from team join issue on issue.Team_id=team.Team_id where issue.TL_id=?";
+    connection.query(query, tlid, (err, data) => {
       connection.release();
 
       if (err) {
@@ -248,15 +244,35 @@ router.get("/fetchIssue", (req, res) => {
   });
 });
 router.post("/UpdateIssue", (req, res) => {
-  const comment=req.query.comment;
-  const issueid=req.query.issueid;
+  const comment = req.query.comment;
+  const issueid = req.query.issueid;
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
 
     let query = "Update issue set Comment=? where issue_id=?";
-    connection.query(query,[comment,issueid], (err, data) => {
+    connection.query(query, [comment, issueid], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+router.get("/fetchIssueForTeam", (req, res) => {
+  const Teamid = req.query.teamid;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query =
+      "select team.Profile_image,team.Team_name,issue.issue_id,issue.issue_name,issue.comment from team join issue on issue.Team_id=team.Team_id where issue.Team_id=?";
+    connection.query(query, Teamid, (err, data) => {
       connection.release();
 
       if (err) {

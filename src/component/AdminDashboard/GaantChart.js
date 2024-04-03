@@ -1,37 +1,88 @@
-import React from 'react';
-import { GanttComponent, Inject } from '@syncfusion/ej2-react-gantt';
-import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
+import React, { useState, useEffect } from 'react';
+import ReactApexChart from 'react-apexcharts';
+import axios from "axios";
 
+function ProjectCalendarChart() {
+  const [projectData, setProjectData] = useState([]);
+    const tlid=sessionStorage.getItem("TLID");
+  useEffect(() => {
+    axios.get(`http://localhost:3001/Project/ProjectwiseTaskDataChart?tlid=${tlid}`)
+      .then(response => {
+        setProjectData(response.data.data);
+      })
+      .catch(error => {
+        console.error('Error fetching project data:', error);
+      });
+  }, []);
 
-const GanttChart = () => {
-  // Define your task data
-  const taskDataSource = new DataManager({
-    url: 'https://js.syncfusion.com/demos/ejservices/api/GanttData/Url',
-    adaptor: new WebApiAdaptor(),
-    crossDomain: true
-});
+  const chartData = {
+    series: [
+      {
+        name: 'Completed Tasks',
+        data: projectData.map(project => project.completed_tasks || 0)
+      },
+      {
+        name: 'Pending Tasks',
+        data: projectData.map(project => project.pending_tasks || 0)
+      },
+      {
+        name: 'Canceled Tasks',
+        data: projectData.map(project => project.canceled_tasks || 0)
+      }
+    ],
+    options: {
+      chart: {
+        type: 'bar',
+        height: 400,
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%',
+          endingShape: 'rounded'
+        },
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: projectData.map(project => project.project_name),
+      },
+      yaxis: {
+        title: {
+          text: 'Number of Tasks'
+        }
+      },
+      fill: {
+        opacity: 1
+      },
+      tooltip: {
+        custom: function ({ seriesIndex, dataPointIndex, w }) {
+          const project = projectData[dataPointIndex];
+          return `<div class="tooltip">${w.globals.seriesNames[seriesIndex]} Tasks: ${w.globals.series[seriesIndex][dataPointIndex]}</div>`;
+        }
+      }
+    },
+  };
 
-// Define columns for the Gantt chart
-const columns = [
-    { field: 'TaskID', headerText: 'Task ID' },
-    { field: 'TaskName', headerText: 'Task Name', width: '250' },
-    { field: 'StartDate', headerText: 'Start Date' },
-    { field: 'EndDate', headerText: 'End Date' },
-    { field: 'Duration', headerText: 'Duration' }
-];
-
-return (
-    <div className='control-pane'>
-        <div className='control-section'>
-            <div className='control-wrapper'>
-                {/* Render the Gantt component */}
-                <GanttComponent dataSource={taskDataSource} columns={columns}>
-                    <Inject services={[/* Add necessary services */]} />
-                </GanttComponent>
-            </div>
-        </div>
+  return (
+    <div className='mt-24'>
+      <h1>Task Completion Status</h1>
+      <div className="w-full h-full">
+        <ReactApexChart
+          options={chartData.options}
+          series={chartData.series}
+          type="bar"
+          height={400}
+        />
+      </div>
     </div>
-);
-};
+  );
+}
 
-export default GanttChart;
+export default ProjectCalendarChart;

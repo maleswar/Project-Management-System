@@ -22,12 +22,13 @@ import TeamProject from "./component/TeamDashbord/TeamProject ";
 import TeamTable from "./component/TeamDashbord/TeamTable ";
 import TeamTask from "./component/TeamDashbord/TeamTask ";
 import NotFound from "./pages/NotFound";
-import ProjectCalendarChart from "./component/TeamDashbord/ProjectCalendarChart";
+// import ProjectCalendarChart from "./component/TeamDashbord/ProjectCalendarChart";
 import TeamMessage from "./component/TeamDashbord/TeamMessage";
 import TeamReport from "./component/TeamDashbord/TeamReport";
 import TeamProfile from "./component/TeamDashbord/TeamProfile";
 import TeamUploadProfile from "./component/TeamDashbord/TeamUploadProfile";
 import TeamUploadProfileForm from "./component/TeamDashbord/TeamUpdateProfileForm";
+import ProjectWiseTeam from "./component/AdminDashboard/ProjectWiseTeam";
 
 function App() {
   return (
@@ -47,8 +48,9 @@ function App() {
             path="EditProjectForm/:projectId"
             element={<EditProjectForm />}
           />
-          <Route path="task/:projectId" element={<Task />} />
-          <Route path="report/:projectId" element={<Report />} />
+          <Route path="task/:projectId/:Project_name" element={<Task />} />
+          <Route path="report/:projectId/:Project_name" element={<Report />} />
+          <Route path="projectwiseteam/:projectId/:Project_name" element={<ProjectWiseTeam />} />
 
           <Route path="profile" element={<Profile />} />
           <Route path="profile/UploadImage" element={<UploadImage />} />
@@ -61,10 +63,10 @@ function App() {
           <Route index element={<HomeDashboard />} />
           <Route path="project" element={<TeamProject />} />
           <Route path="message" element={<TeamMessage />} />
-          <Route path="team/:projectId" element={<TeamTable />} />
-          <Route path="task/:projectId" element={<TeamTask />} />
-          <Route path="report/:projectId" element={<TeamReport />} />
-          <Route path="calendar" element={<ProjectCalendarChart />} />
+          <Route path="team/:projectId/:Project_name" element={<TeamTable />} />
+          <Route path="task/:projectId/:Project_name" element={<TeamTask />} />
+          <Route path="report/:projectId/:Project_name" element={<TeamReport />} />
+          {/* <Route path="calendar" element={<ProjectCalendarChart />} /> */}
           <Route path="profile" element={<TeamProfile />} />
           <Route path="profile/UploadImage" element={<TeamUploadProfile />} />
           <Route

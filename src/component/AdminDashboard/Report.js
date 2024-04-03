@@ -1,14 +1,16 @@
 import React, { useRef, useState, useEffect } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import { FaCommentDots } from "react-icons/fa";
 function Report() {
   const [reportData, setReportData] = useState([]);
+  const { projectId ,Project_name} = useParams();
   const fetchReportData = async () => {
     const tlid = sessionStorage.getItem("TLID");
 
     try {
       const response = await axios.get(
-        `http://localhost:3001/TL/FetchTheReportData?tlid=${tlid}`
+        `http://localhost:3001/TL/FetchTheReportData?tlid=${tlid}&projectid=${projectId}`
       );
       const data = response.data.data; // Assuming your response structure has data property holding the report data
       // Sort the report data based on timestamps
@@ -105,7 +107,7 @@ function Report() {
         <div className="w-full">
           <div className="mx-auto bg-white shadow-lg px-5 py-5 mt-7 rounded-lg">
             <h2 className="text-2xl font-bold mb-4 text-customBlue">
-              Project Report
+             {Project_name} 's Project Report
             </h2>
             <div className="overflow-auto">
               <table className="w-full text-left">
