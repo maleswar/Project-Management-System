@@ -113,13 +113,13 @@ function Report() {
               <table className="w-full text-left">
                 <thead className="bg-blue-gray-200">
                   <tr>
-                    <th className="p-2">Profile</th>
-                    <th className="p-2">Name</th>
-                    <th className="p-2">Description</th>
-                    <th className="p-2">TimeStamp</th>
-                    <th className="p-2">Files</th>
-                    <th className="p-2">Comments</th>
-                    <th className="p-2">Action</th>
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">Profile</th>
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">Name</th>
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">Description</th>
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">TimeStamp</th>
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">Files</th>
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">Comments</th>
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -134,7 +134,7 @@ function Report() {
                       Comment,
                     }) => (
                       <tr key={Upload_id}>
-                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Profile_image ? (
                             <img
                               src={require(`../../image/${Profile_image}`)}
@@ -145,17 +145,17 @@ function Report() {
                             <span>No profile </span>
                           )}
                         </td>{" "}
-                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Team_name}
                         </td>{" "}
-                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Description}
                         </td>{" "}
-                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {formatDateTime(Uploaded_at)}
                         </td>{" "}
                         <td
-                          className="border-t border-b left-0 border-blue-gray-300 p-4"
+                          className="border-t border-b border-l border-r border-gray-700 p-2"
                           title="Download"
                         >
                           <a
@@ -167,10 +167,10 @@ function Report() {
                             {File_name}
                           </a>
                         </td>
-                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Comment}
                         </td>
-                        <td className="border-t border-b text-center border-blue-gray-300 p-4">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           <FaCommentDots
                             className="w-6 h-6 ml-3"
                             onClick={() => handleComment(Upload_id)} // Pass a function reference

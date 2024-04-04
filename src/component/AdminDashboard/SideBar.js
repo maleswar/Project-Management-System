@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { BiHome } from "react-icons/bi";
-import { BiMessageDetail } from "react-icons/bi";
-import { GoProjectRoadmap } from "react-icons/go";
-import { RiTeamLine } from "react-icons/ri";
-import { GrTask } from "react-icons/gr";
-import { MdInsertChartOutlined } from "react-icons/md";
+import { IoHomeOutline } from "react-icons/io5";
+import { MdOutlineMessage } from "react-icons/md";
+import { GrGroup } from "react-icons/gr";
+import { AiOutlineProject } from "react-icons/ai";
+import { BsBarChartLine } from "react-icons/bs";
 import Logo from "./Assest/img/Logo.svg";
-import { HiOutlineDocumentReport } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; //
+import axios from "axios"; 
+
 
 function Sidebar() {
   const [Name, setName] = useState("");
@@ -135,7 +134,7 @@ function Sidebar() {
                   </button>
                 </div>
                 <div
-                  className={`z-50 mr-10 sm:mr-10 ${
+                  className={`z-50 mr-10 sm:mr-10 border border-gray-300 ${
                     profileOpen ? "" : "hidden"
                   } my-4 text-base list-none bg-white rounded shadow absolute`}
                   id="dropdown-user"
@@ -166,24 +165,7 @@ function Sidebar() {
                         {/* </a> */}
                       </li>
                     </Link>
-                    {/* <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        My Contacts
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                      >
-                        Account Settings
-                      </a>
-                    </li> */}
+                    
                     <li
                       onClick={SignOut}
                       className="block px-4 cursor-pointer py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
@@ -211,79 +193,46 @@ function Sidebar() {
             <div className="flex-1">
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link to="/AdminDashbord" className="flex items-center">
-                  <BiHome className="w-8 h-8 text-white" />
-
+                  <IoHomeOutline className="w-8 h-8 text-white " />
                   <div className="text-xl font-semibold text-white ml-3">
-                    <span className="hover:underline">Home</span>
+                    <span className="hover:underline  hover:underline-offset-2">Home</span>
                   </div>
                 </Link>
               </div>
 
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link to="Message" className="flex items-center">
-                  <BiMessageDetail className="w-8 h-8 text-white" />
-
+                  <MdOutlineMessage className="w-8 h-8 text-white" />
                   <div className="text-xl font-semibold text-white ml-3">
-                    <span className="hover:underline">Message</span>
+                    <span className="hover:underline  hover:underline-offset-2">Message</span>
                   </div>
                 </Link>
               </div>
               <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
                 <Link to="team" className="flex items-center">
-                  <RiTeamLine className="w-8 h-8 text-white" />
+                  <GrGroup className="w-8 h-8 text-white" />
                   <div className="text-xl font-semibold text-white ml-3">
-                    <span className="hover:underline">Team</span>
+                    <span className="hover:underline  hover:underline-offset-2">Team</span>
                   </div>
                 </Link>
               </div>
 
               <div className="flex items-center px-5 py-3  space-x-3 cursor-pointer">
                 <Link to="project" className="flex items-center">
-                  <GoProjectRoadmap className="w-8 h-8 text-white" />
-
+                  <AiOutlineProject className="w-8 h-8 text-white" />
                   <div className="text-xl font-semibold text-white ml-3">
-                    <span className="hover:underline">Project</span>
+                    <span className="hover:underline  hover:underline-offset-2">Project</span>
                   </div>
                 </Link>
               </div>
               <div className="flex items-center px-5 py-3  space-x-3 cursor-pointer">
                 <Link to="chart" className="flex items-center">
-                  <GoProjectRoadmap className="w-8 h-8 text-white" />
-
+                  <BsBarChartLine className="w-8 h-8 text-white" />
                   <div className="text-xl font-semibold text-white ml-3">
-                    <span className="hover:underline">Chart</span>
+                    <span className="hover:underline  hover:underline-offset-2">Chart</span>
                   </div>
                 </Link>
               </div>
-              {/* <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link to="task" className="flex items-center">
-                  <GrTask className="w-8 h-8 text-white" />
-                  <div className="text-xl font-semibold text-white ml-3">
-                    <span className="hover:underline">Task</span>
-                  </div>
-                </Link>
-              </div> */}
-
-              {/* <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link to="report" className="flex items-center">
-                  <HiOutlineDocumentReport className="w-8 h-8 text-white" />
-                  <div className="text-xl font-semibold text-white ml-3">
-                    <span className="hover:underline">Report</span>
-                  </div>
-                </Link>
-              </div> */}
-
-              {/* <div className="flex items-center px-5 py-3 space-x-3 cursor-pointer">
-                <Link
-                  to="/AdminDashbord/project/tracking"
-                  className="flex items-center"
-                >
-                  <MdInsertChartOutlined className="w-8 h-8 text-white" />
-                  <div className="text-xl font-semibold text-white ml-3">
-                    <span className="hover:underline">Tracking</span>
-                  </div>
-                </Link>
-              </div> */}
             </div>
           </ul>
         </div>

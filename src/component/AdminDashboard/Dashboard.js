@@ -234,9 +234,8 @@ const Dashboard = () => {
         );
         var count = response.data.data.affectedRows;
 
-        if (count >= 1) {
+        if (count === 1) {
           alert("Project Added Sucsessfully");
-          
         } else {
           alert("there are some error");
         }
@@ -246,13 +245,10 @@ const Dashboard = () => {
     } else {
       return false;
     }
-    setTimeout(() => {
-       closeDrawer();
-          ProjectBudgetList();
-          TotalProject();
-          ProjectPending();
-    }, 1500);
-   
+    closeDrawer();
+    ProjectBudgetList();
+    TotalProject();
+    ProjectPending();
   };
 
   // Close the drawer
@@ -824,13 +820,10 @@ const Dashboard = () => {
                 <table className="w-full">
                   <thead className="bg-gray-400">
                     <tr>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2">
                         Project Name
                       </th>
-                      {/* <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
-                        Team Member
-                      </th> */}
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2">
                         Budget
                       </th>
                     </tr>
@@ -838,13 +831,10 @@ const Dashboard = () => {
                   <tbody>
                     {BudgetList.map(({ Project_name, Budget }, index) => (
                       <tr key={index}>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Project_name}
                         </td>
-                        {/* <td className="border border-blue-gray-300 p-2">
-                            {Team_name}
-                          </td> */}
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Budget}
                         </td>
                       </tr>
@@ -865,20 +855,20 @@ const Dashboard = () => {
                   00"
                   >
                     <tr>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                         Profile
                       </th>
 
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                         Team Member
                       </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                         Issues
                       </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                         Comment
                       </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                         Reply
                       </th>
                     </tr>
@@ -893,7 +883,7 @@ const Dashboard = () => {
                         comment,
                       }) => (
                         <tr key={issue_id}>
-                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2">
                             {Profile_image ? (
                               <img
                                 src={require(`../../image/${Profile_image}`)}
@@ -904,17 +894,16 @@ const Dashboard = () => {
                               <span>No profile </span>
                             )}
                           </td>
-                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2">
                             {Team_name}
                           </td>
-                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2">
                             {issue_name}
                           </td>
-                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2">
                             {comment}
                           </td>
-
-                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2">
                             <FaCommentDots
                               className="w-6 h-6 ml-3"
                               onClick={() => handleComment(issue_id)} // Pass a function reference

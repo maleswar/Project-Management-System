@@ -448,25 +448,25 @@ const TeamTask = () => {
               <table className="w-full text-left border border-black">
                 <thead>
                   <tr className="bg-gray-100">
-                    <th className="p-2 text-gray-700 border border-blue-gray-300">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Task ID
                     </th>
 
-                    <th className="p-2 text-gray-700 border border-blue-gray-300">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Task Name
                     </th>
-                    <th className="p-2 text-gray-700 border border-blue-gray-300">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Description
                     </th>
-                    <th className="p-2 text-gray-700 border border-blue-gray-300">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Start Date
                     </th>
 
-                    <th className="p-2 text-gray-700 border border-blue-gray-300">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       End Date
                     </th>
 
-                    <th className="p-2 text-gray-700 border border-blue-gray-300">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Priority
                     </th>
                   </tr>
@@ -482,22 +482,22 @@ const TeamTask = () => {
                       Priority,
                     }) => (
                       <tr key={Task_id}>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Task_id}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Task_name}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Description}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {formatTimestamp(Start_date)}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {formatTimestamp(End_date)}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Priority}
                         </td>
                       </tr>
@@ -519,31 +519,31 @@ const TeamTask = () => {
               <table className="w-full text-left border border-black">
                 <thead>
                   <tr>
-                    <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Task Id
                     </th>
-                    <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Employee Name
                     </th>
-                    <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Description
                     </th>
-                    <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Start Date
                     </th>
-                    <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       End Date
                     </th>
-                    <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Priority
                     </th>
-                    <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Progress
                     </th>
-                    <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Comments
                     </th>
-                    <th className="p-2 text-gray-700 border border-blue-gray-300 bg-gray-100">
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                       Action
                     </th>
                   </tr>
@@ -561,35 +561,35 @@ const TeamTask = () => {
                       Comments,
                     }) => (
                       <tr key={Task_id}>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Task_id}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Task_name}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Description}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {formatTimestamp(Start_date)}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {formatTimestamp(End_date)}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Priority}
                         </td>
                         <td
-                          className={`p-2 border border-blue-gray-300  ${getStatusColor(
+                          className={`border-t border-b border-l border-r border-gray-700 p-2  ${getStatusColor(
                             Progress
                           )}`}
                         >
                           {Progress}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Comments}
                         </td>
-                        <td className="border-t border-b text-center border-blue-gray-300 p-4">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           <FaCommentDots
                             className="w-6 h-6 ml-3"
                             onClick={() => handleComment(Task_id)} // Pass a function reference

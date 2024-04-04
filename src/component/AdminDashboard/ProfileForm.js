@@ -61,7 +61,6 @@ const ProfileForm = () => {
     }));
   };
 
-
   const [Data, setData] = useState([]);
 
   const fetchData = async () => {
@@ -133,7 +132,7 @@ const ProfileForm = () => {
         );
         var count = response.data.data.affectedRows;
 
-        if (count >=1) {
+        if (count >= 1) {
           alert("Profile Updated Successfully");
           navigate(-2);
         } else {
@@ -165,7 +164,7 @@ const ProfileForm = () => {
           <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-white border-0">
             <div className="rounded-t bg-white mb-0 px-6 py-6">
               <div className="text-center flex justify-between">
-                <h6 className="text-blueGray-700 text-2xl font-bold">
+                <h6 className="text-customBlue text-3xl font-bold">
                   Edit Profile Form
                 </h6>
               </div>
@@ -190,7 +189,7 @@ const ProfileForm = () => {
                         id="fname"
                         value={formData.fname}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="John Deo"
                       />
                       <span id="fnamespan" className="text-red-700"></span>
@@ -210,7 +209,7 @@ const ProfileForm = () => {
                         id="lname"
                         value={formData.lname}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="John Deo"
                       />
                       <span id="lnamespan" className="text-red-700"></span>
@@ -231,7 +230,7 @@ const ProfileForm = () => {
                         id="role"
                         value={formData.role}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="Team Leader"
                       />
                       <span id="rolespan" className="text-red-700"></span>
@@ -253,7 +252,7 @@ const ProfileForm = () => {
                           value={formatDate(formData.dob)} // Potential source of error
                           onChange={handleChange}
                           onBlur={() => calculateAge("dob", "Age")}
-                          className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          className="p-2 rounded-lg w-full border"
                           placeholder="Enter your Birthdate"
                         />
                         <span id="dobspan" className="text-red-700"></span>
@@ -274,7 +273,7 @@ const ProfileForm = () => {
                           value={formData.Age} // Potential source of error
                           onChange={handleChange}
                           // Pass DOB value to calculate age
-                          className="border-0 px-3 h-11 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          className="p-2 rounded-lg w-full border"
                           placeholder="20"
                         />
                         <span id="agespan" className="text-red-700"></span>
@@ -297,7 +296,7 @@ const ProfileForm = () => {
                           id="city"
                           value={formData.city}
                           onChange={handleChange}
-                          className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          className="p-2 rounded-lg w-full border"
                           placeholder="Surat"
                         />
                         <span id="cityspan" className="text-red-700"></span>
@@ -317,7 +316,7 @@ const ProfileForm = () => {
                           id="state"
                           value={formData.state}
                           onChange={handleChange}
-                          className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          className="p-2 rounded-lg w-full border"
                           placeholder="Gujarat"
                         />
                         <span id="statespan" className="text-red-700"></span>
@@ -337,7 +336,7 @@ const ProfileForm = () => {
                           id="country"
                           value={formData.country}
                           onChange={handleChange}
-                          className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          className="p-2 rounded-lg w-full border"
                           placeholder="India"
                         />
                         <span id="countryspan" className="text-red-700"></span>
@@ -359,7 +358,7 @@ const ProfileForm = () => {
                         id="skills"
                         value={formData.skills}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="Javascript,React"
                       />
                       <span id="skillsspan" className="text-red-700"></span>
@@ -379,7 +378,7 @@ const ProfileForm = () => {
                         id="qualification"
                         value={formData.qualification}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="BCA,MCA"
                       />
                       <span
@@ -404,7 +403,7 @@ const ProfileForm = () => {
                           id="password"
                           value={formData.password}
                           onChange={handleChange}
-                          className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          className="p-2 rounded-lg w-full border"
                           placeholder="12345"
                         />
                       </div>
@@ -461,7 +460,7 @@ const ProfileForm = () => {
                         id="uid"
                         value={formData.uid}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="222"
                       />
                       <span id="uidspan" className="text-red-700"></span>
@@ -487,7 +486,7 @@ const ProfileForm = () => {
                         id="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="primeproject@gmail.com"
                       />
                       <span id="emailspan" className="text-red-700"></span>
@@ -511,7 +510,7 @@ const ProfileForm = () => {
                           id="phoneNumber"
                           value={formData.phoneNumber}
                           onChange={handleChange}
-                          className="pl-8 pr-4 py-2  border-0 px-3 h-11 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          className="pl-8 pr-4 py-2 p-2 rounded-lg w-full border"
                           placeholder="97473899321"
                         />
                       </div>
@@ -538,7 +537,7 @@ const ProfileForm = () => {
                         id="instagram"
                         value={formData.instagram}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="@PrimeProject123"
                       />
                       <span id="instagramspan" className="text-red-700"></span>
@@ -558,7 +557,7 @@ const ProfileForm = () => {
                         id="github"
                         value={formData.github}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="@Prime123"
                       />
                       <span id="githubspan" className="text-red-700"></span>
@@ -581,7 +580,7 @@ const ProfileForm = () => {
                         id="twitter"
                         value={formData.twitter}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="Prime123"
                       />
                       <span id="twitterspan" className="text-red-700"></span>
@@ -601,7 +600,7 @@ const ProfileForm = () => {
                         id="linkedin"
                         value={formData.linkedin}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="Prime123"
                       />
                       <span id="linkedinspan" className="text-red-700"></span>
@@ -628,7 +627,7 @@ const ProfileForm = () => {
                         id="companyName"
                         value={formData.companyName}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="Prime Project"
                       />
                       <span
@@ -651,7 +650,7 @@ const ProfileForm = () => {
                         id="companyAddress"
                         value={formData.companyAddress}
                         onChange={handleChange}
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-gray-200 rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="p-2 rounded-lg w-full border"
                         placeholder="Udhna,Surat"
                       />
                       <span

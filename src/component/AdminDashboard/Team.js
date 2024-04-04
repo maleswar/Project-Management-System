@@ -305,16 +305,27 @@ const Team = () => {
 
   const exportToCSV = () => {
     // Define headings
-    const headings = ["Team_id", "Name", "Email", "Role", "Phone Number", "Qualification", "Skills","Profile Image","Project Name", "Status"];
+    const headings = [
+      "Team_id",
+      "Name",
+      "Email",
+      "Role",
+      "Phone Number",
+      "Qualification",
+      "Skills",
+      "Profile Image",
+      "Project Name",
+      "Status",
+    ];
 
     // Transpose the data
     let csvContent = headings.join(",") + "\n";
     TeamMember.forEach((project) => {
-        Object.values(project).forEach((value, index) => {
-            csvContent += index === 0 ? "" : ",";
-            csvContent += value;
-        });
-        csvContent += "\n";
+      Object.values(project).forEach((value, index) => {
+        csvContent += index === 0 ? "" : ",";
+        csvContent += value;
+      });
+      csvContent += "\n";
     });
 
     // Encode URI
@@ -325,46 +336,65 @@ const Team = () => {
 
     // Trigger file download
     saveAs(blob, "Project_Team.csv");
-};
+  };
 
+  const exportToCSV2 = () => {
+    // Define headings
+    const headings = [
+      "Team id",
+      "Uniq ID",
+      "Email",
+      "Team Name",
+      "Phone Number",
+      "Role",
+      "Skills",
+      "Qualification",
+      "Task ID",
+      "Password",
+      "TL ID",
+      "Project ID",
+      "Profile Image",
+      "Active",
+      "Date Of Birth",
+      "Age",
+      "City",
+      "State",
+      "Country",
+      "Instagram",
+      "LinkedIn",
+      "Github",
+      "Twitter",
+      "Company Address",
+      "Company Name",
+    ];
 
-const exportToCSV2 = () => {
-  // Define headings
-  const headings = ["Team id", "Uniq ID", "Email", "Team Name", "Phone Number", "Role", "Skills","Qualification","Task ID", "Password","TL ID","Project ID","Profile Image","Active","Date Of Birth","Age","City","State","Country","Instagram","LinkedIn","Github","Twitter","Company Address","Company Name"];
-
-  // Transpose the data
-  let csvContent = headings.join(",") + "\n";
-  AllTeamMember.forEach((project) => {
+    // Transpose the data
+    let csvContent = headings.join(",") + "\n";
+    AllTeamMember.forEach((project) => {
       Object.values(project).forEach((value, index) => {
-          csvContent += index === 0 ? "" : ",";
-          csvContent += value;
+        csvContent += index === 0 ? "" : ",";
+        csvContent += value;
       });
       csvContent += "\n";
-  });
+    });
 
-  // Encode URI
-  const encodedUri = encodeURI(csvContent);
+    // Encode URI
+    const encodedUri = encodeURI(csvContent);
 
-  // Create Blob
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+    // Create Blob
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
 
-  // Trigger file download
-  saveAs(blob, "Team.csv");
-};
+    // Trigger file download
+    saveAs(blob, "Team.csv");
+  };
   return (
-    <div className="w-full h-screen pt-10">
-      <div className="p-5 bg-bgSky h-screen grid grid-cols-1 gap-y-4">
+    <div className="w-full h-full pt-10">
+      <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4">
         <div className="w-full p-5 h-full">
           <div className="justify-end -mt-5">
             <button
-              onClick={exportToCSV}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Export Data as CSV
-            </button>
-            <button
               ref={buttonRef}
-              className="float-end mx-4 bg-customBlue text-white font-semibold p-2 mt-5 rounded-md flex w-72 items-center"
+              className="float-end mx-4 bg-customBlue text-white font-semibold p-2 mt-5 rounded-md flex w-64 items-center"
               onClick={openDrawer}
             >
               <span>
@@ -534,115 +564,50 @@ const exportToCSV2 = () => {
           </div>
 
           <div className="w-full">
-            <div className="mx-auto bg-white rounded-xl shadow-lg px-5 py-5 mt-7">
-              <h2 className="text-2xl font-bold mb-4 text-customBlue">
-                Project Assigned Team Members
-              </h2>
-              <div className="">
-                <table className="w-full  overflow-x -scroll ">
-                  <thead className="border-t border-b text-black text-left border-gray-100 bg-gray-200">
-                    <tr>
-                      <th className="p-4  text-slate-700 ">Profile</th>
-                      <th className="p-4  text-slate-700 ">Name</th>
-                      <th className="p-4  text-slate-700">Project Name</th>
-                      <th className="p-4  text-slate-700">Status</th>
-                      <th className="p-4  text-slate-700">Email</th>
-                      <th className="p-4  text-slate-700">Designation</th>
-                      <th className="p-4  text-slate-700">Phone Number</th>
-                      <th className="p-4  text-slate-700">Qualification</th>
-                      <th className="p-4  text-slate-700">Skills</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* {BudgetList.map(({ TL_fname, TL_lname, Budget, Project_name }, index) => ( */}
-                    {TeamMember.map(
-                      (
-                        {
-                          Profile_image,
-                          Team_id,
-                          Team_name,
-                          Project_name,
-                          Status,
-                          Email,
-                          Roles,
-                          Phone_number,
-                          Qualification,
-                          Skills,
-                        },
-                        index
-                      ) => (
-                        <tr key={index} className="">
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
-                            {Profile_image ? (
-                              <img
-                                src={require(`../../image/${Profile_image}`)}
-                                alt="student profile"
-                                className="h-10 w-10 rounded-full cursor-pointer"
-                              />
-                            ) : (
-                              <span>No profile </span>
-                            )}
-                          </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
-                            {Team_name}
-                          </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
-                            {Project_name}
-                          </td>
-                          <td
-                            className={`border-t border-b  left-0 border-blue-gray-300 p-4 ${getStatusColor(
-                              Status
-                            )}`}
-                          >
-                            {Status}
-                          </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-9">
-                            {Email}
-                          </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
-                            {Roles}
-                          </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
-                            {Phone_number}
-                          </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
-                            {Qualification}
-                          </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
-                            {Skills}
-                          </td>
-                        </tr>
-                      )
-                    )}
-                  </tbody>
-                </table>
+            <div className="mx-auto bg-white rounded-xl shadow-lg px-5 py-5 mt-20">
+              <div className="flex justify-between items-center mb-4">
+                {/* Updated Code  */}
+                <h2 className="text-2xl font-bold text-customBlue">
+                  All Team Members
+                </h2>
+                <div className="justify-end -mt-5">
+                  <button
+                    onClick={exportToCSV2}
+                    className="bg-blue-500 hover:bg-customBlue text-white font-bold py-2 px-4 rounded mt-3"
+                  >
+                    Export Data as CSV
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div className="w-full">
-            <div className="mx-auto bg-white rounded-xl shadow-lg px-5 py-5 mt-7">
-              <h2 className="text-2xl font-bold mb-4 text-customBlue">
-                All Team Members
-              </h2>
               <div className="overflow-auto">
                 <table className="w-full  overflow-x -scroll ">
-                <button
-              onClick={exportToCSV2}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Export Data as CSV
-            </button>
-                  <thead className="border-t border-b text-black text-left border-gray-100 bg-gray-200">
+                  <thead className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black text-left">
                     <tr>
-                      <th className="p-4  text-slate-700 ">Profile</th>
-                      <th className="p-4  text-slate-700 ">Name</th>
-                      <th className="p-4  text-slate-700">Email</th>
-                      <th className="p-4  text-slate-700">Designation</th>
-                      <th className="p-4  text-slate-700">Phone Number</th>
-                      <th className="p-4  text-slate-700">Qualification</th>
-                      <th className="p-4  text-slate-700">Skills</th>
-                      <th className="p-4  text-slate-700" colSpan={2}>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700 ">
+                        Profile
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700 ">
+                        Name
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Email
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Designation
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Phone Number
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Qualification
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Skills
+                      </th>
+                      <th
+                        className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700"
+                        colSpan={2}
+                      >
                         Action
                       </th>
                     </tr>
@@ -664,7 +629,7 @@ const exportToCSV2 = () => {
                         index
                       ) => (
                         <tr key={index} className="">
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
                             {Profile_image ? (
                               <img
                                 src={require(`../../image/${Profile_image}`)}
@@ -675,26 +640,26 @@ const exportToCSV2 = () => {
                               <span>No profile </span>
                             )}
                           </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
                             {Team_name}
                           </td>
 
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-9">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
                             {Email}
                           </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
                             {Roles}
                           </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
                             {phone_number}
                           </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
                             {Qualification}
                           </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
                             {Skills}
                           </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
                             <button
                               onClick={() =>
                                 handleEditClick(Team_id, Team_name, Email)
@@ -703,13 +668,129 @@ const exportToCSV2 = () => {
                               <MdEditSquare className="h-7 w-6 " />
                             </button>
                           </td>
-                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
                             <button>
                               <MdDelete
                                 className="h-7 w-6 "
                                 onClick={() => DeleteTeam(Team_id)}
                               />
                             </button>
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full">
+            <div className="mx-auto bg-white rounded-xl shadow-lg px-5 py-5 mt-7">
+              {/* Updated Code  */}
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-customBlue">
+                  Project Assigned Team Members
+                </h2>
+                <div className="justify-end -mt-5">
+                  <button
+                    onClick={exportToCSV2}
+                    className="bg-blue-500 hover:bg-customBlue text-white font-bold py-2 px-4 rounded mt-3"
+                  >
+                    Export Data as CSV
+                  </button>
+                </div>
+              </div>
+              <div className="">
+                <table className="w-full  overflow-x -scroll text-left">
+                  <thead className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                    <tr>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Profile
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Name
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Project Name
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Status
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Email
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Designation
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Phone Number
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Qualification
+                      </th>
+                      <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2  text-slate-700">
+                        Skills
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* {BudgetList.map(({ TL_fname, TL_lname, Budget, Project_name }, index) => ( */}
+                    {TeamMember.map(
+                      (
+                        {
+                          Profile_image,
+                          Team_id,
+                          Team_name,
+                          Project_name,
+                          Status,
+                          Email,
+                          Roles,
+                          Phone_number,
+                          Qualification,
+                          Skills,
+                        },
+                        index
+                      ) => (
+                        <tr key={index} className="">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2 text-slate-700">
+                            {Profile_image ? (
+                              <img
+                                src={require(`../../image/${Profile_image}`)}
+                                alt="student profile"
+                                className="h-10 w-10 rounded-full cursor-pointer"
+                              />
+                            ) : (
+                              <span>No profile </span>
+                            )}
+                          </td>
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
+                            {Team_name}
+                          </td>
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
+                            {Project_name}
+                          </td>
+                          <td
+                            className={`border-t border-b border-l border-r border-gray-700 p-2  text-slate-700 ${getStatusColor(
+                              Status
+                            )}`}
+                          >
+                            {Status}
+                          </td>
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
+                            {Email}
+                          </td>
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
+                            {Roles}
+                          </td>
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
+                            {Phone_number}
+                          </td>
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
+                            {Qualification}
+                          </td>
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2  text-slate-700">
+                            {Skills}
                           </td>
                         </tr>
                       )

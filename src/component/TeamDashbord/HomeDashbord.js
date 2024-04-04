@@ -7,7 +7,7 @@ import axios from "axios";
 function HomeDashbord() {
   const teamid = sessionStorage.getItem("TeamID");
   const TeamName = sessionStorage.getItem("TeamName");
-  
+
   const [completedProject, setCompletedProject] = useState([]);
   const [PendingProject, setPendingProject] = useState([]);
   const [TeamLeader, setTeamLeader] = useState([]);
@@ -39,7 +39,7 @@ function HomeDashbord() {
         // (project);
       });
   };
-console.log(PendingProject);
+  console.log(PendingProject);
   const TeamLeaderListWithData = async () => {
     const teamid = sessionStorage.getItem("TeamID");
 
@@ -249,12 +249,12 @@ console.log(PendingProject);
     }
   };
 
-  const ClearFileds=()=>{
+  const ClearFileds = () => {
     setFormData({
       selectedTeamLeader: "",
-    description: "",
+      description: "",
     });
-  }
+  };
   const [issuelist, setIssuelist] = useState([]);
   const fetchIssue = async () => {
     try {
@@ -360,7 +360,6 @@ console.log(PendingProject);
             </div>
           </div>
 
-
           <div className="w-full">
             <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-x-10 mx-auto mt-7 space-y-7 sm:space-y-7 md:space-y-7 lg:space-y-0">
               {/* To-Do List */}
@@ -416,13 +415,21 @@ console.log(PendingProject);
                   <table className="w-full text-left overflow-x -scroll">
                     <thead className="border-t border-b text-black border-gray-100 bg-gray-200">
                       <tr>
-                        <th className="p-4  text-slate-700">Profile Image</th>
-                        <th className="p-4  text-slate-700">
+                        <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                          Profile Image
+                        </th>
+                        <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
                           Team Leader Name
                         </th>
-                        <th className="p-4  text-slate-700">Company Name</th>
-                        <th className="p-4  text-slate-700">Email</th>
-                        <th className="p-4  text-slate-700">Uniq ID</th>
+                        <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                          Company Name
+                        </th>
+                        <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                          Email
+                        </th>
+                        <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                          Uniq ID
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -439,27 +446,27 @@ console.log(PendingProject);
                           index
                         ) => (
                           <tr key={index}>
-                             <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
-                            {profile_image ? (
-                              <img
-                                src={require(`../../image/${profile_image}`)}
-                                alt="student profile"
-                                className="h-10 w-10 rounded-full cursor-pointer"
-                              />
-                            ) : (
-                              <span>No profile </span>
-                            )}
-                          </td>
-                            <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            <td className="border-t border-b border-l border-r border-gray-700 p-2">
+                              {profile_image ? (
+                                <img
+                                  src={require(`../../image/${profile_image}`)}
+                                  alt="student profile"
+                                  className="h-10 w-10 rounded-full cursor-pointer"
+                                />
+                              ) : (
+                                <span>No profile </span>
+                              )}
+                            </td>
+                            <td className="border-t border-b border-l border-r border-gray-700 p-2">
                               {TL_fname} {TL_lname}
                             </td>
-                            <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            <td className="border-t border-b border-l border-r border-gray-700 p-2">
                               {C_name}
                             </td>
-                            <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            <td className="border-t border-b border-l border-r border-gray-700 p-2">
                               {email}
                             </td>
-                            <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                            <td className="border-t border-b border-l border-r border-gray-700 p-2">
                               {Uniq_id}
                             </td>
                           </tr>
@@ -537,71 +544,66 @@ console.log(PendingProject);
           </div>
 
           <div className="bg-white shadow-lg rounded-xl px-5 py-5 text-left">
-              <h2 className="text-2xl font-bold mb-4 text-customBlue">
-                Issues
-              </h2>
-              <div className="overflow-auto">
-                <table className="w-full">
-                  <thead
-                    className="bg-gray-2
+            <h2 className="text-2xl font-bold mb-4 text-customBlue">Issues</h2>
+            <div className="overflow-auto">
+              <table className="w-full">
+                <thead
+                  className="bg-gray-2
                   00"
-                  >
-                    <tr>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
-                        Profile
-                      </th>
+                >
+                  <tr>
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                      Profile
+                    </th>
 
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
-                        Team Member
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
-                        Issues
-                      </th>
-                      <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 text-black">
-                        Comment
-                      </th>
-                      
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {issuelist.map(
-                      ({
-                        Profile_image,
-                        Team_name,
-                        issue_id,
-                        issue_name,
-                        comment,
-                      }) => (
-                        <tr key={issue_id}>
-                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
-                            {Profile_image ? (
-                              <img
-                                src={require(`../../image/${Profile_image}`)}
-                                alt="student profile"
-                                className="h-10 w-10 rounded-full cursor-pointer"
-                              />
-                            ) : (
-                              <span>No profile </span>
-                            )}
-                          </td>
-                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
-                            {Team_name}
-                          </td>
-                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
-                            {issue_name}
-                          </td>
-                          <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
-                            {comment}
-                          </td>
-
-                        
-                        </tr>
-                      )
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                      Team Member
+                    </th>
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                      Issues
+                    </th>
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                      Comment
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {issuelist.map(
+                    ({
+                      Profile_image,
+                      Team_name,
+                      issue_id,
+                      issue_name,
+                      comment,
+                    }) => (
+                      <tr key={issue_id}>
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
+                          {Profile_image ? (
+                            <img
+                              src={require(`../../image/${Profile_image}`)}
+                              alt="student profile"
+                              className="h-10 w-10 rounded-full cursor-pointer"
+                            />
+                          ) : (
+                            <span>No profile </span>
+                          )}
+                        </td>
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
+                          {Team_name}
+                        </td>
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
+                          {issue_name}
+                        </td>
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
+                          {comment}
+                        </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+              </table>
             </div>
+          </div>
         </div>
       </div>
     </div>

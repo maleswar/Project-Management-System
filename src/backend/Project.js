@@ -405,7 +405,7 @@ router.get("/ProjectwiseTaskDataChart", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "SELECT p.project_id,p.project_name,COUNT(t.task_id) AS total_tasks,SUM(CASE WHEN t.Progress = 'Completed' THEN 1 ELSE 0 END) AS completed_tasks,SUM(CASE WHEN t.Progress = 'Pending' THEN 1 ELSE 0 END) AS pending_tasks,SUM(CASE WHEN t.Progress = 'Cancel' THEN 1 ELSE 0 END) AS canceled_tasks FROM project p LEFT JOIN task t ON p.project_id = t.project_id LEFT JOIN tl ON p.tl_id = tl.tl_id WHERE tl.tl_id =1 OR tl.tl_id IS NULL GROUP BY p.project_id, p.project_name;";
+    let query = "SELECT p.project_id,p.project_name,COUNT(t.task_id) AS total_tasks,SUM(CASE WHEN t.Progress = 'Completed' THEN 1 ELSE 0 END) AS completed_tasks,SUM(CASE WHEN t.Progress = 'Pending' THEN 1 ELSE 0 END) AS pending_tasks,SUM(CASE WHEN t.Progress = 'Cancel' THEN 1 ELSE 0 END) AS canceled_tasks FROM project p LEFT JOIN task t ON p.project_id = t.project_id LEFT JOIN tl ON p.tl_id = tl.tl_id WHERE p.Active='Active' And tl.tl_id =? OR tl.tl_id IS NULL GROUP BY p.project_id, p.project_name";
     connection.query(query,tlid, (err, data) => {
       connection.release();
 

@@ -2,10 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-
-
 const ProjectWiseTeam = () => {
-  const { projectId,Project_name } = useParams();
+  const { projectId, Project_name } = useParams();
   const [TeamMember, setTeamMember] = useState([]);
   const TeamMemberList = async () => {
     try {
@@ -36,29 +34,43 @@ const ProjectWiseTeam = () => {
   };
 
   return (
-    <div className="w-full mt-16">
-      <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4 h-screen">
-        <div className="bg-white rounded-lg shadow-lg px-5 py-5 mt-5 mx-5">
-          <h2 className="text-2xl font-bold mb-4 text-customBlue">
-            {Project_name} 's Team Member
-          </h2>
-          <div className="overflow-auto">
-            <table className="w-full text-left border border-black">
-              <thead>
-              <tr>
-                      <th className="p-4  text-slate-700 ">Profile</th>
-                      <th className="p-4  text-slate-700 ">Name</th>
-                   
-                      <th className="p-4  text-slate-700">Email</th>
-                      <th className="p-4  text-slate-700">Designation</th>
-                      <th className="p-4  text-slate-700">Phone Number</th>
-                      <th className="p-4  text-slate-700">Qualification</th>
-                      <th className="p-4  text-slate-700">Skills</th>
-                      
+    <div className="w-full h-full mt-10 bg-bgSky">
+      <div className="p-5 grid grid-cols-1 gap-y-4 h-screen">
+        <div className="w-full">
+          <div className="mx-auto bg-white shadow-lg px-5 py-5 mt-7 rounded-lg">
+            <div className="mb-4">
+              <h2 className="text-2xl font-bold mb-4 text-customBlue">
+                {Project_name} 's Team Member
+              </h2>
+              <div className="overflow-auto">
+                <table className="w-full text-left border border-black">
+                  <thead>
+                    <tr>
+                      <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                        Profile
+                      </th>
+                      <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                        Name
+                      </th>
+                      <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                        Email
+                      </th>
+                      <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                        Designation
+                      </th>
+                      <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                        Phone Number
+                      </th>
+                      <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                        Qualification
+                      </th>
+                      <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                        Skills
+                      </th>
                     </tr>
-              </thead>
-              <tbody>
-              {TeamMember.map(
+                  </thead>
+                  <tbody>
+                    {TeamMember.map(
                       (
                         {
                           Profile_image,
@@ -72,7 +84,7 @@ const ProjectWiseTeam = () => {
                         index
                       ) => (
                         <tr key={index} className="">
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2">
                             {Profile_image ? (
                               <img
                                 src={require(`../../image/${Profile_image}`)}
@@ -83,32 +95,32 @@ const ProjectWiseTeam = () => {
                               <span>No profile </span>
                             )}
                           </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2">
                             {Team_name}
                           </td>
-                          
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-9">
+
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2">
                             {Email}
                           </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2">
                             {Roles}
                           </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2">
                             {phone_number}
                           </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2">
                             {Qualification}
                           </td>
-                          <td className="border-t border-b font-semibold  border-blue-gray-300 px-3">
+                          <td className="border-t border-b border-l border-r border-gray-700 p-2">
                             {Skills}
                           </td>
-                          
-                          
                         </tr>
                       )
                     )}
-              </tbody>
-            </table>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>

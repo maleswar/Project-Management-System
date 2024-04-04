@@ -31,7 +31,7 @@ function Task() {
   const [teamFormMember, setTeamFormMember] = useState([]);
   const [EditProjectData, setEditProjectData] = useState([]);
   const [taskid, settaskid] = useState([]);
-
+  
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
@@ -75,7 +75,7 @@ function Task() {
       .catch((error) => {
         console.error("Error fetching tasks:", error);
       });
-  }, []); // Empty dependency array to only run the effect once on component mount
+  }, []);
 
   const options = {
     chart: {
@@ -521,7 +521,7 @@ function Task() {
         <div className="justify-end -mt-5">
           <button
             ref={buttonRef}
-            className="float-end mx-4 bg-customBlue text-white font-semibold p-2 mt-5 rounded-md flex w-48 items-center"
+            className="float-end mx-4 bg-customBlue text-white font-semibold p-2 mt-5 rounded-md flex w-44 items-center"
             onClick={openDrawer}
           >
             <span>
@@ -734,9 +734,7 @@ function Task() {
         <div className="w-full">
           <div className="bg-white rounded-lg shadow-lg flex items-center py-10">
             <div className="text-left ml-10">
-              <h1 className="text-4xl font-bold mb-2 text-customBlue">
-                {Project_name} 's Task
-              </h1>
+              <h1 className="text-4xl font-bold mb-2 text-customBlue">{Project_name } 's Task</h1>
               <p className="text-gray-600">
                 Welcome to the Project Management Dashboard! Your hub for
                 project progress, collaboration, and success. Let's get started!
@@ -785,13 +783,13 @@ function Task() {
               <table className="w-full text-left">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="border border-blue-gray-300 p-2 text-gray-700">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Sr.no
                     </th>
-                    <th className="border border-blue-gray-300 p-2 text-gray-700">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Task Name
                     </th>
-                    <th className="border border-blue-gray-300 p-2 text-gray-700">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Team Member
                     </th>
                   </tr>
@@ -799,13 +797,13 @@ function Task() {
                 <tbody>
                   {taskTeam.map(({ Task_id, Task_name, Team_name }, index) => (
                     <tr key={index}>
-                      <td className="border border-blue-gray-300 p-2">
+                      <td className="border-t border-b border-l border-r border-gray-700 p-2">
                         {Task_id}
                       </td>
-                      <td className="border border-blue-gray-300 p-2">
+                      <td className="border-t border-b border-l border-r border-gray-700 p-2">
                         {Task_name}
                       </td>
-                      <td className="border border-blue-gray-300 p-2">
+                      <td className="border-t border-b border-l border-r border-gray-700 p-2">
                         {Team_name}
                       </td>
                     </tr>
@@ -824,25 +822,25 @@ function Task() {
               <table className="w-full text-left">
                 <thead className="bg-gray-400">
                   <tr>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2 ">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Sr.No
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Task
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Description
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Start_date
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       End_date
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Priority
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Comments
                     </th>
                   </tr>
@@ -862,25 +860,25 @@ function Task() {
                       index
                     ) => (
                       <tr key={index}>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Task_id}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Task_name}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Description}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {formatTimestamp(start_date)}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {formatTimestamp(End_date)}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Priority}
                         </td>
-                        <td className="border border-blue-gray-300 p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Comments}
                         </td>
                       </tr>
@@ -893,18 +891,20 @@ function Task() {
         </div>
 
         <div className="w-full ">
-          <div className="bg-white p-5 rounded-lg shadow-lg px-5 py-5 mt-7">
-            {tasks.length > 0 ? (
-              <ReactApexChart
-                options={options}
-                series={[{ data: tasks }]}
-                type="rangeBar"
-                height={350}
-              />
-            ) : (
-              <div>Loading...</div>
-            )}
-          </div>
+          
+            <div className="bg-white p-5 rounded-lg shadow-lg px-5 py-5 mt-7">
+              {tasks.length > 0 ? (
+                <ReactApexChart
+                  options={options}
+                  series={[{ data: tasks }]}
+                  type="rangeBar"
+                  height={350}
+                />
+              ) : (
+                <div>Loading...</div>
+              )}
+            </div>
+       
         </div>
 
         <div className="w-full">
@@ -916,31 +916,31 @@ function Task() {
               <table className="w-full text-left">
                 <thead className="bg-gray-400">
                   <tr>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Task
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Team Name
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Description
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Start_date
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       End_date
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Priority
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Progress
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Comments
                     </th>
-                    <th className="border-r-0 border-l-0 border-t-0 border-b border-blue-gray-300 p-2">
+                    <th className="border-t border-b border-l border-r border-gray-700 bg-gray-300 p-2 text-black">
                       Action
                     </th>
                   </tr>
@@ -962,23 +962,23 @@ function Task() {
                       index
                     ) => (
                       <tr key={index}>
-                        <td className="p-2">{Task_name}</td>
-                        <td className="p-2">{team_name}</td>
-                        <td className="p-2">{Description}</td>
-                        <td className="p-2">{formatTimestamp(start_date)}</td>
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">{Task_name}</td>
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">{team_name}</td>
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">{Description}</td>
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">{formatTimestamp(start_date)}</td>
                         <td
-                          className={`p-2  ${
+                          className={`border-t border-b border-l border-r border-gray-700 p-2  ${
                             isDateCloser(End_date) ? "text-red-500" : ""
                           }`}
                         >
                           {formatTimestamp(End_date)}
                         </td>
-                        <td className="p-2">{Priority}</td>
-                        <td className={`p-2 ${getStatusColor(Progress)}`}>
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">{Priority}</td>
+                        <td className={`border-t border-b border-l border-r border-gray-700 p-2 ${getStatusColor(Progress)}`}>
                           {Progress}
                         </td>
-                        <td className="p-2">{Comments}</td>
-                        <td className="p-2">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">{Comments}</td>
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           <button onClick={() => handleEditClick(Task_id)}>
                             <MdEditSquare className="h-7 w-6" />
                           </button>

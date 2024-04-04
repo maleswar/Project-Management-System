@@ -4,10 +4,8 @@ import { HiOutlineCloudDownload } from "react-icons/hi";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-
-
 function TeamReport() {
-  const { projectId ,Project_name} = useParams();
+  const { projectId, Project_name } = useParams();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const drawerRef = useRef(null);
   const buttonRef = useRef(null);
@@ -17,10 +15,9 @@ function TeamReport() {
     description: "",
     file: null,
     fileName: "",
-    Active:"Active",
-    projectId:projectId,
+    Active: "Active",
+    projectId: projectId,
   });
-  
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -45,10 +42,10 @@ function TeamReport() {
 
       // Append the values directly from the form data state
       form.append("file", formData.file);
-      form.append("teamLeader", formData.teamLeader); 
+      form.append("teamLeader", formData.teamLeader);
       form.append("description", formData.description);
-      form.append("Active",formData.Active);
-      form.append("projectId",formData.projectId);
+      form.append("Active", formData.Active);
+      form.append("projectId", formData.projectId);
 
       const response = await fetch(
         `http://localhost:3001/Team/updateTLExcelFile?teamID=${teamID}`,
@@ -73,7 +70,6 @@ function TeamReport() {
     setTimeout(() => {
       fetchReportData();
     }, 1500);
-    
   };
 
   const [reportData, setReportData] = useState([]);
@@ -81,7 +77,9 @@ function TeamReport() {
     const teamID = sessionStorage.getItem("TeamID");
 
     await axios
-      .get(`http://localhost:3001/Team/FetchTheReportData?TeamId=${teamID}&projectId=${projectId}`)
+      .get(
+        `http://localhost:3001/Team/FetchTheReportData?TeamId=${teamID}&projectId=${projectId}`
+      )
       .then((res) => {
         let list = res.data;
         let reportData = list.data;
@@ -132,10 +130,10 @@ function TeamReport() {
     const formattedDateTime = `${date}  ${time}`;
 
     return formattedDateTime;
-}
+  }
   return (
-    <div className="w-full h-full mt-10  bg-bgSky">
-      <div className="p-5 bg-bgSky grid grid-cols-1 gap-y-4 h-full">
+    <div className="w-full h-full mt-10 bg-bgSky">
+      <div className="p-5 grid grid-cols-1 gap-y-4 h-screen">
         <div
           ref={drawerRef}
           id="drawer-right-example"
@@ -172,7 +170,7 @@ function TeamReport() {
                   onChange={handleChange}
                 >
                   <option value="" disabled>
-                    Select Project
+                    Select Team Member
                   </option>
                   {TeamLeaderList.map((TeamMember) => (
                     <option key={TeamMember.TL_ID} value={TeamMember.TL_ID}>
@@ -248,13 +246,24 @@ function TeamReport() {
               <table className="w-full text-left">
                 <thead className="bg-blue-gray-200">
                   <tr>
-                    <th className="p-2">Name</th>
-                    <th className="p-2">TL Name</th>
-                    <th className="p-2">Description</th>
-                    <th className="p-2">TimeStamp</th>
-                    <th className="p-2">Files</th>
-                    <th className="p-2">Comment Of TL</th>
-                    
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                      Name
+                    </th>
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                      TL Name
+                    </th>
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                      Description
+                    </th>
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                      TimeStamp
+                    </th>
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                      Files
+                    </th>
+                    <th className="border-t border-b border-l border-r bg-gray-300 border-gray-700 p-2">
+                      Comment Of TL
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -273,19 +282,22 @@ function TeamReport() {
                       index
                     ) => (
                       <tr key={index}>
-                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Team_name}
                         </td>{" "}
-                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {TL_fname} {TL_lname}
                         </td>{" "}
-                        <td className="border-t border-b font-semibold left-0 border-blue-gray-300 ">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Description}
                         </td>{" "}
-                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {formatDateTime(Uploaded_at)}
                         </td>{" "}
-                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4 " title="Download">
+                        <td
+                          className="border-t border-b  left-0 border-gray-700 p-4"
+                          title="Download"
+                        >
                           <a
                             href={require(`../../Excel/${File_name}`)}
                             download={File_name}
@@ -295,10 +307,9 @@ function TeamReport() {
                             {File_name}
                           </a>
                         </td>
-                        <td className="border-t border-b  left-0 border-blue-gray-300 p-4">
+                        <td className="border-t border-b border-l border-r border-gray-700 p-2">
                           {Comment}
                         </td>
-                        
                       </tr>
                     )
                   )}
