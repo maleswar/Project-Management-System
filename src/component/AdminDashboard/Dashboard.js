@@ -234,8 +234,9 @@ const Dashboard = () => {
         );
         var count = response.data.data.affectedRows;
 
-        if (count === 1) {
+        if (count >= 1) {
           alert("Project Added Sucsessfully");
+          
         } else {
           alert("there are some error");
         }
@@ -245,10 +246,13 @@ const Dashboard = () => {
     } else {
       return false;
     }
-    closeDrawer();
-    ProjectBudgetList();
-    TotalProject();
-    ProjectPending();
+    setTimeout(() => {
+       closeDrawer();
+          ProjectBudgetList();
+          TotalProject();
+          ProjectPending();
+    }, 1500);
+   
   };
 
   // Close the drawer

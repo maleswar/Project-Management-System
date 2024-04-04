@@ -346,14 +346,14 @@ router.get("/TeamTaskData", (req, res) => {
   });
 });
 router.get("/TaskDate", (req, res) => {
-  const teamid = req.query.teamid;
+  const teamid = req.query.tlid;
   const projectId = req.query.projectId;
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
     let query =
-      "SELECT Task_name,Start_Date,End_date from Task where Team_id=? and Project_id=?";
+      "SELECT Task_name,Start_Date,End_date from Task where Tl_id=? and Project_id=?";
     connection.query(query, [teamid, projectId], (err, data) => {
       connection.release();
 

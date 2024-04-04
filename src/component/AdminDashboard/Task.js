@@ -31,14 +31,14 @@ function Task() {
   const [teamFormMember, setTeamFormMember] = useState([]);
   const [EditProjectData, setEditProjectData] = useState([]);
   const [taskid, settaskid] = useState([]);
-  
+
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
     const tlid = sessionStorage.getItem("TLID");
     axios
       .get(
-        `http://localhost:3001/Task/TaskDate?teamid=${tlid}&projectId=${projectId}`
+        `http://localhost:3001/Task/TaskDate?tlid=${tlid}&projectId=${projectId}`
       )
       .then((response) => {
         console.log("Response data:", response.data);
@@ -734,7 +734,9 @@ function Task() {
         <div className="w-full">
           <div className="bg-white rounded-lg shadow-lg flex items-center py-10">
             <div className="text-left ml-10">
-              <h1 className="text-4xl font-bold mb-2 text-customBlue">{Project_name } 's Task</h1>
+              <h1 className="text-4xl font-bold mb-2 text-customBlue">
+                {Project_name} 's Task
+              </h1>
               <p className="text-gray-600">
                 Welcome to the Project Management Dashboard! Your hub for
                 project progress, collaboration, and success. Let's get started!
@@ -891,20 +893,18 @@ function Task() {
         </div>
 
         <div className="w-full ">
-          
-            <div className="bg-white p-5 rounded-lg shadow-lg px-5 py-5 mt-7">
-              {tasks.length > 0 ? (
-                <ReactApexChart
-                  options={options}
-                  series={[{ data: tasks }]}
-                  type="rangeBar"
-                  height={350}
-                />
-              ) : (
-                <div>Loading...</div>
-              )}
-            </div>
-       
+          <div className="bg-white p-5 rounded-lg shadow-lg px-5 py-5 mt-7">
+            {tasks.length > 0 ? (
+              <ReactApexChart
+                options={options}
+                series={[{ data: tasks }]}
+                type="rangeBar"
+                height={350}
+              />
+            ) : (
+              <div>Loading...</div>
+            )}
+          </div>
         </div>
 
         <div className="w-full">

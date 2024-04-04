@@ -150,7 +150,7 @@ router.get("/ProjectBudgetList", (req, res) => {
 });
 
 router.post("/AddNewProject", (req, res) => {
-  const value = [
+  const projectValues = [
     req.body.name,
     req.body.startDate,
     req.body.endDate,
@@ -160,28 +160,59 @@ router.post("/AddNewProject", (req, res) => {
     req.body.budget,
     req.body.priority,
     req.body.teamid,
-    req.body.Active,
-    
+    req.body.Active
   ];
+
   pool.getConnection((err, connection) => {
     if (err) {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query =
-      "insert into Project (`Project_name`,`Start_date`,`End_date`,`TL_id`,`Status`,`Description`,`Budget`,`Priority`,`Team_id`,`Active`) values(?)";
-
-    connection.query(query, [value], (err, data) => {
-      connection.release();
-
+    connection.beginTransaction((err) => {
       if (err) {
         return res.json({ error: err });
-      } else {
-        return res.json({ data: data });
       }
+
+      let projectQuery =
+        "INSERT INTO Project (`Project_name`, `Start_date`, `End_date`, `TL_id`, `Status`, `Description`, `Budget`, `Priority`, `Team_id`, `Active`) VALUES (?)";
+
+      connection.query(projectQuery, [projectValues], (err, projectResult) => {
+        if (err) {
+          connection.rollback(() => {
+            connection.release();
+            return res.json({ error: err });
+          });
+        }
+
+        let projectId = projectResult.insertId;
+        let teamUpdateQuery =
+          "UPDATE Team SET Project_id = ? WHERE Team_id = ?";
+
+        connection.query(teamUpdateQuery, [projectId, req.body.teamid], (err, teamResult) => {
+          if (err) {
+            connection.rollback(() => {
+              connection.release();
+              return res.json({ error: err });
+            });
+          }
+
+          connection.commit((err) => {
+            if (err) {
+              connection.rollback(() => {
+                connection.release();
+                return res.json({ error: err });
+              });
+            }
+
+            connection.release();
+            return res.json({ success: true, projectId: projectId });
+          });
+        });
+      });
     });
   });
 });
+
 
 router.get("/ProjectNames", (req, res) => {
   const tlid = req.query.tlid;

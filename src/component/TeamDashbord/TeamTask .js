@@ -430,13 +430,13 @@ const TeamTask = () => {
             Task Graph
           </h2>
           <div className="donut-chart">
-      <ReactApexChart
-        options={chartOptions}
-        series={chartSeries}
-        type="donut"
-        height="350"
-      />
-    </div>
+            <ReactApexChart
+              options={chartOptions}
+              series={chartSeries}
+              type="donut"
+              height="350"
+            />
+          </div>
         </div>
         {/* Task Alert Table */}
         <div className="w-full">

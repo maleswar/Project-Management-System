@@ -240,7 +240,7 @@ router.get("/TeamInformationForDashbord", (req, res) => {
     }
 
     let query =
-      "SELECT team.Team_id,team.Team_name,team.Email, team.Roles, team.Phone_number, team.Qualification, team.Skills,team.Profile_image,Project.Project_name,Project.Status FROM Team join Project on Project.Project_id=Team.Project_id or Team.Team_id=Project.Team_id WHERE team.Tl_id = ? and Team.Active='Active'and Project.Status='Pending'";
+      "SELECT team.Team_id,team.Team_name,team.Email, team.Roles, team.Phone_number, team.Qualification, team.Skills,team.Profile_image,Project.Project_name,Project.Status FROM Team join Project on Project.Project_id=Team.Project_id or Team.Team_id=Project.Team_id WHERE team.Tl_id = ? and Team.Active='Active'and Project.Status='Pending' and Project.Active='Active'";
     connection.query(query, tlid, (err, data) => {
       connection.release();
 
