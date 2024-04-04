@@ -439,13 +439,17 @@ console.log(PendingProject);
                           index
                         ) => (
                           <tr key={index}>
-                            <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
+                             <td className="border-t border-b font-semibold  border-blue-gray-300 p-4 ">
+                            {profile_image ? (
                               <img
                                 src={require(`../../image/${profile_image}`)}
                                 alt="student profile"
                                 className="h-10 w-10 rounded-full cursor-pointer"
                               />
-                            </td>
+                            ) : (
+                              <span>No profile </span>
+                            )}
+                          </td>
                             <td className="border-t border-b font-semibold left-0 border-blue-gray-300 p-4">
                               {TL_fname} {TL_lname}
                             </td>
