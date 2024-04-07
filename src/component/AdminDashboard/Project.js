@@ -119,8 +119,8 @@ const Project = () => {
   };
 
   return (
-    <div className="w-full h-screen pt-10">
-      <div className="p-5 bg-bgSky h-full grid grid-cols-1 gap-y-4 w-full">
+    <div className="w-full pt-10">
+      <div className="p-5 bg-bgSky  grid grid-cols-1 gap-y-4 w-full">
         <div className="w-full p-7">
           <div className="bg-white  shadow-lg px-7 py-5 mt-7 rounded-lg">
             <div className="flex justify-between items-center mb-4">

@@ -358,7 +358,7 @@ router.get("/TeamLeaderList", (req, res) => {
     }
 
     let query =
-      "select TL.TL_ID,TL.TL_fname,TL.TL_lname from TL join Team on Team.Tl_id=TL.TL_id where Team.Team_id = ? ";
+      "select tl.Profile_image,TL.TL_ID,TL.TL_fname,TL.TL_lname from TL join Team on Team.Tl_id=TL.TL_id where Team.Team_id = ? ";
     connection.query(query, TeamId, (err, data) => {
       connection.release();
 
@@ -438,5 +438,125 @@ router.post("/TeamProfileUpdate", (req, res) => {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
+});
+
+router.get("/TeamMemberNameforMessage", (req, res) => {
+  const tlid = req.query.tlid;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "select Profile_image,Roles,Team_id,Team_name from Team where tl_id=? and Active='Active'";
+    connection.query(query, tlid, (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
+});
+
+// Fetch messages for a specific team member
+router.get("/TeamMemberMessages", (req, res) => {
+  const memberId = req.query.id;
+  const tlid = req.query.tlid;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    let query = `
+      SELECT * FROM Messages 
+      WHERE (Sender_id = ? AND Recevier_id = ?) OR (Sender_id = ? AND Recevier_id = ?)
+      ORDER BY sent_at ASC
+    `;
+    connection.query(query, [memberId, tlid, tlid, memberId], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.status(500).json({ error: err });
+      } else {
+        return res.status(200).json({ data: data });
+      }
+    });
+  });
+});
+
+router.get("/TeamMemberMessagesTeam", (req, res) => {
+  const memberId = req.query.id;
+  const teamid = req.query.teamid;
+
+  if (!memberId || !teamid) {
+    return res.status(400).json({ error: "Missing parameters" });
+  }
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error connecting to database:', err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    let query = `
+      SELECT * FROM Messages 
+      WHERE (Sender_id = ? AND Recevier_id = ?) OR (Sender_id = ? AND Recevier_id = ?)
+      ORDER BY sent_at ASC
+    `;
+    connection.query(query, [memberId, teamid, teamid, memberId], (err, data) => {
+      connection.release();
+
+      if (err) {
+        console.error('Error executing SQL query:', err);
+        return res.status(500).json({ error: "Database Error" });
+      } else {
+        return res.status(200).json({ data: data });
+      }
+    });
+  });
+});
+
+
+router.post("/sendMessage", (req, res) => {
+  const { sender_id, receiver_id, message } = req.body;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    let query = "INSERT INTO Messages (Sender_id, Recevier_id, message) VALUES (?, ?, ?)";
+    connection.query(query, [sender_id, receiver_id, message], (err, result) => {
+      connection.release();
+
+      if (err) {
+        return res.status(500).json({ error: err });
+      } else {
+        return res.status(200).json({ message: "Message sent successfully" });
+      }
+    });
+  });
+});
+
+
+router.get("/TeamMemberNameforMessageTeam", (req, res) => {
+  const teamid = req.query.teamid;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      return res.json({ error: "Internal Server Error" });
+    }
+
+    let query = "SELECT Profile_image, team_id, Team_name  FROM team WHERE Project_id = (SELECT Project_id FROM team WHERE team_id = ?) AND team_id != ?;";
+    connection.query(query, [teamid,teamid], (err, data) => {
+      connection.release();
+
+      if (err) {
+        return res.json({ error: err });
+      } else {
+        return res.json({ data: data });
+      }
+    });
+  });
 });
 module.exports = router;

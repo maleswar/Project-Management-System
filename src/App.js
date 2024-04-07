@@ -50,7 +50,10 @@ function App() {
           />
           <Route path="task/:projectId/:Project_name" element={<Task />} />
           <Route path="report/:projectId/:Project_name" element={<Report />} />
-          <Route path="projectwiseteam/:projectId/:Project_name" element={<ProjectWiseTeam />} />
+          <Route
+            path="projectwiseteam/:projectId/:Project_name"
+            element={<ProjectWiseTeam />}
+          />
 
           <Route path="profile" element={<Profile />} />
           <Route path="profile/UploadImage" element={<UploadImage />} />
@@ -58,6 +61,7 @@ function App() {
             path="profile/UploadImage/ProfileForm"
             element={<ProfileForm />}
           />
+          <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="/TeamDashbord/*" element={<TeamSideBar />}>
           <Route index element={<HomeDashboard />} />
@@ -65,7 +69,10 @@ function App() {
           <Route path="message" element={<TeamMessage />} />
           <Route path="team/:projectId/:Project_name" element={<TeamTable />} />
           <Route path="task/:projectId/:Project_name" element={<TeamTask />} />
-          <Route path="report/:projectId/:Project_name" element={<TeamReport />} />
+          <Route
+            path="report/:projectId/:Project_name"
+            element={<TeamReport />}
+          />
           {/* <Route path="calendar" element={<ProjectCalendarChart />} /> */}
           <Route path="profile" element={<TeamProfile />} />
           <Route path="profile/UploadImage" element={<TeamUploadProfile />} />
@@ -73,6 +80,7 @@ function App() {
             path="profile/UploadImage/ProfileForm"
             element={<TeamUploadProfileForm />}
           />
+          <Route path="*" element={<NotFound />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -1,111 +1,165 @@
-import { useState, useEffect, useRef } from "react";
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
-import "firebase/compat/auth";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDs4XO1tXF_sLG78uJ5BTtHM2pGjiS1OqQ",
-  authDomain: "react-chat-app-83412.firebaseapp.com",
-  projectId: "react-chat-app-83412",
-  storageBucket: "react-chat-app-83412.appspot.com",
-  messagingSenderId: "490133271178",
-  appId: "1:490133271178:web:40e90b7f2997c71c20b373"
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-
-const db = firebase.firestore();
-
-const Message = () => {
-  const [user, setUser] = useState(null);
+function Message() {
+  const tlid = sessionStorage.getItem("TLID");
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [selectedMember, setSelectedMember] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [text, setText] = useState("");
-  const messagesEndRef = useRef(null);
+  const [newMessage, setNewMessage] = useState("");
 
-  useEffect(() => {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        firebase.auth().signInAnonymously();
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = db
-      .collection("messages")
-      .orderBy("timestamp")
-      .onSnapshot((snapshot) => {
-        const messagesData = snapshot.docs.map((doc) => doc.data());
-        setMessages(messagesData);
-      });
-    return () => unsubscribe();
-  }, []);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleInputChange = (event) => {
-    setText(event.target.value);
-  };
-
-  const sendMessage = () => {
-    if (text.trim() !== "") {
-      db.collection("messages").add({
-        text: text,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        userId: user.uid,
-        userName: user.displayName || "Anonymous",
-      });
-      setText("");
+  const fetchTeamMembers = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/Team/TeamMemberNameforMessage?tlid=${tlid}`
+      );
+      setTeamMembers(response.data.data);
+    } catch (error) {
+      console.log(error);
     }
   };
 
+  const fetchSenderMessages = async () => {
+    if (selectedMember) {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/Team/TeamMemberMessages?id=${selectedMember.Team_id}&tlid=${tlid}`
+        );
+        setMessages(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const handleMessageButtonClick = async (member) => {
+    setSelectedMember(member);
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/Team/TeamMemberMessages?id=${member.Team_id}&tlid=${tlid}`
+      );
+      setMessages(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!selectedMember || !newMessage) return;
+    try {
+      await axios.post("http://localhost:3001/Team/sendMessage", {
+        sender_id: tlid,
+        receiver_id: selectedMember.Team_id,
+        message: newMessage,
+      });
+
+      await fetchSenderMessages();
+      setNewMessage("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTeamMembers();
+  }, []);
+
+  useEffect(() => {
+    fetchSenderMessages();
+  }, [selectedMember]);
+
+  const formatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const formattedHours = hours % 12 || 12;
+    const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+    return `${formattedHours}:${formattedMinutes} ${ampm}`;
+  };
+
   return (
-    <div className="h-screen flex flex-col bg-gray-100">
-      <div className="flex-grow flex flex-col px-4 py-2 overflow-y-auto">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`${
-              message.userId === user?.uid
-                ? "self-end bg-customBlue text-white"
-                : "self-start bg-gray-300"
-            } p-2 m-2 rounded-lg max-w-md`}
-          >
-            <span className="text-xs font-semibold mb-1">
-              {message.userName}
-            </span>
-            <p>{message.text}</p>
-          </div>
-        ))}
-        <div ref={messagesEndRef}></div>
+    <div className="flex h-full mx-10 mt-20 gap-5">
+      {/* Left container */}
+      <div className="flex w-1/3 p-4 rounded-lg shadow-lg border overflow-scroll">
+        <div className="flex flex-col gap-4">
+          {teamMembers.map(({ Profile_image, Team_id, Team_name }) => (
+            <div key={Team_id} className="flex items-center gap-4">
+              <div className="">
+                {Profile_image ? (
+                  <img
+                    src={require(`../../image/${Profile_image}`)}
+                    alt="student profile"
+                    className="h-10 w-10 rounded-full cursor-pointer"
+                  />
+                ) : (
+                  <span>No profile </span>
+                )}
+              </div>
+              <div>
+                <h6>{Team_name}</h6>
+                <button
+                  className="bg-customBlue"
+                  onClick={() =>
+                    handleMessageButtonClick({ Team_id, Team_name })
+                  }
+                >
+                  Message
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="flex items-center px-4 py-2">
-        <input
-          type="text"
-          placeholder="Type a message..."
-          className="flex-grow border rounded-lg px-4 py-2 mr-2"
-          value={text}
-          onChange={handleInputChange}
-        />
-        <button
-          className="bg-customBlue text-white rounded-lg px-4 py-2"
-          onClick={sendMessage}
-        >
-          Send
-        </button>
+
+      {/* Right container */}
+      <div className="flex flex-col bg-gray-100 w-2/3 p-4 rounded-lg overflow-hidden">
+        <div className="flex flex-col flex-grow overflow-y-auto">
+          {selectedMember && (
+            <h1 className="text-xl mb-4">{selectedMember.Team_name}</h1>
+          )}
+          <div className="flex flex-col gap-2">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex items-center ${
+                  message.Recevier_id != tlid ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div
+                  className={`rounded-lg p-2 max-w-xs ${
+                    message.Recevier_id != tlid
+                      ? "bg-orange-200 rounded-lg p-2 max-w-xs"
+                      : "bg-blue-200 rounded-lg p-2 max-w-xs"
+                  }`}
+                >
+                  <p>{message.message}</p>
+                  <p className="text-xs text-gray-500">
+                    {formatTime(message.sent_at)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="mt-auto flex items-center">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            className="flex-grow px-3 py-2 rounded-md border outline-none"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+          />
+          <button
+            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+            onClick={sendMessage}
+          >
+            Send
+          </button>
+        </div>
       </div>
     </div>
   );
-};
+}
 
 export default Message;

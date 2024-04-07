@@ -232,9 +232,9 @@ const Dashboard = () => {
           "http://localhost:3001/Project/AddNewProject",
           formData
         );
-        var count = response.data.data.affectedRows;
+        var count = response.data.success;
 
-        if (count === 1) {
+        if (count) {
           alert("Project Added Sucsessfully");
         } else {
           alert("there are some error");

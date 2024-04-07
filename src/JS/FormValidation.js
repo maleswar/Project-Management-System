@@ -60,11 +60,12 @@ export function validateNumber(inputId, span) {
   // Check if the input is a valid number
   if (!isNaN(numberInput.value) && numberInput.value.trim() !== "") {
     // Clear error message if the input is a valid number
-    errorMessage.textContent = "";
+    errorMessage.textContent = ""; 
     return true;
   } else {
     // Display error message if the input is not a valid number
     errorMessage.textContent = "Please enter a  number.";
+    
     return false;
   }
 }

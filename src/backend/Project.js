@@ -221,7 +221,7 @@ router.get("/ProjectNames", (req, res) => {
       return res.json({ error: "Internal Server Error" });
     }
 
-    let query = "SELECT Project_id,Project_name from Project where TL_id= ?";
+    let query = "SELECT Project_id,Project_name from Project where TL_id= ? and Active='Active'";
     connection.query(query, tlid, (err, data) => {
       connection.release();
 
