@@ -122,80 +122,88 @@ function Message() {
   };
   // const combinedMembers = [...teamMembers, ...TLMembers];
   return (
-    <div className="flex h-full mx-10 mt-20 gap-5">
+    <div className="flex mx-10 pt-20 gap-5 h-screen">
       {/* Left container */}
-      <div className="flex w-1/3 p-4 rounded-lg shadow-lg border overflow-scroll">
-        <div className="flex flex-col gap-4">
-          {/* Mapping teamMembers */}
-          {teamMembers.map(({ Profile_image, team_id, Team_name }) => (
-            <div key={team_id} className="flex items-center gap-4">
-              <div className="">
-                {Profile_image ? (
-                  <img
-                    src={require(`../../image/${Profile_image}`)}
-                    alt="student profile"
-                    className="h-10 w-10 rounded-full cursor-pointer"
-                  />
-                ) : (
-                  <span>No profile </span>
-                )}
+      <div className="w-1/3 rounded-lg shadow-lg border overflow-y-auto p-5 overflow-x-hidden h-[96%]l">
+        <div>
+          <div className="flex">
+            <h1 className="bg-customBlue text-white rounded-lg font-bold mb-4 h-10 w-full text-center text-xl place-content-center">
+              Team Members
+            </h1>
+          </div>
+          <div className="flex flex-col gap-4">
+            {/* Mapping teamMembers */}
+            {teamMembers.map(({ Profile_image, team_id, Team_name }) => (
+              <div key={team_id} className="flex items-center gap-4 bg-white border border-gray-400 rounded-lg p-5 w-[350px]">
+                <div className="">
+                  {Profile_image ? (
+                    <img
+                      src={require(`../../image/${Profile_image}`)}
+                      alt="student profile"
+                      className="h-10 w-10 rounded-full cursor-pointer"
+                    />
+                  ) : (
+                    <span>No profile </span>
+                  )}
+                </div>
+                <div>
+                  <h6>{Team_name}</h6>
+                  <button
+                    className="bg-customBlue rounded-lg shadow-lg p-0.5 text-white font-semibold mt-2 w-[230px]"
+                    onClick={() =>
+                      handleMessageButtonClick({ team_id, Team_name })
+                    }
+                  >
+                    Message
+                  </button>
+                </div>
               </div>
-              <div>
-                <h6>{Team_name}</h6>
-                <button
-                  className="bg-customBlue"
-                  onClick={() =>
-                    handleMessageButtonClick({ team_id, Team_name })
-                  }
-                >
-                  Message
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
 
-          {/* Mapping TLMembers */}
-          {TLMembers.map(({ Profile_image, TL_ID, TL_fname, TL_lname }) => (
-            <div key={TL_ID} className="flex items-center gap-4">
-              <div className="">
-                {Profile_image ? (
-                  <img
-                    src={require(`../../image/${Profile_image}`)}
-                    alt="student profile"
-                    className="h-10 w-10 rounded-full cursor-pointer"
-                  />
-                ) : (
-                  <span>No profile </span>
-                )}
+            {/* Mapping TLMembers */}
+            {TLMembers.map(({ Profile_image, TL_ID, TL_fname, TL_lname }) => (
+              <div key={TL_ID} className="flex items-center gap-4 bg-white border border-gray-400 rounded-lg p-5 w-[350px]">
+                <div className="">
+                  {Profile_image ? (
+                    <img
+                      src={require(`../../image/${Profile_image}`)}
+                      alt="student profile"
+                      className="h-10 w-10 rounded-full cursor-pointer"
+                    />
+                  ) : (
+                    <span>No profile </span>
+                  )}
+                </div>
+                <div>
+                  <h6>
+                    {TL_fname} {TL_lname}
+                  </h6>
+                  <button
+                    className="bg-customBlue rounded-lg shadow-lg p-0.5 text-white font-semibold mt-2 w-[230px]"
+                    onClick={() =>
+                      handleMessageButtonClick({ TL_ID, TL_fname, TL_lname })
+                    }
+                  >
+                    Message
+                  </button>
+                </div>
               </div>
-              <div>
-                <h6>
-                  {TL_fname} {TL_lname}
-                </h6>
-                <button
-                  className="bg-customBlue"
-                  onClick={() =>
-                    handleMessageButtonClick({ TL_ID, TL_fname, TL_lname })
-                  }
-                >
-                  Message
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Right container */}
-      <div className="flex flex-col bg-gray-100 w-2/3 p-4 rounded-lg overflow-hidden">
-        <div className="flex flex-col flex-grow overflow-y-auto">
+      <div className="flex flex-col bg-bgSky w-2/3 p-4 rounded-lg h-[96%] ">
+        <div className="overflow-y-scroll overflow-x-hidden">
           {selectedMember && (
-            <h1 className="text-xl mb-4">
+            <h1 className="text-xl p-3 rounded-lg font-semibold fixed mb-10 text-white bg-customBlue w-[750px]">
               {selectedMember.Team_name ||
                 `${selectedMember.TL_fname} ${selectedMember.TL_lname}`}
             </h1>
           )}
-          <div className="flex flex-col gap-2">
+          <div className="px-5 pt-4">
+            <div className="flex flex-col gap-2 pt-12">
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -206,10 +214,10 @@ function Message() {
                 }`}
               >
                 <div
-                  className={`rounded-lg p-2 max-w-xs ${
+                  className={`rounded-lg p-2 text-wrap  ${
                     message.Recevier_id != Team_id
-                      ? "bg-orange-200 rounded-lg p-2 max-w-xs"
-                      : "bg-blue-200 rounded-lg p-2 max-w-xs"
+                      ? "bg-white shadow-xl rounded-lg p-2"
+                      : "bg-white shadow-xl rounded-lg p-2 "
                   }`}
                 >
                   <p>{message.message}</p>
@@ -220,17 +228,19 @@ function Message() {
               </div>
             ))}
           </div>
+          </div>
+          
         </div>
-        <div className="mt-auto flex items-center">
+        <div className="flex items-center pt-9">
           <input
             type="text"
             placeholder="Type a message..."
-            className="flex-grow px-3 py-2 rounded-md border outline-none"
+            className="flex-grow px-3 py-2 rounded-md border outline-none shadow-xl"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
           />
           <button
-            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-customBlue focus:outline-none"
             onClick={sendMessage}
           >
             Send
