@@ -222,4 +222,109 @@ router.post("/UpdateComment", (req, res) => {
   }
 });
 
+router.get("/todos", (req, res) => {
+  const tlid=req.query.tlid;
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) {
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      
+      const query = "SELECT * FROM todos where Persion_id=?";
+      connection.query(query,tlid, (err, result) => {
+        connection.release();
+        if (err) {
+          console.error('Error fetching todos:', err);
+          return res.status(500).json({ error: "Database Error" });
+        } else {
+          return res.status(200).json({ todos: result });
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Error fetching todos:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.post("/updateTask/:taskId", (req, res) => {
+  const taskId = req.params.taskId;
+  const tlid = req.query.tlid;
+  const { completed } = req.body;
+
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) {
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      
+      const query = "UPDATE todos SET completed = ? WHERE id = ? and Persion_id=?";
+      connection.query(query, [completed, taskId,tlid], (err, result) => {
+        connection.release();
+        if (err) {
+          console.error('Error updating task:', err);
+          return res.status(500).json({ error: "Database Error" });
+        } else {
+          return res.status(200).json({ success: true, message: "Task updated successfully" });
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Error updating task:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.post("/addTask", (req, res) => {
+  const { text } = req.body;
+  const tlid=req.query.tlid;
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) {
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      
+      const query = "INSERT INTO todos (`text`,`Persion_id`) VALUES (?,?)";
+      connection.query(query, [text,tlid], (err, result) => {
+        connection.release();
+        if (err) {
+          console.error('Error adding task:', err);
+          return res.status(500).json({ error: "Database Error" });
+        } else {
+          return res.status(200).json({ success: true, message: "Task added successfully" });
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Error adding task:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.delete("/deleteTask/:taskId", (req, res) => {
+  const taskId = req.params.taskId;
+
+  try {
+    pool.getConnection((err, connection) => {
+      if (err) {
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      
+      const query = "DELETE FROM todos WHERE id = ?";
+      connection.query(query, [taskId], (err, result) => {
+        connection.release();
+        if (err) {
+          console.error('Error deleting task:', err);
+          return res.status(500).json({ error: "Database Error" });
+        } else {
+          return res.status(200).json({ success: true, message: "Task deleted successfully" });
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = router;

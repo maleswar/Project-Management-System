@@ -171,47 +171,7 @@ function HomeDashbord() {
     },
   };
 
-  const [todos, setTodos] = useState([
-    {
-      id: 1,
-      text: "Develop login functionality",
-      completed: false,
-    },
-    {
-      id: 2,
-      text: "Implement user profile page",
-      completed: false,
-    },
-    {
-      id: 3,
-      text: "Fix bugs reported by QA",
-      completed: false,
-    },
-  ]);
-
-  const [newTask, setNewTask] = useState("");
-
-  const handleToggle = (id) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
-  };
-
-  const handleAddTask = () => {
-    if (newTask.trim() !== "") {
-      const newTodo = {
-        id: todos.length + 1,
-        text: newTask,
-        completed: false,
-      };
-
-      setTodos([...todos, newTodo]);
-      setNewTask("");
-    }
-  };
-
+ 
   const [formData, setFormData] = useState({
     selectedTeamLeader: "",
     description: "",
@@ -270,6 +230,82 @@ function HomeDashbord() {
   };
 
   const sm = window.innerWidth < 640; // Define 'sm' for small screens
+
+  const [todos, setTodos] = useState([]);
+  const [newTask, setNewTask] = useState("");
+
+  useEffect(() => {
+    // Fetch todo list from backend when component mounts
+    fetchTodos();
+  }, []);
+
+  const fetchTodos = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/TL/todos?tlid=${teamid}`
+      );
+      setTodos(response.data.todos); // Assuming the response contains an array of todos
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+    }
+  };
+
+  const handleToggle = async (id) => {
+    try {
+      const updatedTodos = todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      );
+      setTodos(updatedTodos);
+
+      // Send PATCH request to update todo's completion status on backend
+      const response = await axios.post(
+        `http://localhost:3001/TL/updateTask/${id}?tlid=${teamid}`,
+        {
+          completed: updatedTodos.find((todo) => todo.id === id).completed,
+        }
+      );
+
+      console.log("Task updated successfully", response.data);
+    } catch (error) {
+      console.error("Error updating todo:", error);
+    }
+  };
+
+  const handleAddTask = async () => {
+    if (newTask.trim() !== "") {
+      const newTodo = {
+        text: newTask,
+        completed: false,
+      };
+
+      // Send POST request to add new task to backend
+      try {
+        const response = await axios.post(
+          `http://localhost:3001/TL/addTask?tlid=${teamid}`,
+          newTodo
+        );
+        setTodos([...todos, response.data]);
+         // Assuming response.data is the new todo object with an ID assigned by the backend
+         fetchTodos();
+        setNewTask("");
+      } catch (error) {
+        console.error("Error adding todo:", error);
+      }
+    }
+  };
+
+  const handleDeleteTask = async (id) => {
+    // Filter out the task to be deleted from the local state
+    const updatedTodos = todos.filter((todo) => todo.id !== id);
+    setTodos(updatedTodos);
+
+    // Send DELETE request to remove task from backend
+    try {
+      await axios.delete(`http://localhost:3001/TL/deleteTask/${id}`);
+    } catch (error) {
+      console.error("Error deleting todo:", error);
+    }
+  };
 
   return (
     <div>
@@ -363,49 +399,55 @@ function HomeDashbord() {
           <div className="w-full">
             <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-x-10 mx-auto mt-7 space-y-7 sm:space-y-7 md:space-y-7 lg:space-y-0">
               {/* To-Do List */}
-              <div className="bg-white rounded-lg shadow-lg px-3 py-5">
-                <div className="ml-4 justify-center text-gray-600">
-                  <h2 className="text-2xl font-bold mb-4 text-customBlue">
-                    To-Do List
-                  </h2>
-                  <div className="w-full mb-4">
-                    <input
-                      type="text"
-                      value={newTask}
-                      onChange={(e) => setNewTask(e.target.value)}
-                      placeholder="Add a new task..."
-                      className="border-2 border-gray-300 p-1 mr-2"
-                    />
-                    <button
-                      onClick={handleAddTask}
-                      className="bg-customBlue text-white px-5 py-2 rounded"
-                    >
-                      Add
-                    </button>
-                  </div>
-                  <ul>
-                    {todos.map((todo) => (
-                      <div key={todo.id} className="items-center mb-4">
-                        <input
-                          type="checkbox"
-                          id={`project-todo-${todo.id}`}
-                          checked={todo.completed}
-                          onChange={() => handleToggle(todo.id)}
-                          className="mr-2"
-                        />
-                        <label
-                          htmlFor={`project-todo-${todo.id}`}
-                          className={`text-lg ${
-                            todo.completed ? "line-through text-gray-400" : ""
-                          }`}
-                        >
-                          {todo.text}
-                        </label>
-                      </div>
-                    ))}
-                  </ul>
+              <div className="bg-white shadow-3xl rounded-xl shadow-lg px-3 py-5">
+              <div className="ml-4 justify-center text-gray-600">
+                <h2 className="text-2xl font-bold mb-4 text-customBlue">
+                  To-Do List
+                </h2>
+                <div className="w-full mb-4">
+                  <input
+                    type="text"
+                    value={newTask}
+                    onChange={(e) => setNewTask(e.target.value)}
+                    placeholder="Add a new task..."
+                    className="border-2 border-gray-300 p-1 mr-2"
+                  />
+                  <button
+                    onClick={handleAddTask}
+                    className="bg-customBlue text-white px-5 py-2 rounded"
+                  >
+                    Add
+                  </button>
                 </div>
+                <ul>
+                  {todos.map((todo) => (
+                    <div key={todo.id} className="items-center mb-4">
+                      <input
+                        type="checkbox"
+                        id={`project-todo-${todo.id}`}
+                        checked={todo.completed}
+                        onChange={() => handleToggle(todo.id)}
+                        className="mr-2"
+                      />
+                      <label
+                        htmlFor={`project-todo-${todo.id}`}
+                        className={`text-lg ${
+                          todo.completed ? "line-through text-gray-400" : ""
+                        }`}
+                      >
+                        {todo.text}
+                      </label>
+                      <button
+                        onClick={() => handleDeleteTask(todo.id)}
+                        className="bg-red-500 text-white px-3 py-1 ml-3 rounded"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  ))}
+                </ul>
               </div>
+            </div>
               {/* TL Deatils */}
               <div className="bg-white rounded-lg shadow-lg px-5 py-5 text-left">
                 <h2 className="text-2xl font-bold mb-4 text-customBlue">

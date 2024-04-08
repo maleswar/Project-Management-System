@@ -30,44 +30,79 @@ const Dashboard = () => {
   const [BudgetList, setBudgetList] = useState([]);
   const [teamFormMember, setTeamFormMember] = useState([]);
 
-  const [todos, setTodos] = useState([
-    {
-      id: 1,
-      text: "Plan project scope",
-      completed: false,
-    },
-    {
-      id: 2,
-      text: "Create task list",
-      completed: false,
-    },
-    {
-      id: 3,
-      text: "Design UI mockups",
-      completed: false,
-    },
-  ]);
-
+  const [todos, setTodos] = useState([]);
   const [newTask, setNewTask] = useState("");
 
-  const handleToggle = (id) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
+  useEffect(() => {
+    // Fetch todo list from backend when component mounts
+    fetchTodos();
+  }, []);
+
+  const fetchTodos = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/TL/todos?tlid=${ID}`
+      );
+      setTodos(response.data.todos); // Assuming the response contains an array of todos
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+    }
   };
 
-  const handleAddTask = () => {
+  const handleToggle = async (id) => {
+    try {
+      const updatedTodos = todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      );
+      setTodos(updatedTodos);
+
+      // Send PATCH request to update todo's completion status on backend
+      const response = await axios.post(
+        `http://localhost:3001/TL/updateTask/${id}?tlid=${ID}`,
+        {
+          completed: updatedTodos.find((todo) => todo.id === id).completed,
+        }
+      );
+
+      console.log("Task updated successfully", response.data);
+    } catch (error) {
+      console.error("Error updating todo:", error);
+    }
+  };
+
+  const handleAddTask = async () => {
     if (newTask.trim() !== "") {
       const newTodo = {
-        id: todos.length + 1,
         text: newTask,
         completed: false,
       };
 
-      setTodos([...todos, newTodo]);
-      setNewTask("");
+      // Send POST request to add new task to backend
+      try {
+        const response = await axios.post(
+          `http://localhost:3001/TL/addTask?tlid=${ID}`,
+          newTodo
+        );
+        setTodos([...todos, response.data]);
+         // Assuming response.data is the new todo object with an ID assigned by the backend
+         fetchTodos();
+        setNewTask("");
+      } catch (error) {
+        console.error("Error adding todo:", error);
+      }
+    }
+  };
+
+  const handleDeleteTask = async (id) => {
+    // Filter out the task to be deleted from the local state
+    const updatedTodos = todos.filter((todo) => todo.id !== id);
+    setTodos(updatedTodos);
+
+    // Send DELETE request to remove task from backend
+    try {
+      await axios.delete(`http://localhost:3001/TL/deleteTask/${id}`);
+    } catch (error) {
+      console.error("Error deleting todo:", error);
     }
   };
 
@@ -787,6 +822,12 @@ const Dashboard = () => {
                       >
                         {todo.text}
                       </label>
+                      <button
+                        onClick={() => handleDeleteTask(todo.id)}
+                        className="bg-red-500 text-white px-3 py-1 ml-3 rounded"
+                      >
+                        Delete
+                      </button>
                     </div>
                   ))}
                 </ul>
